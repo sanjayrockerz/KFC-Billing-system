@@ -521,6 +521,7 @@ export default function Dashboard() {
       waCompleted,
       topWAProducts,
       topWACategories,
+      currentWeekNumber,
     }
   }, [orders, orderItems, products, analyticsDateFrom, analyticsDateTo])
 
@@ -1890,7 +1891,7 @@ export default function Dashboard() {
                     <div className="xl:col-span-2 bg-white rounded-card border border-borderLight p-6 shadow-soft">
                       <div className="flex items-center justify-between gap-3 mb-6">
                         <div>
-                          <h3 className="text-[16px] font-bold text-[#111111]">Revenue Trend — Week {currentWeekNumber} of 2026</h3>
+                          <h3 className="text-[16px] font-bold text-[#111111]">Revenue Trend — Week {analytics.currentWeekNumber} of 2026</h3>
                           <p className="mt-1 text-[12px] text-[#6B7280]">Monday to Sunday sales view for the current week.</p>
                         </div>
                         <span className="rounded-full bg-[#F7F6F2] px-3 py-1 text-[11px] font-bold text-[#D4A800]">
