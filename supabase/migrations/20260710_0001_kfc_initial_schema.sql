@@ -90,6 +90,16 @@ CREATE TABLE IF NOT EXISTS products (
   sku TEXT,
   barcode TEXT,
   brand TEXT,
+  stock NUMERIC(10,3) DEFAULT 0,
+  unit TEXT DEFAULT 'piece',
+  remedy JSONB DEFAULT '[]'::jsonb,
+  purchase_price NUMERIC(10,2) DEFAULT 0,
+  gst_percent NUMERIC(5,2) DEFAULT 0,
+  opening_stock NUMERIC(10,3) DEFAULT 0,
+  low_stock_alert NUMERIC(10,3) DEFAULT 5,
+  supplier TEXT,
+  size TEXT,
+  color TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -99,6 +109,7 @@ CREATE TABLE IF NOT EXISTS product_variants (
   product_id TEXT NOT NULL,
   variant_name TEXT NOT NULL,
   size_label TEXT,
+  group_name TEXT,
   price NUMERIC(10,2) NOT NULL DEFAULT 0,
   purchase_price NUMERIC(10,2),
   mrp NUMERIC(10,2),
@@ -411,15 +422,15 @@ BEGIN
   SELECT id INTO cat_chicken FROM categories WHERE name_en = 'Chicken' LIMIT 1;
   SELECT id INTO cat_sides FROM categories WHERE name_en = 'Sides' LIMIT 1;
   SELECT id INTO cat_wraps FROM categories WHERE name_en = 'Burgers & Wraps' LIMIT 1;
-  INSERT INTO products (name, category, category_id, price, description, sort_order)
+  INSERT INTO products (name, category, category_id, price, stock, description, sort_order, image, image_url)
   VALUES
-    ('Bone Shot', 'Chicken', cat_chicken, 120.00, 'Crispy Korean fried chicken bone-in pieces.', 1),
-    ('Big Shot', 'Chicken', cat_chicken, 180.00, 'Large boneless chicken pieces with Korean sauce.', 2),
-    ('Strips', 'Chicken', cat_chicken, 150.00, 'Tender crispy chicken strips with dip.', 3),
-    ('Loaded Fries', 'Sides', cat_sides, 130.00, 'Fries loaded with cheese, sauce & chicken topping.', 4),
-    ('French Fries', 'Sides', cat_sides, 70.00, 'Classic crispy salted french fries.', 5),
-    ('Wrap', 'Burgers & Wraps', cat_wraps, 140.00, 'Tortilla wrap with crispy chicken, veggies & sauce.', 6),
-    ('Burger', 'Burgers & Wraps', cat_wraps, 160.00, 'Chicken burger with lettuce, tomato, cheese & sauce.', 7)
+    ('Bone Shot', 'Chicken', cat_chicken, 120.00, 100, 'Crispy Korean fried chicken bone-in pieces.', 1, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
+    ('Big Shot', 'Chicken', cat_chicken, 180.00, 100, 'Large boneless chicken pieces with Korean sauce.', 2, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
+    ('Strips', 'Chicken', cat_chicken, 150.00, 100, 'Tender crispy chicken strips with dip.', 3, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
+    ('Loaded Fries', 'Sides', cat_sides, 130.00, 100, 'Fries loaded with cheese, sauce & chicken topping.', 4, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
+    ('French Fries', 'Sides', cat_sides, 70.00, 100, 'Classic crispy salted french fries.', 5, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
+    ('Wrap', 'Burgers & Wraps', cat_wraps, 140.00, 100, 'Tortilla wrap with crispy chicken, veggies & sauce.', 6, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
+    ('Burger', 'Burgers & Wraps', cat_wraps, 160.00, 100, 'Chicken burger with lettuce, tomato, cheese & sauce.', 7, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg')
   ON CONFLICT DO NOTHING;
 END $$;
 
