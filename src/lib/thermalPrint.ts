@@ -79,7 +79,7 @@ export function printThermalReceipt(data: ThermalReceiptData) {
       <body>
         <div class="text-center mb-2">
             <div style="display: flex; align-items: center; justify-content: center; gap: 6px; margin-bottom: 4px;">
-              <img src="/logo.png" alt="KFC" style="width: 36px; height: 36px; border-radius: 6px; object-fit: cover;" />
+              <img src="/logo.png" alt="KFC" style="width: 36px; height: 36px; border-radius: 6px; object-fit: contain;" />
           <div class="font-bold" style="font-size: 16px;">${data.storeName || BRAND_EN}</div>
           <div style="font-size: 11px; margin-top: 2px;">${data.storeAddress || ''}</div>
           <div class="mt-2" style="font-size: 11px;">Ph: ${data.storePhone || BRAND_WHATSAPP}</div>

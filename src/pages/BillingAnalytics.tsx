@@ -574,7 +574,7 @@ export default function BillingAnalytics() {
           <div className="admin-logo-lockup min-w-0 sm:min-w-[280px]">
             <div className="admin-logo-mark shrink-0 rounded-[18px] border border-[#F0E6C8] bg-white p-2 shadow-[0_10px_28px_rgba(17,24,39,0.10)]">
               <div className="flex h-14 w-14 items-center justify-center rounded-[14px] bg-[#FCFBF7] ring-1 ring-[#F2E7D2] p-1.5">
-                <img src="/logo.png" alt="KFC logo" className="w-full h-full object-cover" />
+                <img src="/logo.png" alt="KFC logo" className="w-full h-full object-contain" />
               </div>
             </div>
             <div className="min-w-0">

@@ -28,8 +28,8 @@ export default function AdminLogin() {
     <div className="min-h-screen bg-bgMain flex items-center justify-center p-4">
       <div className="w-full max-w-sm bg-white rounded-3xl shadow-xl border border-[#F0E6C8] p-8">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl overflow-hidden bg-white border border-[#F0E6C8] shadow-sm">
-            <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl overflow-hidden bg-white border border-[#F0E6C8] shadow-sm p-1.5">
+            <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
           </div>
           <h1 className="text-2xl font-black text-[#1A1A1A]">{BRAND_EN}</h1>
           <p className="text-[13px] font-medium text-[#6B7280] mt-1">Admin Panel</p>

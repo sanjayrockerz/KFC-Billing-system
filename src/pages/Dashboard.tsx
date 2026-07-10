@@ -1037,8 +1037,8 @@ export default function Dashboard() {
         {/* Desktop brand header */}
         <div className={`hidden lg:flex items-center relative transition-all duration-300 ${sidebarCollapsed ? 'justify-center pt-6 pb-5 px-2' : 'px-5 py-5'}`}>
           <div className={`flex items-center gap-3 min-w-0 transition-all duration-300 ${sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'opacity-100 flex-1'}`}>
-            <div className="flex items-center justify-center shrink-0 w-14 h-14 rounded-[16px] bg-white shadow-[0_4px_12px_rgba(17,24,39,0.10)] overflow-hidden">
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
+            <div className="flex items-center justify-center shrink-0 w-14 h-14 rounded-[16px] bg-white shadow-[0_4px_12px_rgba(17,24,39,0.10)] overflow-hidden p-1.5">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <h1 className="text-[20px] font-black text-white truncate tracking-tight">Korean FC</h1>
           </div>
@@ -1055,8 +1055,8 @@ export default function Dashboard() {
         {/* Mobile mini-header */}
         <div className="flex lg:hidden items-center justify-between px-4 py-3 border-b border-white/10">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shrink-0 overflow-hidden shadow-sm">
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shrink-0 overflow-hidden shadow-sm p-1">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
             </div>
             <span className="text-[15px] font-black text-white truncate">Korean FC</span>
           </div>

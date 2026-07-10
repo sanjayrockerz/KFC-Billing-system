@@ -82,8 +82,8 @@ export const Invoice: React.FC<InvoiceProps> = ({
     >
       {/* ── HEADER ────────────────────────────────────────────────── */}
       <div style={{ textAlign: 'center', borderBottom: '1px solid #e5e7eb', paddingBottom: 24, marginBottom: 24 }}>
-        <div style={{ width: 90, height: 90, margin: '0 auto 12px', borderRadius: 12, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #F0E6C8' }}>
-          <img src="/logo.png" alt="KFC" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div style={{ width: 90, height: 90, margin: '0 auto 12px', borderRadius: 12, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #F0E6C8', padding: 6 }}>
+          <img src="/logo.png" alt="KFC" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </div>
         <div style={{ fontSize: 24, fontWeight: 900, color: '#D4A800', letterSpacing: -0.5, textTransform: 'uppercase' }}>
           {BRAND_EN}
