@@ -135,7 +135,7 @@ export const Invoice: React.FC<InvoiceProps> = ({
       <div style={{ flexGrow: 1 }}>
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
-            <tr style={{ background: '#FFFDF5',, borderRadius: 8 }}>
+            <tr style={{ background: '#FFFDF5', borderRadius: 8 }}>
               <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8, width: 32 }}>#</th>
               <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8 }}>Product</th>
               <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8, width: 50 }}>Qty</th>
