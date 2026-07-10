@@ -234,6 +234,13 @@ export default function Dashboard() {
       return `${year}-${month}-${day}`
     }
     const toLocalMonthKey = (value: string | Date) => toLocalDateKey(value).slice(0, 7)
+    const getWeekNumber = (d: Date) => {
+      const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()))
+      t.setUTCDate(t.getUTCDate() + 4 - (t.getUTCDay() || 7))
+      const yearStart = new Date(Date.UTC(t.getUTCFullYear(), 0, 1))
+      return Math.ceil((((t.getTime() - yearStart.getTime()) / 86400000) + 1) / 7)
+    }
+    const currentWeekNumber = getWeekNumber(new Date())
 
     const todayKey  = toLocalDateKey(new Date())
     const monthKey  = todayKey.slice(0, 7)
@@ -368,8 +375,8 @@ export default function Dashboard() {
       const k = toLocalMonthKey(o.created_at)
       monthlyRevenueMap.set(k, (monthlyRevenueMap.get(k) || 0) + toNumber(o.total, 0))
     })
-    const monthlyTrend = Array.from({ length: 6 }, (_, i) => {
-      const d = new Date(); d.setMonth(d.getMonth() - (5 - i))
+    const monthlyTrend = Array.from({ length: 12 }, (_, i) => {
+      const d = new Date(); d.setMonth(d.getMonth() - (11 - i))
       const k = toLocalMonthKey(d)
       return { key: k, month: d.toLocaleDateString('en-IN', { month: 'short' }), revenue: monthlyRevenueMap.get(k) || 0 }
     })
@@ -1819,14 +1826,14 @@ export default function Dashboard() {
                       <span className="text-[24px] font-bold text-[#111111]">{formatCurrency(analytics.totalCompletedRevenue)}</span>
                       <span className="text-[12px] font-bold text-yellow-dark bg-red-50 px-2 py-1 rounded-md mb-1">Avg {formatCurrency(analytics.monthlyRevenue || 0)}/mo</span>
                     </div>
-                    <div className="h-64">
+                    <div className="h-48">
                       <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={analytics.monthlyTrend}>
+                        <BarChart data={analytics.monthlyTrend} margin={{ left: 0, right: 0, top: 4, bottom: 0 }}>
                           <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
-                          <XAxis dataKey="month" tick={{ fill: '#6B7280', fontSize: 11, fontWeight: 700 }} axisLine={false} tickLine={false} />
+                          <XAxis dataKey="month" tick={{ fill: '#6B7280', fontSize: 9, fontWeight: 700 }} axisLine={false} tickLine={false} interval={0} />
                           <YAxis hide />
                           <Tooltip cursor={{ fill: '#F9FAFB' }} formatter={(value) => formatCurrency(toNumber(value as number | string, 0))} />
-                          <Bar dataKey="revenue" fill="#D4A800" radius={[4, 4, 0, 0]} barSize={24} />
+                          <Bar dataKey="revenue" fill="#D4A800" radius={[4, 4, 0, 0]} barSize={14} />
                         </BarChart>
                       </ResponsiveContainer>
                     </div>
@@ -1877,34 +1884,34 @@ export default function Dashboard() {
                 </div>
 
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                  <div className="xl:col-span-2 bg-white rounded-card border border-borderLight p-6 shadow-soft">
-                    <div className="flex items-center justify-between gap-3 mb-6">
-                      <div>
-                        <h3 className="text-[16px] font-bold text-[#111111]">Revenue Trend This Week</h3>
-                        <p className="mt-1 text-[12px] text-[#6B7280]">Monday to Sunday sales view for the current week.</p>
+                    <div className="xl:col-span-2 bg-white rounded-card border border-borderLight p-6 shadow-soft">
+                      <div className="flex items-center justify-between gap-3 mb-6">
+                        <div>
+                          <h3 className="text-[16px] font-bold text-[#111111]">Revenue Trend — Week {currentWeekNumber} of 2026</h3>
+                          <p className="mt-1 text-[12px] text-[#6B7280]">Monday to Sunday sales view for the current week.</p>
+                        </div>
+                        <span className="rounded-full bg-[#F7F6F2] px-3 py-1 text-[11px] font-bold text-[#D4A800]">
+                          Today: {formatCurrency(analytics.todaySales)}
+                        </span>
                       </div>
-                      <span className="rounded-full bg-[#F7F6F2] px-3 py-1 text-[11px] font-bold text-[#D4A800]">
-                        Today: {formatCurrency(analytics.todaySales)}
-                      </span>
-                    </div>
-                    <div className="h-64">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={analytics.weeklySales}>
-                          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
-                          <XAxis dataKey="day" tick={{ fill: '#6B7280', fontSize: 11, fontWeight: 700 }} axisLine={false} tickLine={false} />
-                          <YAxis hide />
-                          <Tooltip
-                            cursor={{ fill: '#F9FAFB' }}
-                            formatter={(value) => formatCurrency(toNumber(value as number | string, 0))}
-                            labelFormatter={(_, payload) => {
-                              const point = payload?.[0]?.payload as { day?: string; date?: string } | undefined
-                              return point ? `${point.day || 'Day'} � ${point.date || ''}` : 'Weekly Revenue'
-                            }}
-                          />
-                          <Bar dataKey="revenue" fill="#1A1A1A" radius={[4, 4, 0, 0]} barSize={28} />
-                        </BarChart>
-                      </ResponsiveContainer>
-                    </div>
+                      <div className="h-48">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={analytics.weeklySales}>
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
+                            <XAxis dataKey="day" tick={{ fill: '#6B7280', fontSize: 11, fontWeight: 700 }} axisLine={false} tickLine={false} />
+                            <YAxis hide />
+                            <Tooltip
+                              cursor={{ fill: '#F9FAFB' }}
+                              formatter={(value) => formatCurrency(toNumber(value as number | string, 0))}
+                              labelFormatter={(_, payload) => {
+                                const point = payload?.[0]?.payload as { day?: string; date?: string } | undefined
+                                return point ? `${point.day || 'Day'} � ${point.date || ''}` : 'Weekly Revenue'
+                              }}
+                            />
+                            <Bar dataKey="revenue" fill="#1A1A1A" radius={[4, 4, 0, 0]} barSize={22} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
                   </div>
 
                   <div className="bg-white rounded-card border border-borderLight p-6 shadow-soft">
@@ -2930,50 +2937,50 @@ export default function Dashboard() {
         {/* ── COUPONS TAB ── */}
         {/* ── COUPONS TAB ── */}
         {tab === 'coupons' && (
-          <div className="space-y-6">
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div className="space-y-2">
-                  <h2 className="text-[28px] lg:text-[32px] leading-none font-black text-[#111111]">{l('Coupon Management', 'கூப்பன் மேலாண்மை')}</h2>
-                  <p className="max-w-2xl text-[13px] lg:text-[14px] font-medium text-[#6C665C]">
+          <div className="space-y-4">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="space-y-1">
+                  <h2 className="text-[22px] lg:text-[24px] leading-none font-black text-[#111111]">{l('Coupon Management', 'கூப்பன் மேலாண்மை')}</h2>
+                  <p className="max-w-2xl text-[12px] lg:text-[13px] font-medium text-[#6C665C]">
                     {l('Create and manage discount codes for the admin dashboard. Coupon discounts apply only to product subtotal, not delivery charge.', 'தள்ளுபடி குறியீடுகளை உருவாக்கி நிர்வகிக்கவும். கூப்பன் தள்ளுபடி பொருட்களின் subtotal-க்கு மட்டும் பொருந்தும், delivery charge-க்கு பொருந்தாது.')}
                   </p>
                 </div>
                 <button
                   onClick={() => void loadCoupons()}
-                  className="inline-flex items-center gap-2 rounded-full border border-[#F0E6C8] bg-[#FBFAF6] px-4 py-2.5 text-[13px] font-black text-[#D4A800] shadow-sm transition-colors hover:bg-[#F7F1E7]"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#F0E6C8] bg-[#FBFAF6] px-3 py-2 text-[12px] font-black text-[#D4A800] shadow-sm transition-colors hover:bg-[#F7F1E7]"
                 >
-                  <RefreshCw size={14} />
+                  <RefreshCw size={13} />
                   Refresh
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <div className="rounded-2xl border border-[#F0E6C8] bg-[#FBFAF6] px-4 py-4 shadow-sm">
-                  <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#D4A800]">Total Coupons</p>
-                  <p className="mt-2 text-[26px] font-black text-[#1A1A1A]">{coupons.length}</p>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                <div className="rounded-2xl border border-[#F0E6C8] bg-[#FBFAF6] px-3 py-3 shadow-sm">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A800]">Total Coupons</p>
+                  <p className="mt-1 text-[20px] font-black text-[#1A1A1A]">{coupons.length}</p>
                 </div>
-                <div className="rounded-2xl border border-[#F0E6C8] bg-[#FBFAF6] px-4 py-4 shadow-sm">
-                  <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#D4A800]">Active</p>
-                  <p className="mt-2 text-[26px] font-black text-[#D4A800]">{coupons.filter(c => c.is_active).length}</p>
+                <div className="rounded-2xl border border-[#F0E6C8] bg-[#FBFAF6] px-3 py-3 shadow-sm">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A800]">Active</p>
+                  <p className="mt-1 text-[20px] font-black text-[#D4A800]">{coupons.filter(c => c.is_active).length}</p>
                 </div>
-                <div className="rounded-2xl border border-[#F0E6C8] bg-[#FBFAF6] px-4 py-4 shadow-sm">
-                  <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#D4A800]">Used</p>
-                  <p className="mt-2 text-[26px] font-black text-[#1A1A1A]">{coupons.reduce((acc, c) => acc + (c.usage_count || 0), 0)}</p>
+                <div className="rounded-2xl border border-[#F0E6C8] bg-[#FBFAF6] px-3 py-3 shadow-sm">
+                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A800]">Used</p>
+                  <p className="mt-1 text-[20px] font-black text-[#1A1A1A]">{coupons.reduce((acc, c) => acc + (c.usage_count || 0), 0)}</p>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-[#E7CFAA] bg-[#FFF6E7] px-4 py-3 text-[13px] font-bold text-[#D4A800] shadow-sm">
+              <div className="rounded-2xl border border-[#E7CFAA] bg-[#FFF6E7] px-3 py-2 text-[12px] font-bold text-[#D4A800] shadow-sm">
                 {l('Coupon discount applies to product subtotal only - not delivery charge.', 'கூப்பன் தள்ளுபடி பொருட்களின் subtotal-க்கு மட்டும் பொருந்தும் - delivery charge-க்கு பொருந்தாது.')}
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-6 xl:grid-cols-[420px_minmax(0,1fr)]">
-              <form onSubmit={saveCoupon} className="rounded-[28px] border border-[#F0E6C8] bg-[#FFFCF6] p-6 shadow-[0_18px_40px_rgba(139,35,50,0.08)] space-y-5">
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-[340px_minmax(0,1fr)]">
+              <form onSubmit={saveCoupon} className="rounded-[24px] border border-[#F0E6C8] bg-[#FFFCF6] p-4 shadow-[0_12px_28px_rgba(139,35,50,0.06)] space-y-3">
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#D4A800]">{editingCouponId !== null ? 'Edit mode' : 'New coupon'}</p>
-                    <h3 className="mt-2 text-[22px] font-black text-[#1A1A1A]">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A800]">{editingCouponId !== null ? 'Edit mode' : 'New coupon'}</p>
+                    <h3 className="mt-1 text-[18px] font-black text-[#1A1A1A]">
                       {editingCouponId !== null ? l('Edit Coupon', 'கூப்பன் திருத்து') : l('Create Coupon', 'புதிய கூப்பன்')}
                     </h3>
                   </div>
@@ -2981,7 +2988,7 @@ export default function Dashboard() {
                     <button
                       type="button"
                       onClick={cancelEditCoupon}
-                      className="rounded-full border border-[#E7CFAA] bg-[#FFF6E7] px-3 py-1.5 text-[12px] font-black text-[#D4A800] transition-colors hover:bg-[#FBEBD3]"
+                      className="rounded-full border border-[#E7CFAA] bg-[#FFF6E7] px-3 py-1.5 text-[11px] font-black text-[#D4A800] transition-colors hover:bg-[#FBEBD3]"
                     >
                       Cancel
                     </button>
@@ -2989,21 +2996,21 @@ export default function Dashboard() {
                 </div>
 
                 {couponSaveError && (
-                  <div className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-[13px] font-bold text-red-700">
+                  <div className="rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-[12px] font-bold text-red-700">
                     {couponSaveError}
                   </div>
                 )}
                 {couponSaveSuccess && (
-                  <div className="rounded-2xl border border-green-200 bg-yellow/10 px-4 py-3 text-[13px] font-bold text-yellow-dark">
+                  <div className="rounded-2xl border border-green-200 bg-yellow/10 px-3 py-2 text-[12px] font-bold text-yellow-dark">
                     {couponSaveSuccess}
                   </div>
                 )}
 
-                <div className="space-y-2">
-                  <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Coupon Code', 'கூப்பன் குறியீடு')} *</label>
-                  <div className="flex gap-3">
+                <div className="space-y-1.5">
+                  <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Coupon Code', 'கூப்பன் குறியீடு')} *</label>
+                  <div className="flex gap-2">
                     <input
-                      className="flex-1 rounded-2xl border border-[#E7D9BF] bg-white px-4 py-3 text-[14px] font-black uppercase tracking-[0.16em] text-[#1A1A1A] outline-none transition-colors focus:border-[#D4A800]"
+                      className="flex-1 rounded-2xl border border-[#E7D9BF] bg-white px-3 py-2.5 text-[13px] font-black uppercase tracking-[0.16em] text-[#1A1A1A] outline-none transition-colors focus:border-[#D4A800]"
                       placeholder="WELCOME10"
                       value={couponForm.code}
                       disabled={editingCouponId !== null}
@@ -3013,36 +3020,36 @@ export default function Dashboard() {
                       <button
                         type="button"
                         onClick={generateCouponCode}
-                        className="shrink-0 rounded-2xl border border-[#D4A800] bg-[#D4A800] px-4 py-3 text-[13px] font-black text-white transition-colors hover:bg-[#741D2A]"
+                        className="shrink-0 rounded-2xl border border-[#D4A800] bg-[#D4A800] px-3 py-2.5 text-[12px] font-black text-white transition-colors hover:bg-[#741D2A]"
                       >
                         Generate
                       </button>
                     )}
                   </div>
                   {editingCouponId !== null && (
-                    <p className="text-[11px] font-medium text-[#6B7280]">{l('Code cannot be changed when editing', 'திருத்தும் போது குறியீட்டை மாற்ற முடியாது')}</p>
+                    <p className="text-[10px] font-medium text-[#6B7280]">{l('Code cannot be changed when editing', 'திருத்தும் போது குறியீட்டை மாற்ற முடியாது')}</p>
                   )}
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Discount %', 'தள்ளுபடி %')} *</label>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Discount %', 'தள்ளுபடி %')} *</label>
                     <input
                       type="number"
                       min="1"
                       max="100"
-                      className="w-full rounded-2xl border border-[#E7D9BF] bg-white px-4 py-3 text-[13px] font-bold text-[#1A1A1A] outline-none transition-colors focus:border-[#D4A800]"
+                      className="w-full rounded-2xl border border-[#E7D9BF] bg-white px-3 py-2.5 text-[12px] font-bold text-[#1A1A1A] outline-none transition-colors focus:border-[#D4A800]"
                       placeholder="10"
                       value={couponForm.percentage}
                       onChange={e => setCouponForm(f => ({ ...f, percentage: Number(e.target.value) }))}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Min Order (?)', 'குறைந்தபட்ச தொகை (₹)')}</label>
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Min Order (?)', 'குறைந்தபட்ச தொகை (₹)')}</label>
                     <input
                       type="number"
                       min="0"
-                      className="w-full rounded-2xl border border-[#E7D9BF] bg-white px-4 py-3 text-[13px] font-bold text-[#1A1A1A] outline-none transition-colors focus:border-[#D4A800]"
+                      className="w-full rounded-2xl border border-[#E7D9BF] bg-white px-3 py-2.5 text-[12px] font-bold text-[#1A1A1A] outline-none transition-colors focus:border-[#D4A800]"
                       placeholder="0 = no minimum"
                       value={couponForm.min_order_value}
                       onChange={e => setCouponForm(f => ({ ...f, min_order_value: e.target.value }))}
@@ -3050,22 +3057,22 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Expiry Date', 'காலாவதி தேதி')}</label>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Expiry Date', 'காலாவதி தேதி')}</label>
                     <input
                       type="date"
-                      className="w-full rounded-2xl border border-[#E7D9BF] bg-white px-4 py-3 text-[13px] font-bold text-[#1A1A1A] outline-none transition-colors focus:border-[#D4A800]"
+                      className="w-full rounded-2xl border border-[#E7D9BF] bg-white px-3 py-2.5 text-[12px] font-bold text-[#1A1A1A] outline-none transition-colors focus:border-[#D4A800]"
                       value={couponForm.expiry_date}
                       onChange={e => setCouponForm(f => ({ ...f, expiry_date: e.target.value }))}
                     />
                   </div>
-                  <div className="space-y-2">
-                    <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Usage Limit', 'பயன்பாட்டு வரம்பு')}</label>
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Usage Limit', 'பயன்பாட்டு வரம்பு')}</label>
                     <input
                       type="number"
                       min="1"
-                      className="w-full rounded-2xl border border-[#E7D9BF] bg-white px-4 py-3 text-[13px] font-bold text-[#1A1A1A] outline-none transition-colors focus:border-[#D4A800]"
+                      className="w-full rounded-2xl border border-[#E7D9BF] bg-white px-3 py-2.5 text-[12px] font-bold text-[#1A1A1A] outline-none transition-colors focus:border-[#D4A800]"
                       placeholder="Unlimited"
                       value={couponForm.usage_limit}
                       onChange={e => setCouponForm(f => ({ ...f, usage_limit: e.target.value }))}
@@ -3075,26 +3082,26 @@ export default function Dashboard() {
 
                 <button
                   type="submit"
-                  className="w-full rounded-2xl bg-[#D4A800] py-3.5 text-[14px] font-black text-white shadow-sm transition-colors hover:bg-[#741D2A]"
+                  className="w-full rounded-2xl bg-[#D4A800] py-3 text-[13px] font-black text-white shadow-sm transition-colors hover:bg-[#741D2A]"
                 >
                   {editingCouponId !== null ? l('Update Coupon', 'கூப்பன் புதுப்பி') : l('Create Coupon', 'புதிய கூப்பன் உருவாக்கு')}
                 </button>
               </form>
 
-              <div className="rounded-[28px] border border-[#F0E6C8] bg-[#FFFCF6] p-6 shadow-[0_18px_40px_rgba(139,35,50,0.08)]">
-                <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+              <div className="rounded-[24px] border border-[#F0E6C8] bg-[#FFFCF6] p-4 shadow-[0_12px_28px_rgba(139,35,50,0.06)]">
+                <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                   <div>
-                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Coupon List', 'கூப்பன் பட்டியல்')}</p>
-                    <h3 className="mt-2 text-[22px] font-black text-[#111111]">
+                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Coupon List', 'கூப்பன் பட்டியல்')}</p>
+                    <h3 className="mt-1 text-[18px] font-black text-[#111111]">
                       {l('All Coupons', 'அனைத்து கூப்பன்கள்')} <span className="text-[#6B7280]">({coupons.length})</span>
                     </h3>
                   </div>
-                  <span className="rounded-full border border-[#E7CFAA] bg-[#FFF6E7] px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-[#D4A800]">
+                  <span className="rounded-full border border-[#E7CFAA] bg-[#FFF6E7] px-2.5 py-0.5 text-[10px] font-black uppercase tracking-[0.2em] text-[#D4A800]">
                     {l('Admin only', 'நிர்வாகி மட்டும்')}
                   </span>
                 </div>
 
-                <div className="space-y-3 max-h-[36rem] overflow-y-auto pr-1">
+                <div className="space-y-2 max-h-[30rem] overflow-y-auto pr-1">
                   {coupons.map((coupon) => {
                     const isExpired = coupon.expiry_date ? new Date(coupon.expiry_date) < new Date() : false
                     const isExhausted = coupon.usage_limit !== null && coupon.usage_count >= coupon.usage_limit
@@ -3102,46 +3109,46 @@ export default function Dashboard() {
                     return (
                       <div
                         key={coupon.id}
-                        className={`rounded-[22px] border p-4 shadow-sm transition-all ${
+                        className={`rounded-[18px] border p-3 shadow-sm transition-all ${
                           isEditing
                             ? 'border-[#D4A800] bg-[#FFF8F3] ring-1 ring-[#D4A800]/15'
                             : 'border-[#F0E2C8] bg-white hover:border-[#D8BA8A]'
                         }`}
                       >
-                        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                          <div className="min-w-0 space-y-2">
-                            <div className="flex flex-wrap items-center gap-2">
-                              <p className="truncate text-[18px] font-black uppercase tracking-[0.18em] text-[#1A1A1A]">{coupon.code}</p>
-                              <span className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${coupon.is_active ? 'bg-[#FCE7EA] text-[#D4A800]' : 'bg-[#F8EDD9] text-[#9A6700]'}`}>
+                        <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                          <div className="min-w-0 space-y-1.5">
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <p className="truncate text-[15px] font-black uppercase tracking-[0.18em] text-[#1A1A1A]">{coupon.code}</p>
+                              <span className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] ${coupon.is_active ? 'bg-[#FCE7EA] text-[#D4A800]' : 'bg-[#F8EDD9] text-[#9A6700]'}`}>
                                 {coupon.is_active ? l('Active', 'செயலில்') : l('Inactive', 'முடக்கத்தில்')}
                               </span>
                               {isExpired && (
-                                <span className="rounded-full bg-red-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-red-700">
+                                <span className="rounded-full bg-red-100 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-red-700">
                                   Expired
                                 </span>
                               )}
                               {!isExpired && isExhausted && (
-                                <span className="rounded-full bg-orange-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-orange-700">
+                                <span className="rounded-full bg-orange-100 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.18em] text-orange-700">
                                   Limit reached
                                 </span>
                               )}
                             </div>
 
-                            <p className="text-[13px] font-semibold text-[#D4A800]">
+                            <p className="text-[12px] font-semibold text-[#D4A800]">
                               {coupon.percentage}% off
                               {coupon.min_order_value > 0 && ` • min ₹${coupon.min_order_value}`}
                             </p>
 
-                            <p className="text-[12px] text-[#6C665C]">
+                            <p className="text-[11px] text-[#6C665C]">
                               Used {coupon.usage_count}{coupon.usage_limit ? `/${coupon.usage_limit}` : ''} times
                               {coupon.expiry_date ? ` • expires ${new Date(coupon.expiry_date).toLocaleDateString('en-IN')}` : ''}
                             </p>
                           </div>
 
-                          <div className="flex shrink-0 items-center gap-2">
+                          <div className="flex shrink-0 items-center gap-1.5">
                             <button
                               onClick={() => void toggleCoupon(coupon)}
-                              className={`rounded-full px-3 py-2 text-[11px] font-black uppercase tracking-[0.18em] transition-colors ${
+                              className={`rounded-full px-2.5 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] transition-colors ${
                                 coupon.is_active ? 'bg-[#FCE7EA] text-[#D4A800] hover:bg-[#F8D7DD]' : 'bg-[#F8EDD9] text-[#9A6700] hover:bg-[#F2E0B9]'
                               }`}
                             >
@@ -3149,15 +3156,15 @@ export default function Dashboard() {
                             </button>
                             <button
                               onClick={() => startEditCoupon(coupon)}
-                              className="rounded-full border border-[#E7D9BF] bg-white p-2.5 text-[#D4A800] transition-colors hover:border-[#D8BA8A] hover:text-[#741D2A]"
+                              className="rounded-full border border-[#E7D9BF] bg-white p-2 text-[#D4A800] transition-colors hover:border-[#D8BA8A] hover:text-[#741D2A]"
                             >
-                              <Edit2 size={16} />
+                              <Edit2 size={14} />
                             </button>
                             <button
                               onClick={() => void deleteCoupon(coupon)}
-                              className="rounded-full border border-[#F4D4D4] bg-white p-2.5 text-red-500 transition-colors hover:bg-red-50 hover:text-red-700"
+                              className="rounded-full border border-[#F4D4D4] bg-white p-2 text-red-500 transition-colors hover:bg-red-50 hover:text-red-700"
                             >
-                              <Trash2 size={16} />
+                              <Trash2 size={14} />
                             </button>
                           </div>
                         </div>
@@ -3166,7 +3173,7 @@ export default function Dashboard() {
                   })}
 
                   {coupons.length === 0 && (
-                    <div className="rounded-[22px] border border-dashed border-[#E7CFAA] bg-[#FFF8F3] py-12 text-center text-[14px] font-bold text-[#D4A800]">
+                    <div className="rounded-[22px] border border-dashed border-[#E7CFAA] bg-[#FFF8F3] py-8 text-center text-[13px] font-bold text-[#D4A800]">
                       {l('No coupons yet. Create your first coupon!', 'இதுவரை கூப்பன்கள் இல்லை. முதல் கூப்பனை உருவாக்கவும்!')}
                     </div>
                   )}

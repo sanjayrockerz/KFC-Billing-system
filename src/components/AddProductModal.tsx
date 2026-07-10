@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { X } from 'lucide-react'
+import React, { useState, useEffect, useRef } from 'react'
+import { X, ChevronDown } from 'lucide-react'
 import { useProductStore } from '../store/store'
 import { supabase } from '../lib/supabase'
 
@@ -13,6 +13,9 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
   const { fetchProducts } = useProductStore()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [categories, setCategories] = useState<string[]>([])
+  const [catOpen, setCatOpen] = useState(false)
+  const catRef = useRef<HTMLDivElement>(null)
   const [formData, setFormData] = useState({
     name: '',
     category: 'Manual',
@@ -20,7 +23,27 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     stock: '10'
   })
 
+  useEffect(() => {
+    if (!isOpen) return
+    setFormData({ name: '', category: 'Manual', price: '', stock: '10' })
+    setError('')
+    supabase.from('products').select('category').then(({ data }) => {
+      const cats = [...new Set((data ?? []).map(r => String(r.category).trim()).filter(Boolean))]
+      setCategories(cats.sort())
+    })
+  }, [isOpen])
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (catRef.current && !catRef.current.contains(e.target as Node)) setCatOpen(false)
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
   if (!isOpen) return null
+
+  const filtered = categories.filter(c => c.toLowerCase().includes(formData.category.toLowerCase()))
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -82,14 +105,32 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div>
+            <div className="relative" ref={catRef}>
               <label className="block text-[10px] font-black text-[#6B7280] tracking-wider uppercase mb-1.5">Category</label>
-              <input 
-                type="text" 
-                value={formData.category}
-                onChange={e => setFormData({...formData, category: e.target.value})}
-                className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#F0E6C8]/60 rounded-xl focus:outline-none focus:border-[#D4A800] text-[13px] font-bold"
-              />
+              <div className="relative">
+                <input 
+                  type="text" 
+                  value={formData.category}
+                  onChange={e => { setFormData({...formData, category: e.target.value}); setCatOpen(true) }}
+                  onFocus={() => setCatOpen(true)}
+                  className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#F0E6C8]/60 rounded-xl focus:outline-none focus:border-[#D4A800] text-[13px] font-bold pr-8"
+                />
+                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280] pointer-events-none" />
+              </div>
+              {catOpen && filtered.length > 0 && (
+                <div className="absolute z-50 top-full mt-1 left-0 right-0 bg-white border border-[#F0E6C8] rounded-xl shadow-lg max-h-36 overflow-y-auto">
+                  {filtered.map(c => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => { setFormData({...formData, category: c}); setCatOpen(false) }}
+                      className="w-full text-left px-4 py-2.5 text-[13px] font-bold text-[#1A1A1A] hover:bg-[#F7F6F2] transition-colors"
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             <div>
               <label className="block text-[10px] font-black text-[#6B7280] tracking-wider uppercase mb-1.5">Price (₹)</label>

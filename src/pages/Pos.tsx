@@ -1120,34 +1120,14 @@ export default function Pos(props: PosProps = {}) {
             
             {/* Action Buttons Fixed Footer */}
             <div className="sticky bottom-0 p-4 md:p-5 border-t border-[#F0E6C8]/60 bg-white shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
-              <div className="grid grid-cols-1 min-[360px]:grid-cols-[1fr_1fr] gap-2">
-                <button 
-                  type="button"
-                  onClick={generateBill}
-                  disabled={saving}
-                  className="col-span-1 min-[360px]:col-span-2 py-4 bg-[#4CAF50] hover:bg-[#45a049] text-white rounded-xl text-[15px] md:text-[13px] font-black uppercase tracking-wider transition-colors disabled:opacity-50 min-h-[52px]"
-                >
-                  {saving ? 'Processing...' : 'Complete Sale'}
-                </button>
-                <button 
-                  type="button"
-                  onClick={() => window.print()}
-                  className="py-3.5 bg-white border border-[#F0E6C8]/60 text-[#1A1A1A] rounded-xl text-[14px] md:text-[11px] font-black uppercase hover:bg-[#FAFAFA] transition-colors min-h-[48px]"
-                >
-                  Print Bill
-                </button>
-                <button 
-                  type="button"
-                  onClick={() => {
-                    alert('Draft saved locally!');
-                    setItems([]);
-                    setCustomer({ name: '', phone: '', address: '' });
-                  }}
-                  className="py-3.5 bg-white border border-[#F0E6C8]/60 text-[#1A1A1A] rounded-xl text-[14px] md:text-[11px] font-black uppercase hover:bg-[#FAFAFA] transition-colors min-h-[48px]"
-                >
-                  Save Draft
-                </button>
-              </div>
+              <button 
+                type="button"
+                onClick={generateBill}
+                disabled={saving}
+                className="w-full py-4 bg-[#4CAF50] hover:bg-[#45a049] text-white rounded-xl text-[15px] md:text-[13px] font-black uppercase tracking-wider transition-colors disabled:opacity-50 min-h-[52px]"
+              >
+                {saving ? 'Processing...' : 'Complete Sale'}
+              </button>
             </div>
           </div>
         </div>
