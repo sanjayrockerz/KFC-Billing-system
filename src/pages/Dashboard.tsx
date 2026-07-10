@@ -145,6 +145,8 @@ export default function Dashboard() {
 
   // WA detail expansion
   const [waExpandedId, setWaExpandedId] = useState<string | null>(null)
+  const [todayBillsExpandedId, setTodayBillsExpandedId] = useState<string | null>(null)
+  const [todayBillsSearch, setTodayBillsSearch] = useState('')
 
   // Search & date filter
   const [search, setSearch] = useState({ invoiceNo: '', phone: '', customerName: '', dateFrom: '', dateTo: '' })
@@ -484,6 +486,7 @@ export default function Dashboard() {
       todayHourlyTrend,
       todayTopProducts,
       todayBills,
+      todayOrders: todayOrders,
       todayOfflineRevenue,
       todayOnlineRevenue,
       todayManualRevenue,
@@ -1946,7 +1949,7 @@ export default function Dashboard() {
                   {[
                     { label: "Today's Revenue", value: formatCurrency(analytics.todaySales), icon: <IndianRupee size={18} />, from: 'from-emerald-500 to-teal-600', to: 'via-emerald-600/40' },
                     { label: 'Orders', value: String(analytics.todayCompletedOrdersCount), icon: <ShoppingCart size={18} />, from: 'from-blue-500 to-indigo-600', to: 'via-indigo-600/40' },
-                    { label: 'Items Sold', value: String(Math.round(analytics.todayItemsSold)), icon: <Package size={18} />, from: 'from-violet-500 to-purple-600', to: 'via-purple-600/40' },
+                    { label: 'Avg Bill Revenue', value: formatCurrency(analytics.todayAvgOrderValue), icon: <TrendingUp size={18} />, from: 'from-violet-500 to-purple-600', to: 'via-purple-600/40' },
                     { label: 'Avg Order', value: formatCurrency(analytics.todayAvgOrderValue), icon: <TrendingUp size={18} />, from: 'from-amber-500 to-orange-600', to: 'via-orange-600/40' },
                   ].map((card, i) => (
                     <div key={i} className={`relative overflow-hidden rounded-2xl p-5 shadow-lg border border-white/20 bg-gradient-to-br ${card.from}`}>
@@ -2009,13 +2012,25 @@ export default function Dashboard() {
 
                 {/* Today's latest bills */}
                 <div className="bg-white rounded-2xl border border-[#F0E6C8]/30 p-5 shadow-sm">
-                  <div className="flex items-center justify-between mb-3">
+                  <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                     <h3 className="text-[15px] font-bold text-[#1A1A1A]">Today's Bills</h3>
-                    <span className="text-[11px] font-bold text-[#D4A800]">{analytics.todayCompletedOrdersCount} orders</span>
+                    <div className="flex items-center gap-2">
+                      <div className="relative">
+                        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280] pointer-events-none" />
+                        <input
+                          type="text"
+                          value={todayBillsSearch}
+                          onChange={e => setTodayBillsSearch(e.target.value)}
+                          placeholder="Search invoice or customer..."
+                          className="w-44 pl-8 pr-3 py-1.5 bg-[#F7F6F2] border border-[#F0E6C8]/60 rounded-xl text-[11px] font-semibold outline-none focus:border-[#D4A800]"
+                        />
+                      </div>
+                      <span className="text-[11px] font-bold text-[#D4A800]">{analytics.todayCompletedOrdersCount} orders</span>
+                    </div>
                   </div>
                   {analytics.todayBills.length > 0 ? (
                     <div className="overflow-x-auto rounded-xl border border-[#F0E6C8]/30">
-                      <table className="w-full min-w-[480px] text-[12px]">
+                      <table className="w-full min-w-[580px] text-[12px]">
                         <thead className="bg-[#F7F6F2] text-[10px] uppercase tracking-wider text-[#6B7280]">
                           <tr>
                             <th className="px-3 py-2.5 font-black text-left">Invoice</th>
@@ -2023,20 +2038,157 @@ export default function Dashboard() {
                             <th className="px-3 py-2.5 font-black text-left">Total</th>
                             <th className="px-3 py-2.5 font-black text-left">Time</th>
                             <th className="px-3 py-2.5 font-black text-left">Type</th>
+                            <th className="px-3 py-2.5 font-black text-center">View</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-[#F0E6C8]/20">
-                          {analytics.todayBills.map(o => {
+                          {(todayBillsSearch
+                            ? analytics.todayOrders.filter(o =>
+                                (o.invoice_no || '').toLowerCase().includes(todayBillsSearch.toLowerCase()) ||
+                                (o.customer_name || '').toLowerCase().includes(todayBillsSearch.toLowerCase())
+                              )
+                            : analytics.todayBills
+                          ).map(o => {
+                            const isTbExpanded = todayBillsExpandedId === o.id
                             const btLabel = normalizeOrderType(o.order_type) === 'manual_sale' ? 'MANUAL' : normalizeOrderMode(o.order_mode) === 'online' ? 'ONLINE' : 'OFFLINE'
                             const btClass = normalizeOrderType(o.order_type) === 'manual_sale' ? 'bg-purple-100 text-purple-700' : normalizeOrderMode(o.order_mode) === 'online' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'
                             return (
-                              <tr key={o.id} className="hover:bg-[#F7F6F2]/50">
-                                <td className="px-3 py-2.5 font-bold text-[#D4A800] text-[11px]">{o.invoice_no || '-'}</td>
-                                <td className="px-3 py-2.5 font-semibold text-[#1A1A1A] max-w-[100px] truncate">{o.customer_name}</td>
-                                <td className="px-3 py-2.5 font-black text-[#1A1A1A]">{formatCurrency(toNumber(o.total, 0))}</td>
-                                <td className="px-3 py-2.5 text-[#6B7280] whitespace-nowrap">{new Date(o.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</td>
-                                <td className="px-3 py-2.5"><span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${btClass}`}>{btLabel}</span></td>
-                              </tr>
+                              <React.Fragment key={o.id}>
+                                <tr className={`hover:bg-[#F7F6F2]/50 ${isTbExpanded ? 'bg-[#F7F6F2]' : ''}`}>
+                                  <td className="px-3 py-2.5 font-bold text-[#D4A800] text-[11px]">{o.invoice_no || '-'}</td>
+                                  <td className="px-3 py-2.5 font-semibold text-[#1A1A1A] max-w-[100px] truncate">{o.customer_name}</td>
+                                  <td className="px-3 py-2.5 font-black text-[#1A1A1A]">{formatCurrency(toNumber(o.total, 0))}</td>
+                                  <td className="px-3 py-2.5 text-[#6B7280] whitespace-nowrap">{new Date(o.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</td>
+                                  <td className="px-3 py-2.5"><span className={`px-2 py-0.5 rounded-full text-[10px] font-black ${btClass}`}>{btLabel}</span></td>
+                                  <td className="px-3 py-2.5 text-center">
+                                    <button
+                                      type="button"
+                                      onClick={() => setTodayBillsExpandedId(isTbExpanded ? null : o.id)}
+                                      className={`px-2.5 py-1 rounded-lg text-[10px] font-black transition-colors whitespace-nowrap ${
+                                        isTbExpanded ? 'bg-[#1A1A1A] text-white' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                                      }`}
+                                    >
+                                      {isTbExpanded ? 'Close' : 'View'}
+                                    </button>
+                                  </td>
+                                </tr>
+                                {isTbExpanded && (
+                                  <tr>
+                                    <td colSpan={6} className="px-3 pb-4 pt-1">
+                                      <div className="bg-white rounded-xl border border-blue-100 shadow-sm overflow-hidden">
+                                        {/* Invoice Header */}
+                                        <div className="text-center border-b border-[#F0E6C8]/40 px-4 py-4">
+                                          <div className="flex justify-center mb-2">
+                                            <div className="w-12 h-12 rounded-xl overflow-hidden border border-[#F0E6C8] p-1 bg-white flex items-center justify-center">
+                                              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+                                            </div>
+                                          </div>
+                                          <h2 className="text-[16px] font-black text-[#D4A800] uppercase tracking-tight">{BRAND_EN}</h2>
+                                          <p className="text-[10px] text-[#6B7280] mt-1 max-w-xl mx-auto">{BRAND_ADDRESS}</p>
+                                        </div>
+
+                                        {/* Invoice Meta + Customer */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 px-4 py-3 border-b border-[#F0E6C8]/20">
+                                          <div>
+                                            <p className="text-[8px] font-black uppercase tracking-wider text-[#6B7280] mb-1">Invoice</p>
+                                            <p className="text-[13px] font-black text-[#1A1A1A]">{o.invoice_no || o.id || '-'}</p>
+                                            <p className="text-[10px] text-[#6B7280] mt-1">
+                                              {new Date(o.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                            </p>
+                                          </div>
+                                          <div className="sm:text-right">
+                                            <p className="text-[8px] font-black uppercase tracking-wider text-[#6B7280] mb-1">Customer</p>
+                                            <p className="text-[13px] font-black text-[#1A1A1A]">{o.customer_name || '-'}</p>
+                                            <p className="text-[10px] text-[#6B7280]">{o.phone || '-'}</p>
+                                            {o.address && <p className="text-[9px] text-[#9CA3AF] mt-1">{o.address}</p>}
+                                          </div>
+                                        </div>
+
+                                        {/* Items Table */}
+                                        {(() => {
+                                          const its = parseOrderItems(o.items)
+                                          return its.length > 0 ? (
+                                            <div className="px-4 py-3 border-b border-[#F0E6C8]/20">
+                                              <table className="w-full text-[11px]">
+                                                <thead>
+                                                  <tr className="text-left text-[#6B7280] font-black text-[9px] uppercase tracking-wider border-b border-[#F0E6C8]/30">
+                                                    <th className="pb-1.5 w-6">#</th>
+                                                    <th className="pb-1.5">Product</th>
+                                                    <th className="pb-1.5 text-center w-12">Qty</th>
+                                                    <th className="pb-1.5 text-right w-16">Rate</th>
+                                                    <th className="pb-1.5 text-right w-20">Amount</th>
+                                                  </tr>
+                                                </thead>
+                                                <tbody className="divide-y divide-[#F0E6C8]/10">
+                                                  {its.map((raw: unknown, idx: number) => {
+                                                    const item = raw as Record<string, unknown>
+                                                    const fullName  = String(item.name || item.product_name || 'Product')
+                                                    const dashIdx   = fullName.indexOf(' - ')
+                                                    const prodName  = dashIdx > 0 ? fullName.slice(0, dashIdx) : fullName
+                                                    const variant   = dashIdx > 0 ? fullName.slice(dashIdx + 3) : ''
+                                                    const qty       = toNumber(item.quantity ?? item.qty, 0)
+                                                    const basePrice = toNumber(item.base_price ?? item.basePrice ?? item.price, 0)
+                                                    const lineTotal = toNumber(item.line_total ?? item.lineTotal, 0)
+                                                    return (
+                                                      <tr key={idx}>
+                                                        <td className="py-1.5 text-[#9CA3AF] text-[10px]">{idx + 1}</td>
+                                                        <td className="py-1.5">
+                                                          <span className="font-bold text-[#1A1A1A] text-[11px]">{prodName}</span>
+                                                          {variant && <span className="text-[9px] text-[#6B7280] ml-1">({variant})</span>}
+                                                        </td>
+                                                        <td className="py-1.5 text-center font-semibold text-[11px]">{qty}</td>
+                                                        <td className="py-1.5 text-right text-[#6B7280] text-[10px]">{formatCurrency(basePrice)}</td>
+                                                        <td className="py-1.5 text-right font-bold text-[11px]">{formatCurrency(lineTotal)}</td>
+                                                      </tr>
+                                                    )
+                                                  })}
+                                                </tbody>
+                                              </table>
+                                              <div className="flex justify-end mt-2 pt-2 border-t-2 border-[#D4A800]">
+                                                <div className="w-48 space-y-1">
+                                                  <div className="flex justify-between text-[10px]">
+                                                    <span className="text-[#6B7280]">Subtotal</span>
+                                                    <span className="font-semibold">{formatCurrency(toNumber(o.total, 0))}</span>
+                                                  </div>
+                                                  {toNumber(o.discount_amount, 0) > 0 && (
+                                                    <div className="flex justify-between text-[10px]">
+                                                      <span className="text-green-600">Discount</span>
+                                                      <span className="font-semibold text-green-600">-{formatCurrency(toNumber(o.discount_amount, 0))}</span>
+                                                    </div>
+                                                  )}
+                                                  {toNumber(o.delivery_charge, 0) > 0 ? (
+                                                    <div className="flex justify-between text-[10px]">
+                                                      <span className="text-[#6B7280]">Delivery</span>
+                                                      <span className="font-semibold">{formatCurrency(toNumber(o.delivery_charge, 0))}</span>
+                                                    </div>
+                                                  ) : (
+                                                    <div className="flex justify-between text-[10px]">
+                                                      <span className="text-green-600">Delivery</span>
+                                                      <span className="font-semibold text-green-600">FREE</span>
+                                                    </div>
+                                                  )}
+                                                  <div className="flex justify-between text-[12px] pt-1 border-t border-[#F0E6C8]/40">
+                                                    <span className="font-black text-[#D4A800] uppercase">Total</span>
+                                                    <span className="font-black text-[#D4A800]">{formatCurrency(toNumber(o.total, 0))}</span>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          ) : (
+                                            <div className="px-4 py-4 text-center text-[11px] text-[#6B7280]">No item details available.</div>
+                                          )
+                                        })()}
+
+                                        {/* Footer */}
+                                        <div className="text-center px-4 py-3 bg-[#FAFAFA] border-t border-[#F0E6C8]/20">
+                                          <p className="text-[10px] font-bold text-[#D4A800]">Thank you for shopping with Korean Fried Chicken!</p>
+                                          <p className="text-[8px] text-[#9CA3AF] mt-0.5">Contact: {BRAND_PHONE_DISPLAY} | {BRAND_EMAIL}</p>
+                                        </div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                )}
+                              </React.Fragment>
                             )
                           })}
                         </tbody>
