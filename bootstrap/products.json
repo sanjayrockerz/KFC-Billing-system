@@ -1,0 +1,79 @@
+[
+  {
+    "name": "Bone Shot",
+    "name_ta": "போன் ஷாட்",
+    "category": "Chicken",
+    "price": 150,
+    "description": "Crispy bone-in fried chicken shot",
+    "benefits": "Juicy, crispy, full of flavour",
+    "image": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=800&q=80",
+    "stock": 50,
+    "remedy": []
+  },
+  {
+    "name": "Big Shot",
+    "name_ta": "பிக் ஷாட்",
+    "category": "Chicken",
+    "price": 250,
+    "description": "Large portion of boneless fried chicken",
+    "benefits": "Generous serving, tender & juicy",
+    "image": "https://images.unsplash.com/photo-1562967914-608f82629710?w=800&q=80",
+    "stock": 50,
+    "remedy": []
+  },
+  {
+    "name": "Strips",
+    "name_ta": "ஸ்ட்ரிப்ஸ்",
+    "category": "Chicken",
+    "price": 180,
+    "description": "Crispy chicken strips",
+    "benefits": "Perfect snack, crunchy coating",
+    "image": "https://images.unsplash.com/photo-1614308457932-e16b9c6b0df1?w=800&q=80",
+    "stock": 50,
+    "remedy": []
+  },
+  {
+    "name": "Loaded Fries",
+    "name_ta": "லோடட் பிரைஸ்",
+    "category": "Sides",
+    "price": 200,
+    "description": "French fries loaded with cheese, chicken and sauce",
+    "benefits": "Hearty, cheesy, satisfying",
+    "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=800&q=80",
+    "stock": 40,
+    "remedy": []
+  },
+  {
+    "name": "French Fries",
+    "name_ta": "பிரெஞ்சு பிரைஸ்",
+    "category": "Sides",
+    "price": 100,
+    "description": "Classic crispy french fries",
+    "benefits": "Golden, crispy, lightly salted",
+    "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=800&q=80",
+    "stock": 60,
+    "remedy": []
+  },
+  {
+    "name": "Wrap",
+    "name_ta": "ரேப்",
+    "category": "Chicken",
+    "price": 180,
+    "description": "Chicken wrap with fresh veggies and sauce",
+    "benefits": "Fresh, filling, easy to eat on the go",
+    "image": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800&q=80",
+    "stock": 40,
+    "remedy": []
+  },
+  {
+    "name": "Burger",
+    "name_ta": "பர்கர்",
+    "category": "Chicken",
+    "price": 200,
+    "description": "Crispy chicken burger with lettuce and mayo",
+    "benefits": "Classic chicken burger, juicy patty",
+    "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&q=80",
+    "stock": 40,
+    "remedy": []
+  }
+]
