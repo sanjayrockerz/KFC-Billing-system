@@ -759,9 +759,9 @@ export default function BillingAnalytics() {
                     <th className="px-3 py-3 font-black">Customer</th>
                     <th className="px-3 py-3 font-black">Phone</th>
                     <th className="px-3 py-3 font-black">Bill Type</th>
-                    <th className="px-3 py-3 font-black">Coupon</th>
-                    <th className="px-3 py-3 font-black">Discount</th>
-                    <th className="px-3 py-3 font-black">Delivery</th>
+                    <th className="hidden md:table-cell px-3 py-3 font-black">Coupon</th>
+                    <th className="hidden md:table-cell px-3 py-3 font-black">Discount</th>
+                    <th className="hidden md:table-cell px-3 py-3 font-black">Delivery</th>
                     <th className="px-3 py-3 font-black">Total</th>
                     <th className="px-3 py-3 font-black">Date</th>
                     <th className="px-3 py-3 font-black">Status</th>
@@ -787,9 +787,9 @@ export default function BillingAnalytics() {
                         <td className="px-3 py-3">
                           <span className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase ${billTypeClass}`}>{billTypeLabel}</span>
                         </td>
-                        <td className="px-3 py-3">{order.coupon_code ? <span className="rounded bg-yellow/10 px-1.5 py-0.5 text-[10px] font-bold text-yellow-dark">{order.coupon_code}</span> : <span className="text-[#9BAB9A]">—</span>}</td>
-                        <td className="px-3 py-3">{order.discount_amount > 0 ? <span className="font-bold text-yellow-dark">-{formatCurrency(order.discount_amount)}</span> : <span className="text-[#9BAB9A]">—</span>}</td>
-                        <td className="px-3 py-3">{order.delivery_charge > 0 ? <span className="font-bold">{formatCurrency(order.delivery_charge)}</span> : <span className="text-[#9BAB9A]">—</span>}</td>
+                        <td className="hidden md:table-cell px-3 py-3">{order.coupon_code ? <span className="rounded bg-yellow/10 px-1.5 py-0.5 text-[10px] font-bold text-yellow-dark">{order.coupon_code}</span> : <span className="text-[#9BAB9A]">—</span>}</td>
+                        <td className="hidden md:table-cell px-3 py-3">{order.discount_amount > 0 ? <span className="font-bold text-yellow-dark">-{formatCurrency(order.discount_amount)}</span> : <span className="text-[#9BAB9A]">—</span>}</td>
+                        <td className="hidden md:table-cell px-3 py-3">{order.delivery_charge > 0 ? <span className="font-bold">{formatCurrency(order.delivery_charge)}</span> : <span className="text-[#9BAB9A]">—</span>}</td>
                         <td className="whitespace-nowrap px-3 py-3 font-bold">{formatCurrency(toNumber(order.total, 0))}</td>
                         <td className="whitespace-nowrap px-3 py-3 text-[#6B7280]">{new Date(order.created_at).toLocaleDateString('en-IN')}</td>
                         <td className="px-3 py-3">
