@@ -2,7 +2,10 @@
 
 -- 1. Remove duplicate products keeping only the first inserted per name
 DELETE FROM products WHERE id NOT IN (
-  SELECT MIN(id) FROM products GROUP BY name
+  SELECT id FROM (
+    SELECT id, ROW_NUMBER() OVER (PARTITION BY name ORDER BY created_at ASC, id ASC) AS rn
+    FROM products
+  ) ranked WHERE rn = 1
 );
 
 -- 2. Add unique constraint on product name to prevent future duplicates
