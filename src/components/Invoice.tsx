@@ -82,8 +82,8 @@ export const Invoice: React.FC<InvoiceProps> = ({
     >
       {/* ── HEADER ────────────────────────────────────────────────── */}
       <div style={{ textAlign: 'center', borderBottom: '1px solid #e5e7eb', paddingBottom: 24, marginBottom: 24 }}>
-        <div style={{ width: 80, height: 80, margin: '0 auto', marginBottom: 12, borderRadius: 8, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#F5C518' }}>
-          <span style={{ fontSize: 28, fontWeight: 900, color: '#1A1A1A' }}>KFC</span>
+        <div style={{ width: 90, height: 90, margin: '0 auto 12px', borderRadius: 12, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', border: '1px solid #F0E6C8', padding: 6 }}>
+          <img src="/logo.png" alt="KFC" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
         </div>
         <div style={{ fontSize: 24, fontWeight: 900, color: '#D4A800', letterSpacing: -0.5, textTransform: 'uppercase' }}>
           {BRAND_EN}
@@ -120,11 +120,11 @@ export const Invoice: React.FC<InvoiceProps> = ({
             </>
           )}
         </div>
-        <div style={{ textAlign: 'right' }}>
+        <div style={{ textAlign: 'right', maxWidth: 300 }}>
           <div style={{ fontSize: 9, fontWeight: 800, color: '#888', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Customer</div>
           <div style={{ fontSize: 14, fontWeight: 800, color: '#1a1a2e' }}>{customerName}</div>
           <div style={{ fontSize: 12, color: '#555', marginTop: 3 }}>{phone}</div>
-          <div style={{ fontSize: 11, color: '#777', marginTop: 4, maxWidth: 220, textAlign: 'right', lineHeight: 1.5 }}>{address}</div>
+          <div style={{ fontSize: 11, color: '#777', marginTop: 4, lineHeight: 1.5, wordBreak: 'break-word' }}>{address}</div>
         </div>
       </div>
 
@@ -136,11 +136,11 @@ export const Invoice: React.FC<InvoiceProps> = ({
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: '#FFFDF5', borderRadius: 8 }}>
-              <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8, width: 32 }}>#</th>
+              <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8, width: 36 }}>#</th>
               <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8 }}>Product</th>
-              <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8, width: 50 }}>Qty</th>
-              <th style={{ padding: '10px 12px', textAlign: 'right', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8, width: 80 }}>Rate</th>
-              <th style={{ padding: '10px 12px', textAlign: 'right', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8, width: 90 }}>Amount</th>
+              <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8, width: 60 }}>Qty</th>
+              <th style={{ padding: '10px 12px', textAlign: 'right', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8, width: 90 }}>Rate</th>
+              <th style={{ padding: '10px 12px', textAlign: 'right', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8, width: 100 }}>Amount</th>
             </tr>
           </thead>
           <tbody>
@@ -173,7 +173,7 @@ export const Invoice: React.FC<InvoiceProps> = ({
       {/* ── TOTALS ───────────────────────────────────────────────── */}
       <div style={{ marginTop: 28, borderTop: '2px solid #D4A800', paddingTop: 20 }}>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <div style={{ minWidth: 260 }}>
+          <div style={{ minWidth: 280, maxWidth: 340 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
               <span style={{ fontSize: 13, color: '#666' }}>Subtotal</span>
               <span style={{ fontSize: 13, fontWeight: 700 }}>{formatCurrency(subtotal)}</span>
