@@ -9,6 +9,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { debounce } from '../lib/debounce'
 import { useAuthStore, useAdminAuthStore, useProductStore, type Product } from '../store/store'
+import { BRAND_EN, BRAND_ADDRESS, BRAND_PHONE_DISPLAY, BRAND_EMAIL } from '../lib/brand'
 import { useLangStore } from '../store/langStore'
 import { uploadProductImage } from '../lib/storage'
 import { formatCurrency, normalizeOrderMode, normalizeUnitType, toNumber, type UnitType } from '../lib/retail'
@@ -1508,85 +1509,134 @@ export default function Dashboard() {
                               </td>
                             </tr>
 
-                            {/* Expanded detail row */}
+                            {/* Expanded invoice detail row */}
                             {isExpanded && (
                               <tr>
                                 <td colSpan={8} className="px-4 pb-5 pt-2 bg-blue-50/40">
-                                  <div className="space-y-4">
-                                    {/* Customer info bar */}
-                                    <div className="flex flex-wrap gap-4 text-[12px] bg-white rounded-xl p-3 border border-blue-100">
-                                      <div><span className="font-black text-[#6B7280]">{l('Name', 'பெயர்')}: </span><span className="font-bold text-[#1A1A1A]">{order.customer_name || '-'}</span></div>
-                                      <div><span className="font-black text-[#6B7280]">{l('Phone', 'தொலைபேசி')}: </span><span className="font-bold text-[#1A1A1A]">{order.phone || '-'}</span></div>
-                                      <div className="flex-1"><span className="font-black text-[#6B7280]">{l('Address', 'முகவரி')}: </span><span className="text-[#1A1A1A]">{order.address || '-'}</span></div>
+                                  <div className="bg-white rounded-xl border border-blue-100 shadow-sm overflow-hidden">
+
+                                    {/* Invoice Header */}
+                                    <div className="text-center border-b border-[#F0E6C8]/40 px-6 py-5">
+                                      <div className="flex justify-center mb-3">
+                                        <div className="w-16 h-16 rounded-xl overflow-hidden border border-[#F0E6C8] p-1.5 bg-white flex items-center justify-center">
+                                          <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+                                        </div>
+                                      </div>
+                                      <h2 className="text-[18px] font-black text-[#D4A800] uppercase tracking-tight">{BRAND_EN}</h2>
+                                      <p className="text-[11px] text-[#6B7280] mt-1 max-w-xl mx-auto">{BRAND_ADDRESS}</p>
+                                      <p className="text-[11px] font-semibold text-[#1A1A1A] mt-1">📞 {BRAND_PHONE_DISPLAY} &nbsp;|&nbsp; ✉️ {BRAND_EMAIL}</p>
                                     </div>
 
-                                    {/* Items table */}
+                                    {/* Invoice Meta + Customer */}
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 px-6 py-4 border-b border-[#F0E6C8]/20">
+                                      <div>
+                                        <p className="text-[9px] font-black uppercase tracking-wider text-[#6B7280] mb-1">{l('Invoice', 'விலைப்பட்டியல்')}</p>
+                                        <p className="text-[14px] font-black text-[#1A1A1A]">{order.invoice_no || order.id || '-'}</p>
+                                        <p className="text-[11px] text-[#6B7280] mt-1">
+                                          {new Date(order.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                                        </p>
+                                        <span className="inline-block mt-1.5 px-2 py-0.5 rounded-full text-[9px] font-black uppercase bg-[#D4A800]/10 text-[#D4A800] border border-[#D4A800]/20">
+                                          {normalizeOrderMode(order.order_mode || 'offline')}
+                                        </span>
+                                      </div>
+                                      <div className="sm:text-right">
+                                        <p className="text-[9px] font-black uppercase tracking-wider text-[#6B7280] mb-1">{l('Customer', 'வாடிக்கையாளர்')}</p>
+                                        <p className="text-[14px] font-black text-[#1A1A1A]">{order.customer_name || '-'}</p>
+                                        <p className="text-[11px] text-[#6B7280]">{order.phone || '-'}</p>
+                                        {order.address && <p className="text-[10px] text-[#9CA3AF] mt-1">{order.address}</p>}
+                                      </div>
+                                    </div>
+
+                                    {/* Items Table */}
                                     {its.length > 0 && (
-                                      <div className="overflow-x-auto">
-                                        <table className="w-full text-[12px] min-w-[540px] bg-white rounded-xl overflow-hidden border border-blue-100">
-                                          <thead className="bg-[#F7F6F2]">
-                                            <tr className="text-left text-[#6B7280] font-black text-[10px] uppercase tracking-wider">
-                                              <th className="px-4 py-2.5">{l('Product', 'பொருள்')}</th>
-                                              <th className="px-4 py-2.5">{l('Variant', 'வகைப்படி')}</th>
-                                              <th className="px-4 py-2.5">{l('Size / Weight', 'அளவு / எடை')}</th>
-                                              <th className="px-4 py-2.5 text-center">{l('Qty', 'அளவு')}</th>
-                                              <th className="px-4 py-2.5">{l('Unit Price', 'ஒரு விலை')}</th>
-                                              <th className="px-4 py-2.5 text-right">{l('Line Total', 'வரி மொத்தம்')}</th>
+                                      <div className="px-6 py-4 border-b border-[#F0E6C8]/20">
+                                        <table className="w-full text-[12px]">
+                                          <thead>
+                                            <tr className="text-left text-[#6B7280] font-black text-[10px] uppercase tracking-wider border-b border-[#F0E6C8]/30">
+                                              <th className="pb-2 w-8">#</th>
+                                              <th className="pb-2">{l('Product', 'பொருள்')}</th>
+                                              <th className="pb-2 text-center w-16">{l('Qty', 'அளவு')}</th>
+                                              <th className="pb-2 text-right w-20">{l('Rate', 'விலை')}</th>
+                                              <th className="pb-2 text-right w-24">{l('Amount', 'தொகை')}</th>
                                             </tr>
                                           </thead>
-                                          <tbody className="divide-y divide-[#F0E6C8]/20">
+                                          <tbody className="divide-y divide-[#F0E6C8]/10">
                                             {its.map((raw, idx) => {
                                               const item = raw as Record<string, unknown>
                                               const fullName  = String(item.name || item.product_name || 'Product')
                                               const dashIdx   = fullName.indexOf(' - ')
                                               const prodName  = dashIdx > 0 ? fullName.slice(0, dashIdx) : fullName
-                                              const variant   = dashIdx > 0 ? fullName.slice(dashIdx + 3) : '-'
+                                              const variant   = dashIdx > 0 ? fullName.slice(dashIdx + 3) : ''
                                               const qty       = toNumber(item.quantity ?? item.qty, 0)
-                                              const baseQty   = toNumber(item.base_quantity ?? item.baseQuantity, 1)
                                               const basePrice = toNumber(item.base_price ?? item.basePrice ?? item.price, 0)
                                               const lineTotal = toNumber(item.line_total ?? item.lineTotal, 0)
-                                              const unit      = String(item.unit || 'pc')
-                                              const unitType  = String(item.unit_type || item.unitType || 'unit')
-                                              const sizeLabel = unitType === 'weight'
-                                                ? qty >= 1000 ? `${qty / 1000}kg` : `${qty}g`
-                                                : unitType === 'volume'
-                                                  ? qty >= 1000 ? `${qty / 1000}L` : `${qty}ml`
-                                                  : `${qty} ${unit}`
-                                              const priceLabel = formatCurrency(basePrice)
                                               return (
-                                                <tr key={idx} className="hover:bg-blue-50/20">
-                                                  <td className="px-4 py-2.5 font-bold text-[#1A1A1A]">{prodName}</td>
-                                                  <td className="px-4 py-2.5 text-[#6B7280]">{variant}</td>
-                                                  <td className="px-4 py-2.5 text-[#6B7280]">{sizeLabel}</td>
-                                                  <td className="px-4 py-2.5 text-center font-bold">{qty}</td>
-                                                  <td className="px-4 py-2.5 text-[#6B7280]">{priceLabel}</td>
-                                                  <td className="px-4 py-2.5 font-black text-[#1A1A1A] text-right">{formatCurrency(lineTotal)}</td>
+                                                <tr key={idx}>
+                                                  <td className="py-2 text-[#9CA3AF]">{idx + 1}</td>
+                                                  <td className="py-2">
+                                                    <span className="font-bold text-[#1A1A1A]">{prodName}</span>
+                                                    {variant && <span className="text-[10px] text-[#6B7280] ml-1">({variant})</span>}
+                                                  </td>
+                                                  <td className="py-2 text-center font-semibold">{qty}</td>
+                                                  <td className="py-2 text-right text-[#6B7280]">{formatCurrency(basePrice)}</td>
+                                                  <td className="py-2 text-right font-bold">{formatCurrency(lineTotal)}</td>
                                                 </tr>
                                               )
                                             })}
                                           </tbody>
-                                          <tfoot className="bg-[#F7F6F2] border-t border-[#F0E6C8]/30">
-                                            <tr>
-                                              <td colSpan={5} className="px-4 py-2.5 text-right font-black text-[#6B7280] text-[11px] uppercase tracking-wider">{l('Grand Total', 'மொத்த தொகை')}</td>
-                                              <td className="px-4 py-2.5 text-right font-black text-[18px] text-[#1A1A1A]">{formatCurrency(toNumber(order.total, 0))}</td>
-                                            </tr>
-                                          </tfoot>
                                         </table>
+
+                                        {/* Totals */}
+                                        <div className="flex justify-end mt-3 pt-3 border-t-2 border-[#D4A800]">
+                                          <div className="w-56 space-y-1.5">
+                                            <div className="flex justify-between text-[11px]">
+                                              <span className="text-[#6B7280]">{l('Subtotal', 'இடைத்தொகை')}</span>
+                                              <span className="font-semibold">{formatCurrency(toNumber(order.total, 0))}</span>
+                                            </div>
+                                            {toNumber(order.discount_amount, 0) > 0 && (
+                                              <div className="flex justify-between text-[11px]">
+                                                <span className="text-green-600">{l('Discount', 'தள்ளுபடி')}</span>
+                                                <span className="font-semibold text-green-600">-{formatCurrency(toNumber(order.discount_amount, 0))}</span>
+                                              </div>
+                                            )}
+                                            {toNumber(order.delivery_charge, 0) > 0 ? (
+                                              <div className="flex justify-between text-[11px]">
+                                                <span className="text-[#6B7280]">{l('Delivery', 'டெலிவரி')}</span>
+                                                <span className="font-semibold">{formatCurrency(toNumber(order.delivery_charge, 0))}</span>
+                                              </div>
+                                            ) : (
+                                              <div className="flex justify-between text-[11px]">
+                                                <span className="text-green-600">{l('Delivery', 'டெலிவரி')}</span>
+                                                <span className="font-semibold text-green-600">{l('FREE', 'இலவசம்')}</span>
+                                              </div>
+                                            )}
+                                            <div className="flex justify-between text-[13px] pt-1.5 border-t border-[#F0E6C8]/40">
+                                              <span className="font-black text-[#D4A800] uppercase">{l('Total', 'மொத்தம்')}</span>
+                                              <span className="font-black text-[#D4A800]">{formatCurrency(toNumber(order.total, 0))}</span>
+                                            </div>
+                                          </div>
+                                        </div>
                                       </div>
                                     )}
 
-                                    {/* WhatsApp message */}
-                                    <div className="bg-white rounded-xl border border-blue-100 p-4">
+                                    {/* Footer */}
+                                    <div className="text-center px-6 py-3 bg-[#FAFAFA] border-t border-[#F0E6C8]/20">
+                                      <p className="text-[11px] font-bold text-[#D4A800]">{l('Thank you for shopping with Korean Fried Chicken!', 'கொரியன் பிரைடு சிக்கனில் வாங்கியதற்கு நன்றி!')}</p>
+                                      <p className="text-[9px] text-[#9CA3AF] mt-0.5">{l('Contact', 'தொடர்பு')}: {BRAND_PHONE_DISPLAY} | {BRAND_EMAIL}</p>
+                                    </div>
+
+                                    {/* WhatsApp Message */}
+                                    <div className="px-6 py-4 border-t border-[#F0E6C8]/20">
                                       <div className="flex items-center justify-between mb-2">
-                                        <span className="text-[11px] font-black text-[#6B7280] uppercase tracking-wider">{l('WhatsApp Message', 'வாட்ஸ் அப் செய்தி')}</span>
+                                        <span className="text-[10px] font-black text-[#6B7280] uppercase tracking-wider">{l('WhatsApp Message', 'வாட்ஸ் அப் செய்தி')}</span>
                                         <button
                                           type="button"
                                           onClick={() => void navigator.clipboard.writeText(waMsg)}
-                                          className="px-3 py-1 rounded-lg bg-[#25D366] text-white text-[11px] font-black hover:bg-[#1da851] transition-colors">
+                                          className="px-3 py-1 rounded-lg bg-[#25D366] text-white text-[10px] font-black hover:bg-[#1da851] transition-colors">
                                           {l('Copy Message', 'நகல் எடு')}
                                         </button>
                                       </div>
-                                      <pre className="text-[12px] text-[#1A1A1A] bg-[#F7F6F2] rounded-xl p-3 whitespace-pre-wrap font-sans leading-relaxed select-all">{waMsg}</pre>
+                                      <pre className="text-[11px] text-[#1A1A1A] bg-[#F7F6F2] rounded-xl p-3 whitespace-pre-wrap font-sans leading-relaxed select-all max-h-40 overflow-y-auto">{waMsg}</pre>
                                     </div>
                                   </div>
                                 </td>

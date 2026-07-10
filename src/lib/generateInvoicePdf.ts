@@ -1,6 +1,6 @@
 import jsPDF from 'jspdf'
-import { BRAND_EN, BRAND_ADDRESS, BRAND_PHONE_DISPLAY } from './brand'
-import { formatCurrency, formatQuantityDisplay } from './retail'
+import { BRAND_EN, BRAND_ADDRESS, BRAND_PHONE_DISPLAY, BRAND_EMAIL } from './brand'
+import { formatCurrency } from './retail'
 
 export interface PdfInvoiceItem {
   name: string
@@ -26,170 +26,224 @@ export interface PdfInvoiceData {
   manualDiscountAmount?: number
   gstAmount?: number
   total: number
+  orderType?: string
 }
 
 export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Blob> {
   const doc = new jsPDF({ format: 'a4', unit: 'mm' })
   const pw = doc.internal.pageSize.getWidth()
   const ph = doc.internal.pageSize.getHeight()
-  const m = 20
+  const m = 18
   const cw = pw - m * 2
-  let y = m
+
+  // ── Colour palette ─────────────────────────────────────────────
+  const GOLD = '#D4A800'
+  const DARK = '#1A1A1A'
+  const GREY = '#6B7280'
+  const LIGHT = '#9CA3AF'
+  const BG = '#F7F6F2'
 
   // ── Helper functions ────────────────────────────────────────────
-  const bold = (text: string, size = 10) => { doc.setFont('helvetica', 'bold'); doc.setFontSize(size); return doc }
-  const normal = (text: string, size = 10) => { doc.setFont('helvetica', 'normal'); doc.setFontSize(size); return doc }
-  const text = (text: string, x: number, y: number, align: 'left' | 'center' | 'right' = 'left') => doc.text(text, x, y, { align })
-  const line = (y: number) => { doc.setDrawColor(200); doc.line(m, y, pw - m, y) }
+  const setGold = () => doc.setTextColor(212, 168, 0)
+  const setDark = () => doc.setTextColor(26, 26, 26)
+  const setGrey = () => doc.setTextColor(107, 114, 128)
+  const setLight = () => doc.setTextColor(156, 163, 175)
+  const setGreen = () => doc.setTextColor(22, 163, 74)
+  const b = (text: string, size = 10) => { doc.setFont('helvetica', 'bold'); doc.setFontSize(size); return doc }
+  const n = (text: string, size = 10) => { doc.setFont('helvetica', 'normal'); doc.setFontSize(size); return doc }
+  const t = (text: string, x: number, y: number, align: 'left' | 'center' | 'right' = 'left') => doc.text(text, x, y, { align })
+  const hr = (y: number, color = '#E5E7EB') => { doc.setDrawColor(...hexToRgb(color)); doc.line(m, y, pw - m, y) }
+  const spacer = (y: number, gap: number) => y + gap
 
-  // ── Load logo as base64 ─────────────────────────────────────────
+  let y = m
+
+  // ── Load logo ──────────────────────────────────────────────────
   const logoDataUrl = await loadLogoAsBase64()
   if (logoDataUrl) {
-    try { doc.addImage(logoDataUrl, 'PNG', pw / 2 - 18, y, 36, 36) } catch { /* ignore */ }
-    y += 40
+    try { doc.addImage(logoDataUrl, 'PNG', pw / 2 - 16, y, 32, 32) } catch { /* ignore */ }
+    y += 36
   }
 
-  // ── Header ──────────────────────────────────────────────────────
-  bold(BRAND_EN, 22).text(BRAND_EN, pw / 2, y, { align: 'center' }); y += 8
-  normal(BRAND_ADDRESS, 9).text(BRAND_ADDRESS, pw / 2, y, { align: 'center' }); y += 5
-  normal(`📞 ${BRAND_PHONE_DISPLAY}`, 9).text(`📞 ${BRAND_PHONE_DISPLAY}`, pw / 2, y, { align: 'center' }); y += 8
+  // ── Company Header ─────────────────────────────────────────────
+  setGold()
+  b(BRAND_EN, 20).text(BRAND_EN, pw / 2, y, { align: 'center' }); y += 7
+  setGrey()
+  n(BRAND_ADDRESS, 8).text(BRAND_ADDRESS, pw / 2, y, { align: 'center' }); y += 4
+  setDark()
+  n(`${BRAND_PHONE_DISPLAY}  |  ${BRAND_EMAIL}`, 8).text(`${BRAND_PHONE_DISPLAY}  |  ${BRAND_EMAIL}`, pw / 2, y, { align: 'center' }); y += 6
 
-  line(y); y += 4
+  hr(y, '#D4A800'); y += 4
 
-  // ── Invoice Title ───────────────────────────────────────────────
-  bold('INVOICE', 16).text('INVOICE', pw / 2, y, { align: 'center' }); y += 6
-  normal(data.invoiceNo, 11).text(data.invoiceNo, pw / 2, y, { align: 'center' }); y += 10
+  // ── Invoice Title ──────────────────────────────────────────────
+  setGold()
+  b('INVOICE', 16).text('INVOICE', pw / 2, y, { align: 'center' }); y += 6
+  setDark()
+  b(data.invoiceNo, 11).text(data.invoiceNo, pw / 2, y, { align: 'center' }); y += 4
+  setGrey()
+  n(data.date, 9).text(data.date, pw / 2, y, { align: 'center' }); y += 3
+  if (data.orderType) {
+    setGrey()
+    n(`Mode: ${data.orderType}`, 8).text(`Mode: ${data.orderType}`, pw / 2, y, { align: 'center' }); y += 3
+  }
+  y += 4
+  hr(y); y += 6
 
-  // ── Meta Row: Date | Customer ───────────────────────────────────
-  const col1X = m
-  const col2X = pw / 2 + 5
+  // ── Two-column: Invoice Info | Customer ────────────────────────
+  const colW = (cw - 20) / 2
+  const colA_x = m
+  const colB_x = m + colW + 20
 
-  normal('Order Date', 8).text('Order Date', col1X, y); y += 4
-  bold(data.date, 10).text(data.date, col1X, y); y += 6
-
-  y = y - 10 // reset y for second column
-  normal('Customer', 8).text('Customer', col2X, y); y += 4
-  bold(data.customerName || '-', 10).text(data.customerName || '-', col2X, y); y += 5
-  normal(data.phone || '', 9).text(data.phone || '', col2X, y); y += 5
-  if (data.address) {
-    normal(data.address, 9).text(data.address, col2X, y); y += 5
+  // Left column — Invoice details
+  setGrey(); n('INVOICE DETAILS', 7).text('INVOICE DETAILS', colA_x, y, { align: 'left' }); y += 4
+  setDark(); b(`# ${data.invoiceNo}`, 10).text(`# ${data.invoiceNo}`, colA_x, y); y += 5
+  setGrey(); n(`Date: ${data.date}`, 8).text(`Date: ${data.date}`, colA_x, y); y += 4
+  if (data.orderType) {
+    setGrey(); n(`Type: ${data.orderType}`, 8).text(`Type: ${data.orderType}`, colA_x, y); y += 4
   }
 
-  y = Math.max(y, m + 50) + 4
-  line(y); y += 6
+  // Save Y position after left column, then move to right column
+  const leftY = y
 
-  // ── Items Table ─────────────────────────────────────────────────
-  const tableHeaders = ['#', 'Product', 'Qty', 'Rate', 'Amount']
-  const colWidths = [8, null, 20, 28, 32]
-  const colX: number[] = []
-  let cx = m
-  colWidths.forEach((w, i) => {
-    colX.push(cx)
-    cx += w || (cw - colWidths.filter((_, j) => j < i).reduce((s, w) => s + (w || 0), 0) - colWidths.filter((_, j) => j > i).reduce((s, w) => s + (w || 0), 0))
-  })
-  // Actually let me compute properly
-  const fixedW = colWidths.filter(w => w !== null).reduce((s, w) => s + w, 0) as number
-  const nameW = cw - fixedW
-  const headerXs = [m, m + 8, m + 8 + nameW, m + 8 + nameW + 20, m + 8 + nameW + 20 + 28]
+  // Right column — Customer details (render at same starting Y as left)
+  y = m + 6 + 36 + 7 + 4 + 6 + 4 + 6 + 4 + 3 + 3 + 4 + 4 + 6
+  // Actually, let me just compute the Y position properly
+  // Reset Y for right column to match the left column's "INVOICE DETAILS" Y
+  y = m + 36 + 7 + 4 + 4 + 6 + 4 + 6 + 4 + 3 + 3 + 4 + 4 + 6
+  // Actually let me just track starting Y and render both columns
+  // Let me restart the two-column layout approach:
 
-  doc.setFillColor(255, 253, 245)
-  doc.rect(m, y - 4, cw, 7, 'F')
-  bold('#', 8).text('#', headerXs[0] + 3, y)
-  bold('Product', 8).text('Product', headerXs[1] + 3, y)
-  bold('Qty', 8).text('Qty', headerXs[2] + nameW - 3, y, { align: 'right' })
-  bold('Rate', 8).text('Rate', headerXs[3] - 3, y, { align: 'right' })
-  bold('Amount', 8).text('Amount', headerXs[4] - 3, y, { align: 'right' })
-  y += 8
+  // Reset y to the position after the horizontal line
+  // Starting Y for two-column layout
+  let startY = m + 36 + 7 + 4 + 4 + 6 + 4 + 6 + 4 + 3 + 3 + 4 + 4 + 6
 
-  data.items.forEach((item, idx) => {
-    if (y > ph - 50) { doc.addPage(); y = m + 10 }
+  // Left column
+  let lx = m
+  let ly = startY
+  setGrey(); n('INVOICE', 7).text('INVOICE', lx, ly); ly += 4.5
+  setDark(); b(`# ${data.invoiceNo}`, 10).text(`# ${data.invoiceNo}`, lx, ly); ly += 5
+  setGrey(); n(data.date, 8).text(data.date, lx, ly); ly += 4
+  if (data.orderType) {
+    setGrey(); n(`Mode: ${data.orderType}`, 8).text(`Mode: ${data.orderType}`, lx, ly); ly += 4
+  }
 
-    normal(String(idx + 1), 9).text(String(idx + 1), headerXs[0] + 3, y)
-    bold(item.name, 9).text(item.name, headerXs[1] + 3, y)
-    if (item.nameTa) {
-      normal(item.nameTa, 8).text(item.nameTa, headerXs[1] + 3, y + 4)
-    }
-    const qtyDisplay = formatQuantityDisplay(item.qty, item.unit, item.unitType as any)
-    normal(qtyDisplay, 9).text(qtyDisplay, headerXs[2] + nameW - 3, y, { align: 'right' })
-    const rateStr = formatCurrency(item.rate)
-    normal(rateStr, 9).text(rateStr, headerXs[3] - 3, y, { align: 'right' })
-    const amtStr = formatCurrency(item.lineTotal)
-    bold(amtStr, 9).text(amtStr, headerXs[4] - 3, y, { align: 'right' })
+  // Right column
+  let rx = m + colW + 20
+  let ry = startY
+  setGrey(); n('CUSTOMER', 7).text('CUSTOMER', rx, ry); ry += 4.5
+  setDark(); b(data.customerName || '-', 10).text(data.customerName || '-', rx, ry); ry += 5
+  if (data.phone) { setGrey(); n(data.phone, 8).text(data.phone, rx, ry); ry += 4 }
+  if (data.address) { setLight(); n(data.address, 7).text(data.address, rx, ry); ry += 4 }
 
-    const rowH = item.nameTa ? 10 : 6
-    y += rowH
-    doc.setDrawColor(240)
-    doc.line(m, y - 2, pw - m, y - 2)
-  })
+  y = Math.max(ly, ry) + 4
+  hr(y); y += 6
 
-  // ── Totals ──────────────────────────────────────────────────────
-  y += 6
-  if (y > ph - 60) { doc.addPage(); y = m + 10 }
+  // ── Items Table ────────────────────────────────────────────────
+  // Column positions
+  const colSn = m                  // 8mm
+  const colProduct = m + 8         // rest
+  const colQty = pw - m - 80      // 20mm
+  const colRate = pw - m - 56     // 24mm
+  const colAmount = pw - m - 28   // 28mm
 
-  const totalsX = pw - m - 70
-  const totalsW = 70
-
-  normal('Subtotal', 10).text('Subtotal', totalsX, y)
-  normal(formatCurrency(data.subtotal), 10).text(formatCurrency(data.subtotal), totalsX + totalsW, y, { align: 'right' })
+  // Table header
+  doc.setFillColor(245, 243, 240)
+  doc.rect(m, y - 3.5, cw, 6.5, 'F')
+  setGrey(); b('#', 8).text('#', colSn + 2, y)
+  setGrey(); b('Product', 8).text('Product', colProduct + 2, y)
+  setGrey(); b('Qty', 8).text('Qty', colQty - 1, y, { align: 'right' })
+  setGrey(); b('Rate', 8).text('Rate', colRate - 1, y, { align: 'right' })
+  setGrey(); b('Amount', 8).text('Amount', colAmount - 1, y, { align: 'right' })
   y += 7
 
+  // Table rows
+  data.items.forEach((item, idx) => {
+    if (y > ph - 45) { doc.addPage(); y = m + 10; hr(y - 4); y += 6 }
+
+    const lineTotal = item.qty * item.rate
+
+    hr(y - 1, '#F3F0EB')
+    setDark(); n(String(idx + 1), 9).text(String(idx + 1), colSn + 2, y)
+    setDark(); b(item.name, 9).text(item.name, colProduct + 2, y)
+    if (item.nameTa) { setLight(); n(item.nameTa, 7).text(item.nameTa, colProduct + 2, y + 3.5) }
+    setDark(); n(String(item.qty), 9).text(String(item.qty), colQty - 1, y, { align: 'right' })
+    setGrey(); n(formatCurrency(item.rate), 9).text(formatCurrency(item.rate), colRate - 1, y, { align: 'right' })
+    setDark(); b(formatCurrency(lineTotal), 9).text(formatCurrency(lineTotal), colAmount - 1, y, { align: 'right' })
+
+    y += item.nameTa ? 9 : 6
+  })
+
+  // ── Totals section ─────────────────────────────────────────────
+  y += 4
+  if (y > ph - 65) { doc.addPage(); y = m + 10 }
+
+  const totalsX = pw - m - 85
+  const totalsW = 85
+  const labelX = totalsX
+  const valueX = totalsX + totalsW
+
+  // Totals label
+  setGrey(); b('BILL SUMMARY', 8).text('BILL SUMMARY', labelX, y); y += 5
+
+  n('Subtotal', 10).text('Subtotal', labelX, y)
+  setDark(); n(formatCurrency(data.subtotal), 10).text(formatCurrency(data.subtotal), valueX, y, { align: 'right' })
+  y += 6.5
+
   if (data.discountAmount && data.discountAmount > 0) {
-    const label = data.couponCode ? `Coupon (${data.couponCode})` : 'Coupon'
-    doc.setTextColor(22, 163, 74)
-    normal(label, 10).text(label, totalsX, y)
-    normal(`-${formatCurrency(data.discountAmount)}`, 10).text(`-${formatCurrency(data.discountAmount)}`, totalsX + totalsW, y, { align: 'right' })
-    doc.setTextColor(0)
-    y += 7
+    setGreen()
+    const label = data.couponCode ? `Coupon (${data.couponCode})` : 'Coupon Discount'
+    n(label, 10).text(label, labelX, y)
+    n(`-${formatCurrency(data.discountAmount)}`, 10).text(`-${formatCurrency(data.discountAmount)}`, valueX, y, { align: 'right' })
+    setDark()
+    y += 6.5
   }
 
   if (data.manualDiscountAmount && data.manualDiscountAmount > 0) {
-    doc.setTextColor(22, 163, 74)
-    normal('Manual Discount', 10).text('Manual Discount', totalsX, y)
-    normal(`-${formatCurrency(data.manualDiscountAmount)}`, 10).text(`-${formatCurrency(data.manualDiscountAmount)}`, totalsX + totalsW, y, { align: 'right' })
-    doc.setTextColor(0)
-    y += 7
+    setGreen()
+    n('Manual Discount', 10).text('Manual Discount', labelX, y)
+    n(`-${formatCurrency(data.manualDiscountAmount)}`, 10).text(`-${formatCurrency(data.manualDiscountAmount)}`, valueX, y, { align: 'right' })
+    setDark()
+    y += 6.5
   }
 
   if (data.gstAmount && data.gstAmount > 0) {
-    normal('GST', 10).text('GST', totalsX, y)
-    normal(`+${formatCurrency(data.gstAmount)}`, 10).text(`+${formatCurrency(data.gstAmount)}`, totalsX + totalsW, y, { align: 'right' })
-    y += 7
+    setDark()
+    n('GST', 10).text('GST', labelX, y)
+    n(`+${formatCurrency(data.gstAmount)}`, 10).text(`+${formatCurrency(data.gstAmount)}`, valueX, y, { align: 'right' })
+    y += 6.5
   }
 
   if (data.shipping > 0) {
-    normal('Delivery', 10).text('Delivery', totalsX, y)
-    normal(formatCurrency(data.shipping), 10).text(formatCurrency(data.shipping), totalsX + totalsW, y, { align: 'right' })
-    y += 7
+    setDark()
+    n('Delivery', 10).text('Delivery', labelX, y)
+    n(formatCurrency(data.shipping), 10).text(formatCurrency(data.shipping), valueX, y, { align: 'right' })
+    y += 6.5
   } else {
-    doc.setTextColor(22, 163, 74)
-    normal('Delivery', 10).text('Delivery', totalsX, y)
-    normal('FREE', 10).text('FREE', totalsX + totalsW, y, { align: 'right' })
-    doc.setTextColor(0)
-    y += 7
+    setGreen()
+    n('Delivery', 10).text('Delivery', labelX, y)
+    n('FREE', 10).text('FREE', valueX, y, { align: 'right' })
+    setDark()
+    y += 6.5
   }
 
+  // Gold divider
   doc.setDrawColor(212, 168, 0)
-  doc.setLineWidth(0.5)
-  doc.line(totalsX, y, totalsX + totalsW, y)
-  y += 4
+  doc.setLineWidth(0.6)
+  doc.line(labelX, y, valueX, y)
+  y += 4.5
 
-  doc.setTextColor(212, 168, 0)
-  bold('Total', 14).text('Total', totalsX, y)
-  bold(formatCurrency(data.total), 14).text(formatCurrency(data.total), totalsX + totalsW, y, { align: 'right' })
-  doc.setTextColor(0)
+  setGold()
+  b('Total', 14).text('Total', labelX, y)
+  b(formatCurrency(data.total), 14).text(formatCurrency(data.total), valueX, y, { align: 'right' })
+  setDark()
   doc.setLineWidth(0.2)
 
   // ── Footer ──────────────────────────────────────────────────────
-  y = ph - 30
-  doc.setDrawColor(200)
-  doc.line(m, y, pw - m, y)
-  y += 6
-
-  doc.setTextColor(150)
-  normal('Thank you for shopping with Korean Fried Chicken!', 9).text('Thank you for shopping with Korean Fried Chicken!', pw / 2, y, { align: 'center' })
-  y += 5
-  normal(`Contact: ${BRAND_PHONE_DISPLAY}`, 8).text(`Contact: ${BRAND_PHONE_DISPLAY}`, pw / 2, y, { align: 'center' })
-  doc.setTextColor(0)
+  y = ph - 28
+  hr(y, '#D4A800'); y += 5
+  setGold()
+  n('Thank you for shopping with Korean Fried Chicken!', 9).text('Thank you for shopping with Korean Fried Chicken!', pw / 2, y, { align: 'center' }); y += 4
+  setGrey()
+  n(`Contact: ${BRAND_PHONE_DISPLAY}  |  ${BRAND_EMAIL}`, 7).text(`Contact: ${BRAND_PHONE_DISPLAY}  |  ${BRAND_EMAIL}`, pw / 2, y, { align: 'center' })
 
   return doc.output('blob')
 }
@@ -210,4 +264,9 @@ function loadLogoAsBase64(): Promise<string | null> {
     img.onerror = () => resolve(null)
     img.src = '/logo.png'
   })
+}
+
+function hexToRgb(hex: string): [number, number, number] {
+  const v = parseInt(hex.replace('#', ''), 16)
+  return [(v >> 16) & 255, (v >> 8) & 255, v & 255]
 }

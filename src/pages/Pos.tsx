@@ -487,6 +487,7 @@ export default function Pos(props: PosProps = {}) {
         manualDiscountAmount: inv.manualDiscountAmount,
         gstAmount: inv.gstAmount,
         total: inv.total,
+        orderType: inv.orderType === 'online_request' ? 'Online' : 'POS',
       })
       const file = new File([pdfBlob], `${inv.invoiceNo}.pdf`, { type: 'application/pdf' })
       if (navigator.canShare && navigator.canShare({ files: [file] })) {
