@@ -45,8 +45,12 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
       await fetchProducts(true)
       onSuccess()
       onClose()
-    } catch (err: any) {
-      setError(err.message || 'Failed to add product')
+    } catch (err) {
+      const msg = typeof err === 'object' && err !== null && 'message' in err
+        ? String((err as { message: unknown }).message)
+        : String(err)
+      console.error('addProduct failed:', msg, err)
+      setError(msg || 'Failed to add product')
     } finally {
       setLoading(false)
     }

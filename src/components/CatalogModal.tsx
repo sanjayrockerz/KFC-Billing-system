@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { X, Search, ShoppingBag, Edit2, Trash2 } from 'lucide-react'
 import { useProductStore, type Product } from '../store/store'
 import { supabase } from '../lib/supabase'
@@ -10,7 +10,7 @@ interface CatalogModalProps {
 }
 
 export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalProps) {
-  const { fetchProducts, products } = useProductStore()
+  const { fetchProducts, products, error } = useProductStore()
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState('All')
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
@@ -69,6 +69,8 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
     await supabase.from('products').update({ is_active: false }).eq('id', p.id)
     await fetchProducts(true)
   }
+
+  useEffect(() => { if (isOpen) void fetchProducts() }, [isOpen])
 
   if (!isOpen) return null
 
@@ -140,25 +142,30 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
                 ))}
               </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 bg-[#FAFAFA]">
-              {filtered.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full text-[#6B7280]/60 py-12">
-                  <ShoppingBag size={48} className="mb-4 opacity-20" />
-                  <p className="text-[14px] font-bold">No products found</p>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              <div className="flex-1 overflow-y-auto p-3 md:p-4 bg-[#FAFAFA]">
+                {error && (
+                  <div className="mb-3 p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] font-bold">
+                    {error}
+                  </div>
+                )}
+                {filtered.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center h-full text-[#6B7280]/60 py-12">
+                    <ShoppingBag size={48} className="mb-4 opacity-20" />
+                    <p className="text-[14px] font-bold">No products found</p>
+                  </div>
+                ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 md:gap-3">
                   {filtered.map(product => (
                     <div key={product.id}
                       className="bg-white border border-[#F0E6C8]/60 rounded-2xl p-3 flex flex-col gap-2 hover:border-[#D4A800]/40 hover:shadow-md transition-all group relative">
-                      <div className="absolute top-2 right-2 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                      <div className="absolute top-2 right-2 flex gap-1 z-10">
                         <button onClick={(e) => { e.stopPropagation(); startEdit(product) }} title="Edit product"
-                          className="p-1.5 rounded-lg bg-white border border-[#F0E6C8]/60 text-[#6B7280] hover:text-[#D4A800] hover:border-[#D4A800]/40 shadow-sm transition-colors">
-                          <Edit2 size={14} />
+                          className="p-2 rounded-lg bg-white border border-[#F0E6C8]/60 text-[#6B7280] hover:text-[#D4A800] hover:border-[#D4A800]/40 shadow-sm transition-colors">
+                          <Edit2 size={16} />
                         </button>
                         <button onClick={(e) => { e.stopPropagation(); void handleDelete(product) }} title="Delete product"
-                          className="p-1.5 rounded-lg bg-white border border-[#F0E6C8]/60 text-red-400 hover:text-red-600 hover:border-red-300 shadow-sm transition-colors">
-                          <Trash2 size={14} />
+                          className="p-2 rounded-lg bg-white border border-[#F0E6C8]/60 text-red-400 hover:text-red-600 hover:border-red-300 shadow-sm transition-colors">
+                          <Trash2 size={16} />
                         </button>
                       </div>
                       <div onClick={() => onAdd(product)} className="cursor-pointer flex-1">

@@ -17,6 +17,8 @@ type CreateOrderInput = {
   manualDiscountValue?: number
   couponCode?: string
   couponPercentage?: number
+  totalGst?: number
+  gstEnabled?: boolean
 }
 
 type CreatedOrder = {
@@ -40,6 +42,8 @@ export const createOrderWithStock = async (input: CreateOrderInput): Promise<Cre
   const manualDiscountValue = Number(input.manualDiscountValue || 0)
   const couponCode     = input.couponCode?.trim() || null
   const couponPercentage = Number(input.couponPercentage || 0)
+  const totalGst       = Number(input.totalGst || 0)
+  const gstEnabled     = Boolean(input.gstEnabled)
   const effectiveDiscount = discountAmount + manualDiscountAmount
 
   if (!isSupabaseConfigured) {
@@ -66,6 +70,8 @@ export const createOrderWithStock = async (input: CreateOrderInput): Promise<Cre
     p_manual_discount_value: manualDiscountValue,
     p_coupon_code:       couponCode,
     p_coupon_percentage: couponPercentage,
+    p_total_gst:         totalGst,
+    p_gst_enabled:       gstEnabled,
   })
   data  = newRpcResult.data
   error = newRpcResult.error

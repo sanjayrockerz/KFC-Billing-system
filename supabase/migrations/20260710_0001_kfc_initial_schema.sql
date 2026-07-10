@@ -94,6 +94,7 @@ CREATE TABLE IF NOT EXISTS products (
   unit TEXT DEFAULT 'piece',
   remedy JSONB DEFAULT '[]'::jsonb,
   purchase_price NUMERIC(10,2) DEFAULT 0,
+  mrp NUMERIC(10,2) DEFAULT 0,
   gst_percent NUMERIC(5,2) DEFAULT 0,
   opening_stock NUMERIC(10,3) DEFAULT 0,
   low_stock_alert NUMERIC(10,3) DEFAULT 5,
@@ -289,17 +290,17 @@ $$ LANGUAGE plpgsql;
 
 -- Retail decrement stock
 CREATE OR REPLACE FUNCTION retail_decrement_stock(
-  p_product_id BIGINT,
+  p_product_id TEXT,
   p_quantity NUMERIC,
   p_unit_type TEXT DEFAULT 'unit'
 ) RETURNS VOID AS $$
 BEGIN
   UPDATE products SET stock_quantity = GREATEST(COALESCE(stock_quantity, 0) - p_quantity, 0)
-  WHERE id::TEXT = p_product_id::TEXT;
+  WHERE id::TEXT = p_product_id;
 END;
 $$ LANGUAGE plpgsql;
 
--- Create order with stock (15-param variant-aware version)
+-- Create order with stock (17-param variant-aware version)
 CREATE OR REPLACE FUNCTION create_order_with_stock(
   p_customer_name TEXT,
   p_phone TEXT,
@@ -315,7 +316,9 @@ CREATE OR REPLACE FUNCTION create_order_with_stock(
   p_manual_discount_type TEXT DEFAULT 'flat',
   p_manual_discount_value NUMERIC DEFAULT 0,
   p_coupon_code TEXT DEFAULT NULL,
-  p_coupon_percentage NUMERIC DEFAULT 0
+  p_coupon_percentage NUMERIC DEFAULT 0,
+  p_total_gst NUMERIC DEFAULT 0,
+  p_gst_enabled BOOLEAN DEFAULT false
 ) RETURNS JSONB AS $$
 DECLARE
   v_order_id UUID;
@@ -342,14 +345,16 @@ BEGIN
   INSERT INTO orders (invoice_no, customer_name, phone, address, items, subtotal,
     shipping, total, status, order_mode, order_type,
     delivery_charge, discount_amount, manual_discount_amount,
-    manual_discount_type, manual_discount_value, coupon_code, coupon_percentage)
+    manual_discount_type, manual_discount_value, coupon_code, coupon_percentage,
+    total_gst, gst_enabled)
   VALUES (v_invoice_no, p_customer_name, p_phone, p_address, p_items, v_subtotal,
     p_shipping,
     GREATEST(v_subtotal + COALESCE(p_shipping,0) + COALESCE(p_delivery_charge,0)
       - COALESCE(p_discount_amount,0) - COALESCE(p_manual_discount_amount,0), 0),
     p_status, p_order_mode, v_detected_type,
     p_delivery_charge, p_discount_amount, p_manual_discount_amount,
-    p_manual_discount_type, p_manual_discount_value, p_coupon_code, p_coupon_percentage)
+    p_manual_discount_type, p_manual_discount_value, p_coupon_code, p_coupon_percentage,
+    p_total_gst, p_gst_enabled)
   RETURNING id INTO v_order_id;
   FOR v_item IN SELECT * FROM jsonb_to_recordset(p_items) AS x(
     product_id TEXT, variant_id TEXT, name TEXT, product_name TEXT,
@@ -372,7 +377,7 @@ BEGIN
         UPDATE product_variants SET stock = GREATEST(COALESCE(stock, 0) - COALESCE(v_item.quantity, 1), 0)
         WHERE id::TEXT = v_item.variant_id;
       ELSE
-        PERFORM retail_decrement_stock(v_item.product_id::BIGINT, COALESCE(v_item.quantity, 1), COALESCE(v_item.unit_type, 'unit'));
+        PERFORM retail_decrement_stock(v_item.product_id, COALESCE(v_item.quantity, 1), COALESCE(v_item.unit_type, 'unit'));
       END IF;
     END IF;
   END LOOP;
@@ -431,7 +436,7 @@ BEGIN
   SELECT id INTO cat_chicken FROM categories WHERE name_en = 'Chicken' LIMIT 1;
   SELECT id INTO cat_sides FROM categories WHERE name_en = 'Sides' LIMIT 1;
   SELECT id INTO cat_wraps FROM categories WHERE name_en = 'Burgers & Wraps' LIMIT 1;
-  INSERT INTO products (name, category, category_id, price, stock, description, sort_order, image, image_url)
+  INSERT INTO products (name, category, category_id, price, stock, description, sort_order)
   VALUES
     ('Bone Shot', 'Chicken', cat_chicken, 120.00, 100, 'Crispy Korean fried chicken bone-in pieces.', 1),
     ('Big Shot', 'Chicken', cat_chicken, 180.00, 100, 'Large boneless chicken pieces with Korean sauce.', 2),

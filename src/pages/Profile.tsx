@@ -5,8 +5,7 @@ import { useLangStore } from '../store/langStore'
 import { Package, User, LogOut, ChevronDown, ChevronUp, ShoppingBag, Settings, Edit2, Check, X, Camera } from 'lucide-react'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { formatCurrency, formatQuantityDisplay, normalizeStructuredOrderItem } from '../lib/retail'
-
-const PHONE_RE = /^[6-9]\d{9}$/
+import { normalizePhone, getSubscriberDigits } from '../lib/phone'
 
 interface ProfileOrderItem {
   product_id: string | null   // UUID — Supabase products.id is UUID
@@ -107,21 +106,22 @@ export default function Profile() {
 
   const handleSaveProfile = async () => {
     const trimName  = editName.trim()
-    const trimPhone = editPhone.replace(/\D/g, '')
+    const normalizedPhone = normalizePhone(editPhone)
+    const subscriberDigits = normalizedPhone ? (getSubscriberDigits(normalizedPhone) ?? '') : ''
     if (!trimName || trimName.length < 2) { setSaveErr('Name must be at least 2 characters.'); return }
-    if (trimPhone && !PHONE_RE.test(trimPhone)) { setSaveErr('Enter a valid 10-digit Indian mobile number.'); return }
+    if (editPhone && !normalizedPhone) { setSaveErr('Enter a valid Malaysian mobile number (e.g. 0123456789).'); return }
     if (!user) return
 
     setSaving(true); setSaveErr('')
     const { error } = await supabase
       .from('profiles')
-      .update({ name: trimName, mobile: trimPhone })
+      .update({ name: trimName, mobile: subscriberDigits })
       .eq('id', user.id)
 
     if (error) { setSaveErr(error.message); setSaving(false); return }
 
     // Update local store so Navbar / other components reflect new values immediately
-    setAuth({ ...user, name: trimName, mobile: trimPhone })
+    setAuth({ ...user, name: trimName, mobile: subscriberDigits })
     setSaving(false); setEditing(false)
   }
 
@@ -361,19 +361,18 @@ export default function Profile() {
                     <div>
                       <label className="block text-[11px] font-bold text-textMuted uppercase tracking-wide mb-1.5">
                         Mobile Number
-                        <span className="ml-1 font-normal normal-case text-[10px] text-gray-400">10-digit Indian mobile</span>
+                        <span className="ml-1 font-normal normal-case text-[10px] text-gray-400">Malaysian mobile (e.g. 0123456789)</span>
                       </label>
                       <div className="flex gap-2">
                         <span className="flex items-center px-3 py-3 bg-[#F7F6F2] border-2 border-[#F0E6C8] rounded-xl text-[13px] font-bold text-textMuted shrink-0 select-none">
-                          🇮🇳 +91
+                          🇲🇾 +60
                         </span>
                         <input
                           type="tel"
-                          maxLength={10}
                           className="flex-1 px-4 py-3 rounded-xl border-2 border-[#F0E6C8] focus:border-yellow-darkDark outline-none text-[13px]"
                           value={editPhone}
                           onChange={e => { setEditPhone(e.target.value.replace(/\D/g, '')); setSaveErr('') }}
-                          placeholder="9876543210"
+                          placeholder="12-345 6789"
                         />
                       </div>
                     </div>

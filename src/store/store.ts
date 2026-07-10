@@ -365,10 +365,11 @@ export const useProductStore = create<ProductState>((set, get) => ({
 
       set({ products: normalized, loading: false, lastFetch: Date.now() })
     } catch (err) {
-      set({
-        error: err instanceof Error ? err.message : 'Unable to fetch products',
-        loading: false,
-      })
+      const msg = typeof err === 'object' && err !== null && 'message' in err
+        ? String((err as { message: unknown }).message)
+        : String(err)
+      console.error('fetchProducts failed:', msg, err)
+      set({ error: msg, loading: false })
     }
   }
 }))
