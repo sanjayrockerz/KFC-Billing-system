@@ -523,14 +523,14 @@ export const useVariantModalStore = create<VariantModalState>()((set) => ({
 // ── Admin Panel Auth ─────────────────────────────────────────────
 interface AdminAuthState {
   isLoggedIn: boolean
-  login: (id: string, password: string) => boolean
+  login: (password: string) => boolean
   logout: () => void
 }
 
 export const useAdminAuthStore = create<AdminAuthState>()((set) => ({
   isLoggedIn: false,
-  login: (id: string, password: string) => {
-    if (id === 'shopname' && password === 'shopname@cenexa') {
+  login: (password: string) => {
+    if (password === '9342489391') {
       set({ isLoggedIn: true })
       return true
     }

@@ -4,7 +4,6 @@ import { useAdminAuthStore } from '../store/store'
 import { BRAND_EN } from '../lib/brand'
 
 export default function AdminLogin() {
-  const [id, setId] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const login = useAdminAuthStore((s) => s.login)
@@ -13,14 +12,14 @@ export default function AdminLogin() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    if (!id.trim() || !password.trim()) {
-      setError('Enter ID and password')
+    if (!password.trim()) {
+      setError('Enter password')
       return
     }
-    if (login(id.trim(), password)) {
+    if (login(password.trim())) {
       navigate('/dashboard', { replace: true })
     } else {
-      setError('Invalid ID or password')
+      setError('Invalid password')
     }
   }
 
@@ -37,17 +36,6 @@ export default function AdminLogin() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-[11px] font-black uppercase tracking-wider text-[#6B7280] mb-1.5">ID</label>
-            <input
-              type="text"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
-              placeholder="Enter shop ID"
-              className="w-full h-12 px-4 bg-[#FAFAFA] border border-[#F0E6C8]/60 rounded-xl text-[15px] font-bold text-[#1A1A1A] focus:outline-none focus:border-[#D4A800]"
-              autoFocus
-            />
-          </div>
-          <div>
             <label className="block text-[11px] font-black uppercase tracking-wider text-[#6B7280] mb-1.5">Password</label>
             <input
               type="password"
@@ -55,6 +43,7 @@ export default function AdminLogin() {
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter password"
               className="w-full h-12 px-4 bg-[#FAFAFA] border border-[#F0E6C8]/60 rounded-xl text-[15px] font-bold text-[#1A1A1A] focus:outline-none focus:border-[#D4A800]"
+              autoFocus
             />
           </div>
 
