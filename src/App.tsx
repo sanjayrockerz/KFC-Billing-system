@@ -168,6 +168,9 @@ function AppShell() {
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </main>
+      <div className="print:hidden text-center py-3 text-[10px] font-medium text-[#9CA3AF] border-t border-[#F0E6C8]/30 bg-white/50">
+        Powered by Cenexa 2026 © Copyright
+      </div>
     </div>
   )
 }

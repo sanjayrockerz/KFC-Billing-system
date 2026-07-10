@@ -241,6 +241,7 @@ export default function Pos(props: PosProps = {}) {
   // Manual product addition (minimal, non-destructive)
   const [manualName, setManualName] = useState('')
   const [manualPrice, setManualPrice] = useState('')
+  const [manualOpen, setManualOpen] = useState(false)
   const addManualItem = () => {
     setError('')
     const name = manualName.trim()
@@ -717,10 +718,10 @@ export default function Pos(props: PosProps = {}) {
                   <Plus size={12} /> ADD TO CATALOG
                 </button>
                 <button 
-                  onClick={addManualItem}
+                  onClick={() => setManualOpen(true)}
                   className="px-3 py-1.5 rounded-lg border border-[#D4A800] text-[#D4A800] text-[11px] font-black hover:bg-[#D4A800]/5 transition-colors flex items-center gap-1.5"
                 >
-                  + ADD CUSTOM ITEM
+                  <Plus size={12} /> ADD CUSTOM ITEM
                 </button>
               </div>
             </div>
@@ -1124,6 +1125,56 @@ export default function Pos(props: PosProps = {}) {
           onClose={() => setAddProductOpen(false)}
           onSuccess={() => {}}
         />
+      )}
+
+      {manualOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4" onClick={() => setManualOpen(false)}>
+          <div className="w-full max-w-sm bg-white rounded-2xl shadow-xl border border-[#F0E6C8] p-6" onClick={e => e.stopPropagation()}>
+            <h3 className="text-[16px] font-black text-[#1A1A1A] mb-4">Add Custom Item</h3>
+            <div className="space-y-3">
+              <div>
+                <label className="block text-[11px] font-black text-[#6B7280] uppercase mb-1">Item Name</label>
+                <input
+                  type="text"
+                  value={manualName}
+                  onChange={e => setManualName(e.target.value)}
+                  placeholder="e.g. Extra Cheese"
+                  className="w-full h-11 px-4 bg-white border border-[#F0E6C8]/60 rounded-xl text-[14px] font-bold text-[#1A1A1A] focus:outline-none focus:border-[#D4A800]"
+                  autoFocus
+                />
+              </div>
+              <div>
+                <label className="block text-[11px] font-black text-[#6B7280] uppercase mb-1">Price (₹)</label>
+                <input
+                  type="number"
+                  value={manualPrice}
+                  onChange={e => setManualPrice(e.target.value)}
+                  placeholder="e.g. 50"
+                  min="0"
+                  step="1"
+                  className="w-full h-11 px-4 bg-white border border-[#F0E6C8]/60 rounded-xl text-[14px] font-bold text-[#1A1A1A] focus:outline-none focus:border-[#D4A800]"
+                />
+              </div>
+              {error && (
+                <div className="p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-600 text-[11px] font-bold">{error}</div>
+              )}
+            </div>
+            <div className="flex gap-2 mt-5">
+              <button
+                onClick={() => { setManualOpen(false); setError('') }}
+                className="flex-1 h-11 rounded-xl border border-[#F0E6C8]/60 text-[#6B7280] text-[13px] font-bold hover:bg-[#FAFAFA] transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => { setError(''); addManualItem(); if (manualName.trim() && Number(manualPrice || 0) > 0) setManualOpen(false) }}
+                className="flex-1 h-11 rounded-xl bg-[#D4A800] text-white text-[13px] font-bold hover:bg-[#C49600] transition-colors"
+              >
+                Add Item
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )
