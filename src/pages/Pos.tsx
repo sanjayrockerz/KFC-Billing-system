@@ -21,6 +21,7 @@ import {
   formatQuantityDisplay,
 } from '../lib/retail'
 import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
+import { generateInvoicePdf } from '../lib/generateInvoicePdf'
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { getProductImage, onImgError } from '../lib/productImages'
 import { normalizePhone, toWhatsAppUrl } from '../lib/phone'
@@ -462,7 +463,51 @@ export default function Pos(props: PosProps = {}) {
   const change = cashReceived && Number(cashReceived) >= total
     ? Number(cashReceived) - total : null
 
-  const sendPosWhatsApp = (inv: InvoiceSnap) => {
+  const sendPosWhatsApp = async (inv: InvoiceSnap) => {
+    try {
+      const pdfBlob = await generateInvoicePdf({
+        invoiceNo: inv.invoiceNo,
+        date: inv.date,
+        customerName: inv.customerName,
+        phone: inv.phone,
+        address: inv.address,
+        items: inv.items.map((item) => ({
+          name: item.name,
+          nameTa: item.nameTa,
+          qty: item.qty,
+          unit: item.selectedUnit,
+          unitType: item.unitType,
+          rate: item.basePrice,
+          lineTotal: item.lineTotal,
+        })),
+        subtotal: inv.subtotal,
+        shipping: inv.shipping,
+        discountAmount: inv.couponDiscount,
+        couponCode: inv.couponCode,
+        manualDiscountAmount: inv.manualDiscountAmount,
+        gstAmount: inv.gstAmount,
+        total: inv.total,
+      })
+      const file = new File([pdfBlob], `${inv.invoiceNo}.pdf`, { type: 'application/pdf' })
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: `Invoice ${inv.invoiceNo}` })
+      } else {
+        fallbackSharePdf(file, inv)
+      }
+    } catch {
+      fallbackSharePdf(null, inv)
+    }
+  }
+
+  const fallbackSharePdf = (file: File | null, inv: InvoiceSnap) => {
+    if (file) {
+      const url = URL.createObjectURL(file)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `${inv.invoiceNo}.pdf`
+      a.click()
+      URL.revokeObjectURL(url)
+    }
     const waLink = toWhatsAppUrl(inv.phone || customer.phone || '')
     const text = encodeURIComponent(buildProfessionalWhatsAppMessage({
       customerName: inv.customerName,
