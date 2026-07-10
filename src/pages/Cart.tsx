@@ -71,7 +71,7 @@ export default function Cart() {
                         <span className="min-w-12 sm:min-w-14 px-1 sm:px-2 text-center font-bold text-sm text-textMain">{item.variantId ? String(item.qty) : formatQuantityDisplay(item.qty, item.selectedUnit, item.unitType)}</span>
                         <button onClick={() => updateQty(item.id, item.qty + getStep(item))} className="touch-target w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center text-textMuted hover:bg-bgMain hover:text-textMain transition-colors"><Plus size={14} /></button>
                       </div>
-                      <span className="text-lg font-bold text-textMain font-headline w-24 text-right whitespace-nowrap">{formatCurrency(item.lineTotal)}</span>
+                      <span className="text-lg font-bold text-textMain font-headline shrink-0 text-right whitespace-nowrap">{formatCurrency(item.lineTotal)}</span>
                       <button onClick={() => remove(item.id)} className="touch-target p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"><Trash2 size={15} /></button>
                     </div>
                   </motion.div>

@@ -119,7 +119,7 @@ const exportCSV = (orders: BillingOrder[]) => {
         ? 'ONLINE'
         : 'OFFLINE'
     return [
-      order.invoice_no || '—',
+      order.invoice_no || '-',
       order.customer_name,
       order.phone,
       billType,
@@ -571,10 +571,10 @@ export default function BillingAnalytics() {
     <div className="admin-shell min-h-screen bg-white">
       <div className="mx-auto max-w-[1600px] px-4 py-4 sm:px-6 lg:px-8">
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-          <div className="admin-logo-lockup min-w-[280px]">
+          <div className="admin-logo-lockup min-w-0 sm:min-w-[280px]">
             <div className="admin-logo-mark shrink-0 rounded-[18px] border border-[#F0E6C8] bg-white p-2 shadow-[0_10px_28px_rgba(17,24,39,0.10)]">
               <div className="flex h-14 w-14 items-center justify-center rounded-[14px] bg-[#FCFBF7] ring-1 ring-[#F2E7D2] p-1.5">
-                <img src="/logo.png" alt="KFC logo" className="w-full h-full object-contain" />
+                <img src="/logo.png" alt="KFC logo" className="w-full h-full object-cover" />
               </div>
             </div>
             <div className="min-w-0">
@@ -781,15 +781,15 @@ export default function BillingAnalytics() {
                         : 'bg-orange-100 text-orange-700'
                     return (
                       <tr key={order.id} className="hover:bg-[#F7F6F2]/50">
-                        <td className="whitespace-nowrap px-3 py-3 font-bold text-[#D4A800]">{order.invoice_no || '—'}</td>
+                        <td className="whitespace-nowrap px-3 py-3 font-bold text-[#D4A800]">{order.invoice_no || '-'}</td>
                         <td className="max-w-[140px] truncate px-3 py-3 font-semibold text-[#1A1A1A]">{order.customer_name}</td>
                         <td className="whitespace-nowrap px-3 py-3 text-[#6B7280]">{order.phone}</td>
                         <td className="px-3 py-3">
                           <span className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase ${billTypeClass}`}>{billTypeLabel}</span>
                         </td>
-                        <td className="hidden md:table-cell px-3 py-3">{order.coupon_code ? <span className="rounded bg-yellow/10 px-1.5 py-0.5 text-[10px] font-bold text-yellow-dark">{order.coupon_code}</span> : <span className="text-[#9BAB9A]">—</span>}</td>
-                        <td className="hidden md:table-cell px-3 py-3">{order.discount_amount > 0 ? <span className="font-bold text-yellow-dark">-{formatCurrency(order.discount_amount)}</span> : <span className="text-[#9BAB9A]">—</span>}</td>
-                        <td className="hidden md:table-cell px-3 py-3">{order.delivery_charge > 0 ? <span className="font-bold">{formatCurrency(order.delivery_charge)}</span> : <span className="text-[#9BAB9A]">—</span>}</td>
+                        <td className="hidden md:table-cell px-3 py-3">{order.coupon_code ? <span className="rounded bg-yellow/10 px-1.5 py-0.5 text-[10px] font-bold text-yellow-dark">{order.coupon_code}</span> : <span className="text-[#9BAB9A] font-bold">NIL</span>}</td>
+                        <td className="hidden md:table-cell px-3 py-3">{order.discount_amount > 0 ? <span className="font-bold text-yellow-dark">-{formatCurrency(order.discount_amount)}</span> : <span className="text-[#9BAB9A] font-bold">NIL</span>}</td>
+                        <td className="hidden md:table-cell px-3 py-3">{order.delivery_charge > 0 ? <span className="font-bold">{formatCurrency(order.delivery_charge)}</span> : <span className="text-[#9BAB9A] font-bold">NIL</span>}</td>
                         <td className="whitespace-nowrap px-3 py-3 font-bold">{formatCurrency(toNumber(order.total, 0))}</td>
                         <td className="whitespace-nowrap px-3 py-3 text-[#6B7280]">{new Date(order.created_at).toLocaleDateString('en-IN')}</td>
                         <td className="px-3 py-3">

@@ -82,8 +82,8 @@ export const Invoice: React.FC<InvoiceProps> = ({
     >
       {/* ── HEADER ────────────────────────────────────────────────── */}
       <div style={{ textAlign: 'center', borderBottom: '1px solid #e5e7eb', paddingBottom: 24, marginBottom: 24 }}>
-        <div style={{ width: 90, height: 90, margin: '0 auto 12px', borderRadius: 12, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#fff', border: '1px solid #F0E6C8', padding: 6 }}>
-          <img src="/logo.png" alt="KFC" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+        <div style={{ width: 90, height: 90, margin: '0 auto 12px', borderRadius: 12, overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #F0E6C8' }}>
+          <img src="/logo.png" alt="KFC" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
         <div style={{ fontSize: 24, fontWeight: 900, color: '#D4A800', letterSpacing: -0.5, textTransform: 'uppercase' }}>
           {BRAND_EN}
@@ -120,7 +120,7 @@ export const Invoice: React.FC<InvoiceProps> = ({
             </>
           )}
         </div>
-        <div style={{ textAlign: 'right', maxWidth: 300 }}>
+        <div style={{ maxWidth: 300 }}>
           <div style={{ fontSize: 9, fontWeight: 800, color: '#888', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Customer</div>
           <div style={{ fontSize: 14, fontWeight: 800, color: '#1a1a2e' }}>{customerName}</div>
           <div style={{ fontSize: 12, color: '#555', marginTop: 3 }}>{phone}</div>
@@ -136,7 +136,7 @@ export const Invoice: React.FC<InvoiceProps> = ({
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ background: '#FFFDF5', borderRadius: 8 }}>
-              <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8, width: 36 }}>#</th>
+              <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8, width: 36 }}>#</th>
               <th style={{ padding: '10px 12px', textAlign: 'left', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8 }}>Product</th>
               <th style={{ padding: '10px 12px', textAlign: 'center', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8, width: 60 }}>Qty</th>
               <th style={{ padding: '10px 12px', textAlign: 'right', fontSize: 10, fontWeight: 800, color: '#D4A800', textTransform: 'uppercase', letterSpacing: 0.8, width: 90 }}>Rate</th>
@@ -149,7 +149,7 @@ export const Invoice: React.FC<InvoiceProps> = ({
               const displayName = normalized.tamil_name || item.nameTa || normalized.name
               return (
                 <tr key={idx} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                  <td style={{ padding: '12px', fontSize: 12, color: '#999', verticalAlign: 'top' }}>{idx + 1}</td>
+                  <td style={{ padding: '12px', fontSize: 12, color: '#999', textAlign: 'center', verticalAlign: 'top' }}>{idx + 1}</td>
                   <td style={{ padding: '12px', verticalAlign: 'top' }}>
                     <div style={{ fontSize: 13, fontWeight: 700, color: '#1a1a2e' }}>{normalized.name}</div>
                     {displayName && displayName !== normalized.name && <div style={{ fontSize: 11, color: '#888', marginTop: 2 }}>{displayName}</div>}

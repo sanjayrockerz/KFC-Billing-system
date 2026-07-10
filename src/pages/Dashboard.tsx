@@ -5,10 +5,10 @@ import {
   Package, IndianRupee, Search, RefreshCw, ShieldCheck, ShieldOff, Trophy,
   MessageCircle, ChevronDown,
 } from 'lucide-react'
-import { Link, useLocation } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { debounce } from '../lib/debounce'
-import { useAuthStore, useProductStore, type Product } from '../store/store'
+import { useAuthStore, useAdminAuthStore, useProductStore, type Product } from '../store/store'
 import { useLangStore } from '../store/langStore'
 import { uploadProductImage } from '../lib/storage'
 import { formatCurrency, normalizeOrderMode, normalizeUnitType, toNumber, type UnitType } from '../lib/retail'
@@ -110,6 +110,7 @@ export default function Dashboard() {
   const { user } = useAuthStore()
   const { products, fetchProducts } = useProductStore()
   const location = useLocation()
+  const navigate = useNavigate()
   const [tab, setTab] = useState<TabKey>(() => {
     if (location.pathname === '/whatsapp-center') return 'whatsapp'
     if (location.pathname === '/pos-analytics') return 'pos_analytics'
@@ -1036,8 +1037,8 @@ export default function Dashboard() {
         {/* Desktop brand header */}
         <div className={`hidden lg:flex items-center relative transition-all duration-300 ${sidebarCollapsed ? 'justify-center pt-6 pb-5 px-2' : 'px-5 py-5'}`}>
           <div className={`flex items-center gap-3 min-w-0 transition-all duration-300 ${sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'opacity-100 flex-1'}`}>
-            <div className="flex items-center justify-center shrink-0 w-14 h-14 rounded-[16px] bg-white shadow-[0_4px_12px_rgba(17,24,39,0.10)] overflow-hidden p-1.5">
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+            <div className="flex items-center justify-center shrink-0 w-14 h-14 rounded-[16px] bg-white shadow-[0_4px_12px_rgba(17,24,39,0.10)] overflow-hidden">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
             <h1 className="text-[20px] font-black text-white truncate tracking-tight">Korean FC</h1>
           </div>
@@ -1054,8 +1055,8 @@ export default function Dashboard() {
         {/* Mobile mini-header */}
         <div className="flex lg:hidden items-center justify-between px-4 py-3 border-b border-white/10">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shrink-0 overflow-hidden shadow-sm p-1">
-              <img src="/logo.png" alt="Logo" className="w-full h-full object-contain" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white shrink-0 overflow-hidden shadow-sm">
+              <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
             <span className="text-[15px] font-black text-white truncate">Korean FC</span>
           </div>
@@ -1071,7 +1072,7 @@ export default function Dashboard() {
               onClick={() => setTab(item.id)}
               title={item.label}
               className={[
-                'shrink-0 flex flex-col lg:flex-row items-center',
+                'shrink-0 flex flex-col lg:flex-row items-center justify-center',
                 'gap-1 lg:gap-3',
                 'w-[64px] h-[64px] lg:h-[48px]',
                 sidebarCollapsed ? 'lg:w-[48px] lg:justify-center mx-auto' : 'lg:w-full lg:px-4 lg:justify-start',
@@ -1088,9 +1089,9 @@ export default function Dashboard() {
           ))}
           
           <button
-            onClick={() => {/* logout logic later */}}
+            onClick={() => { useAdminAuthStore.getState().logout(); navigate('/admin-login', { replace: true }) }}
             className={[
-              'shrink-0 flex flex-col lg:flex-row items-center',
+              'shrink-0 flex flex-col lg:flex-row items-center justify-center',
               'gap-1 lg:gap-3',
               'w-[64px] h-[64px] lg:h-[48px]',
               sidebarCollapsed ? 'lg:w-[48px] lg:justify-center mx-auto' : 'lg:w-full lg:px-4 lg:justify-start',
@@ -1362,7 +1363,7 @@ export default function Dashboard() {
             </div>
 
             {/* Status summary cards */}
-            <div className="grid grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {[
                 { label: l('Total Requests', 'மொத்த கோரிக்கை'), val: analytics.waRequests,  bg: 'bg-blue-50',   color: 'text-blue-700',   border: 'border-blue-100' },
                 { label: l('Pending', 'நிலுவை'),                 val: analytics.waPending,   bg: 'bg-yellow/10',  color: 'text-amber-700',  border: 'border-yellow-dark-100' },
@@ -1415,9 +1416,9 @@ export default function Dashboard() {
                           '',
                           `We truly appreciate your purchase and hope you enjoyed your shopping experience with us.`,
                           '',
-                          `??????????????????`,
-                          `?? *INVOICE SUMMARY*`,
-                          `??????????????????`,
+                          `──────────────────────────`,
+                          `📋 *INVOICE SUMMARY*`,
+                          `──────────────────────────`,
                           '',
                           `Invoice No : ${order.invoice_no || order.id || '-'}`,
                           `Date : ${new Date(order.created_at).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`,
@@ -1425,9 +1426,9 @@ export default function Dashboard() {
                           `Customer : ${order.customer_name || '-'}`,
                           `Phone : ${order.phone || '-'}`,
                           '',
-                          `??????????????????`,
-                          `?? *ITEMS PURCHASED*`,
-                          `??????????????????`,
+                          `──────────────────────────`,
+                          `🛒 *ITEMS PURCHASED*`,
+                          `──────────────────────────`,
                           '',
                           ...its.map(raw => {
                             const it = raw as Record<string, unknown>
@@ -1435,18 +1436,18 @@ export default function Dashboard() {
                             const qty = toNumber(it.quantity ?? it.qty, 0)
                             const rate = qty > 0 ? toNumber(it.line_total ?? it.lineTotal, 0) / qty : 0
                             const lt = toNumber(it.line_total ?? it.lineTotal, 0)
-                            return `� ${nm}\n  Qty : ${qty} � ${formatCurrency(rate)}\n  Amount : ${formatCurrency(lt)}`
+                            return `• ${nm}\n  Qty : ${qty} • ${formatCurrency(rate)}\n  Amount : ${formatCurrency(lt)}`
                           }),
                           '',
-                          `??????????????????`,
-                          `?? *BILL SUMMARY*`,
-                          `??????????????????`,
+                          `──────────────────────────`,
+                          `🧾 *BILL SUMMARY*`,
+                          `──────────────────────────`,
                           '',
                           `Subtotal           : ${formatCurrency(toNumber(order.total, 0))}`,
                           '',
-                          `??????????????????`,
+                          `──────────────────────────`,
                           `*Grand Total : ${formatCurrency(toNumber(order.total, 0))}*`,
-                          `??????????????????`,
+                          `──────────────────────────`,
                           '',
                           `We sincerely thank you for choosing *Korean Fried Chicken*. ??`,
                           '',
@@ -2259,8 +2260,8 @@ export default function Dashboard() {
           <div className="space-y-6 rounded-[28px] border border-[#F0E6C8]/60 bg-[#FBFAF6] p-5 sm:p-6 lg:p-7 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#D4A800]">{l('Billing history', '???? ??????')}</p>
-                <h2 className="mt-1 text-xl font-black text-[#1A1A1A]">{l('Order Management', '?????? ????????')} <span className="text-[11px] font-semibold text-[#6B7280]">({l('POS Bills only', 'POS ??????? ???????')})</span></h2>
+                <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#D4A800]">{l('Billing history', 'பில் வரலாறு')}</p>
+                <h2 className="mt-1 text-xl font-black text-[#1A1A1A]">{l('Order Management', 'ஆர்டர் மேலாண்மை')} <span className="text-[11px] font-semibold text-[#6B7280]">({l('POS Bills only', 'POS பில்கள் மட்டும்')})</span></h2>
               </div>
               <div className="flex gap-2">
                 <Link to="/pos" className="inline-flex items-center gap-2 rounded-xl bg-[#1A1A1A] px-4 py-2 text-[13px] font-bold text-white shadow-sm hover:bg-[#1f281d]">
@@ -2293,15 +2294,15 @@ export default function Dashboard() {
                   ))}
                   {(search.dateFrom || search.dateTo || datePreset) && (
                     <button type="button" onClick={() => { setDatePreset(''); setSearch(s => ({ ...s, dateFrom: '', dateTo: '' })) }}
-                      className="px-3 py-1.5 rounded-xl text-[12px] font-black text-[#D4A800] hover:bg-[#D4A800]/5">{l('Clear Dates', '???? ???')}</button>
+                      className="px-3 py-1.5 rounded-xl text-[12px] font-black text-[#D4A800] hover:bg-[#D4A800]/5">{l('Clear Dates', 'தேதிகளை அழி')}</button>
                   )}
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                  <input className="rounded-xl bg-[#F7F6F2] px-3 py-2.5 text-[13px] font-semibold text-[#1A1A1A] placeholder:text-[#8A9384] focus:outline-none focus:ring-2 focus:ring-[#D4A800]/15" placeholder={l('Invoice / Bill No', '???? ???')}
+                  <input className="rounded-xl bg-[#F7F6F2] px-3 py-2.5 text-[13px] font-semibold text-[#1A1A1A] placeholder:text-[#8A9384] focus:outline-none focus:ring-2 focus:ring-[#D4A800]/15" placeholder={l('Invoice / Bill No', 'இன்வாய்ஸ் / பில் எண்')}
                     value={search.invoiceNo} onChange={e => setSearch(s => ({ ...s, invoiceNo: e.target.value }))} />
-                  <input className="rounded-xl bg-[#F7F6F2] px-3 py-2.5 text-[13px] font-semibold text-[#1A1A1A] placeholder:text-[#8A9384] focus:outline-none focus:ring-2 focus:ring-[#D4A800]/15" placeholder={l('Customer Name', '????????????? ?????')}
+                  <input className="rounded-xl bg-[#F7F6F2] px-3 py-2.5 text-[13px] font-semibold text-[#1A1A1A] placeholder:text-[#8A9384] focus:outline-none focus:ring-2 focus:ring-[#D4A800]/15" placeholder={l('Customer Name', 'வாடிக்கையாளர் பெயர்')}
                     value={search.customerName} onChange={e => setSearch(s => ({ ...s, customerName: e.target.value }))} />
-                  <input className="rounded-xl bg-[#F7F6F2] px-3 py-2.5 text-[13px] font-semibold text-[#1A1A1A] placeholder:text-[#8A9384] focus:outline-none focus:ring-2 focus:ring-[#D4A800]/15" placeholder={l('Mobile Number', '?????? ???')}
+                  <input className="rounded-xl bg-[#F7F6F2] px-3 py-2.5 text-[13px] font-semibold text-[#1A1A1A] placeholder:text-[#8A9384] focus:outline-none focus:ring-2 focus:ring-[#D4A800]/15" placeholder={l('Mobile Number', 'மொபைல் எண்')}
                     value={search.phone} onChange={e => setSearch(s => ({ ...s, phone: e.target.value }))} />
                   {datePreset === 'custom' ? (
                     <>
@@ -2313,19 +2314,19 @@ export default function Dashboard() {
                   ) : (
                     <button type="submit" disabled={searchLoading}
                       className="sm:col-span-2 flex items-center justify-center gap-2 rounded-xl bg-[#D4A800] py-2.5 text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-[#C49600] disabled:opacity-60">
-                      <Search size={14} /> {searchLoading ? l('Searching...','?????????...') : l('Search Bills','????')}
+                      <Search size={14} /> {searchLoading ? l('Searching...','தேடுகிறது...') : l('Search Bills','பில் தேடு')}
                     </button>
                   )}
                   {datePreset === 'custom' && (
                     <button type="submit" disabled={searchLoading}
                       className="sm:col-span-2 lg:col-span-4 flex items-center justify-center gap-2 rounded-xl bg-[#D4A800] py-2.5 text-[13px] font-bold text-white shadow-sm transition-colors hover:bg-[#C49600] disabled:opacity-60">
-                      <Search size={14} /> {searchLoading ? l('Searching...','?????????...') : l('Search Bills','????')}
+                      <Search size={14} /> {searchLoading ? l('Searching...','தேடுகிறது...') : l('Search Bills','பில் தேடு')}
                     </button>
                   )}
                 </div>
               </form>
               <div className="flex items-center justify-between mb-2">
-                <p className="text-[11px] font-semibold text-[#6B7280]">{filteredSearchResults.length} {l('result(s)', '?????????')}</p>
+                <p className="text-[11px] font-semibold text-[#6B7280]">{filteredSearchResults.length} {l('result(s)', 'முடிவுகள்')}</p>
                 {filteredSearchResults.length > 0 && (
                   <button onClick={() => exportCSV(filteredSearchResults)}
                     className="flex items-center gap-1 text-[11px] font-bold text-[#D4A800] hover:underline">
@@ -2348,18 +2349,18 @@ export default function Dashboard() {
                       const billTypeClass = normalizeOrderType(o.order_type) === 'manual_sale' ? 'bg-purple-50 text-purple-700' : normalizeOrderMode(o.order_mode) === 'online' ? 'bg-blue-50 text-blue-700' : 'bg-orange-50 text-orange-700'
                       return (
                         <tr key={o.id} className="hover:bg-[#F7F6F2]">
-                          <td className="whitespace-nowrap px-3 py-3 text-[12px] font-bold text-[#1A1A1A]">{o.invoice_no || '�'}</td>
+                          <td className="whitespace-nowrap px-3 py-3 text-[12px] font-bold text-[#1A1A1A]">{o.invoice_no || '-'}</td>
                           <td className="max-w-[110px] truncate px-3 py-3 text-[12px] font-semibold text-[#1A1A1A]">{o.customer_name}</td>
                           <td className="whitespace-nowrap px-3 py-3 text-[12px] text-[#6B7280]">{o.phone}</td>
                           <td className="px-3 py-3"><span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${billTypeClass}`}>{billTypeLabel}</span></td>
                           <td className="px-3 py-3 text-[12px]">
-                            {o.coupon_code ? <span className="rounded bg-yellow/10 px-1.5 py-0.5 text-[10px] font-bold text-yellow-dark">{o.coupon_code}</span> : <span className="text-[#9BAB9A]">�</span>}
+                            {o.coupon_code ? <span className="rounded bg-yellow/10 px-1.5 py-0.5 text-[10px] font-bold text-yellow-dark">{o.coupon_code}</span> : <span className="text-[#9BAB9A] font-bold">NIL</span>}
                           </td>
                           <td className="px-3 py-3 text-[12px]">
-                            {o.discount_amount > 0 ? <span className="font-bold text-yellow-dark">-{formatCurrency(o.discount_amount)}</span> : <span className="text-[#9BAB9A]">�</span>}
+                            {o.discount_amount > 0 ? <span className="font-bold text-yellow-dark">-{formatCurrency(o.discount_amount)}</span> : <span className="text-[#9BAB9A] font-bold">NIL</span>}
                           </td>
                           <td className="px-3 py-3 text-[12px]">
-                            {o.delivery_charge > 0 ? <span className="font-bold text-[#1A1A1A]">{formatCurrency(o.delivery_charge)}</span> : <span className="text-[#9BAB9A]">�</span>}
+                            {o.delivery_charge > 0 ? <span className="font-bold text-[#1A1A1A]">{formatCurrency(o.delivery_charge)}</span> : <span className="text-[#9BAB9A] font-bold">NIL</span>}
                           </td>
                           <td className="whitespace-nowrap px-3 py-3 text-[13px] font-bold text-[#1A1A1A]">{formatCurrency(toNumber(o.total, 0))}</td>
                           <td className="whitespace-nowrap px-3 py-3 text-[12px] text-[#6B7280]">{new Date(o.created_at).toLocaleDateString('en-IN')}</td>
@@ -2379,7 +2380,7 @@ export default function Dashboard() {
                       )
                     })}
                     {filteredSearchResults.length === 0 && (
-                      <tr><td colSpan={10} className="px-4 py-8 text-center text-[#6B7280]">{l('No matching bills', '??????? ?????')}</td></tr>
+                      <tr><td colSpan={10} className="px-4 py-8 text-center text-[#6B7280]">{l('No matching bills', 'பொருந்தும் பில்கள் இல்லை')}</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -2883,9 +2884,9 @@ export default function Dashboard() {
             <div className="flex flex-col gap-4">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="space-y-2">
-                  <h2 className="text-[28px] lg:text-[32px] leading-none font-black text-[#111111]">{l('Coupon Management', '??????? ????????')}</h2>
+                  <h2 className="text-[28px] lg:text-[32px] leading-none font-black text-[#111111]">{l('Coupon Management', 'கூப்பன் மேலாண்மை')}</h2>
                   <p className="max-w-2xl text-[13px] lg:text-[14px] font-medium text-[#6C665C]">
-                    {l('Create and manage discount codes for the admin dashboard. Coupon discounts apply only to product subtotal, not delivery charge.', '??????????? subtotal-???? ??????? ??????? ???????? ??????????. delivery charge-???? ?????.')}
+                    {l('Create and manage discount codes for the admin dashboard. Coupon discounts apply only to product subtotal, not delivery charge.', 'தள்ளுபடி குறியீடுகளை உருவாக்கி நிர்வகிக்கவும். கூப்பன் தள்ளுபடி பொருட்களின் subtotal-க்கு மட்டும் பொருந்தும், delivery charge-க்கு பொருந்தாது.')}
                   </p>
                 </div>
                 <button
@@ -2913,7 +2914,7 @@ export default function Dashboard() {
               </div>
 
               <div className="rounded-2xl border border-[#E7CFAA] bg-[#FFF6E7] px-4 py-3 text-[13px] font-bold text-[#D4A800] shadow-sm">
-                {l('Coupon discount applies to product subtotal only - not delivery charge.', '??????? ???????? ??????????? subtotal-???? ??????? ??????????. delivery charge-???? ?????.')}
+                {l('Coupon discount applies to product subtotal only - not delivery charge.', 'கூப்பன் தள்ளுபடி பொருட்களின் subtotal-க்கு மட்டும் பொருந்தும் - delivery charge-க்கு பொருந்தாது.')}
               </div>
             </div>
 
@@ -2923,7 +2924,7 @@ export default function Dashboard() {
                   <div>
                     <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#D4A800]">{editingCouponId !== null ? 'Edit mode' : 'New coupon'}</p>
                     <h3 className="mt-2 text-[22px] font-black text-[#1A1A1A]">
-                      {editingCouponId !== null ? l('Edit Coupon', '??????? ????????') : l('Create Coupon', '????? ???????')}
+                      {editingCouponId !== null ? l('Edit Coupon', 'கூப்பன் திருத்து') : l('Create Coupon', 'புதிய கூப்பன்')}
                     </h3>
                   </div>
                   {editingCouponId !== null && (
@@ -2949,7 +2950,7 @@ export default function Dashboard() {
                 )}
 
                 <div className="space-y-2">
-                  <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Coupon Code', '??????? ????????')} *</label>
+                  <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Coupon Code', 'கூப்பன் குறியீடு')} *</label>
                   <div className="flex gap-3">
                     <input
                       className="flex-1 rounded-2xl border border-[#E7D9BF] bg-white px-4 py-3 text-[14px] font-black uppercase tracking-[0.16em] text-[#1A1A1A] outline-none transition-colors focus:border-[#D4A800]"
@@ -2969,13 +2970,13 @@ export default function Dashboard() {
                     )}
                   </div>
                   {editingCouponId !== null && (
-                    <p className="text-[11px] font-medium text-[#6B7280]">{l('Code cannot be changed when editing', '?????????????? ?????????? ????? ????????')}</p>
+                    <p className="text-[11px] font-medium text-[#6B7280]">{l('Code cannot be changed when editing', 'திருத்தும் போது குறியீட்டை மாற்ற முடியாது')}</p>
                   )}
                 </div>
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Discount %', '???????? %')} *</label>
+                    <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Discount %', 'தள்ளுபடி %')} *</label>
                     <input
                       type="number"
                       min="1"
@@ -2987,7 +2988,7 @@ export default function Dashboard() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Min Order (?)', '??????? ?????? (?)')}</label>
+                    <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Min Order (?)', 'குறைந்தபட்ச தொகை (₹)')}</label>
                     <input
                       type="number"
                       min="0"
@@ -3001,7 +3002,7 @@ export default function Dashboard() {
 
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
-                    <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Expiry Date', '??????? ????')}</label>
+                    <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Expiry Date', 'காலாவதி தேதி')}</label>
                     <input
                       type="date"
                       className="w-full rounded-2xl border border-[#E7D9BF] bg-white px-4 py-3 text-[13px] font-bold text-[#1A1A1A] outline-none transition-colors focus:border-[#D4A800]"
@@ -3010,7 +3011,7 @@ export default function Dashboard() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Usage Limit', '?????????? ??????')}</label>
+                    <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Usage Limit', 'பயன்பாட்டு வரம்பு')}</label>
                     <input
                       type="number"
                       min="1"
@@ -3026,20 +3027,20 @@ export default function Dashboard() {
                   type="submit"
                   className="w-full rounded-2xl bg-[#D4A800] py-3.5 text-[14px] font-black text-white shadow-sm transition-colors hover:bg-[#741D2A]"
                 >
-                  {editingCouponId !== null ? l('Update Coupon', '??????? ????????') : l('Create Coupon', '??????? ?????????')}
+                  {editingCouponId !== null ? l('Update Coupon', 'கூப்பன் புதுப்பி') : l('Create Coupon', 'புதிய கூப்பன் உருவாக்கு')}
                 </button>
               </form>
 
               <div className="rounded-[28px] border border-[#F0E6C8] bg-[#FFFCF6] p-6 shadow-[0_18px_40px_rgba(139,35,50,0.08)]">
                 <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
                   <div>
-                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Coupon List', '??????? ????????')}</p>
+                    <p className="text-[11px] font-black uppercase tracking-[0.2em] text-[#6B7280]">{l('Coupon List', 'கூப்பன் பட்டியல்')}</p>
                     <h3 className="mt-2 text-[22px] font-black text-[#111111]">
-                      {l('All Coupons', '??????? ??????????')} <span className="text-[#6B7280]">({coupons.length})</span>
+                      {l('All Coupons', 'அனைத்து கூப்பன்கள்')} <span className="text-[#6B7280]">({coupons.length})</span>
                     </h3>
                   </div>
                   <span className="rounded-full border border-[#E7CFAA] bg-[#FFF6E7] px-3 py-1 text-[11px] font-black uppercase tracking-[0.2em] text-[#D4A800]">
-                    {l('Admin only', '??????? ???????')}
+                    {l('Admin only', 'நிர்வாகி மட்டும்')}
                   </span>
                 </div>
 
@@ -3062,7 +3063,7 @@ export default function Dashboard() {
                             <div className="flex flex-wrap items-center gap-2">
                               <p className="truncate text-[18px] font-black uppercase tracking-[0.18em] text-[#1A1A1A]">{coupon.code}</p>
                               <span className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] ${coupon.is_active ? 'bg-[#FCE7EA] text-[#D4A800]' : 'bg-[#F8EDD9] text-[#9A6700]'}`}>
-                                {coupon.is_active ? l('Active', '???????') : l('Inactive', '???????')}
+                                {coupon.is_active ? l('Active', 'செயலில்') : l('Inactive', 'முடக்கத்தில்')}
                               </span>
                               {isExpired && (
                                 <span className="rounded-full bg-red-100 px-2.5 py-1 text-[10px] font-black uppercase tracking-[0.18em] text-red-700">
@@ -3078,12 +3079,12 @@ export default function Dashboard() {
 
                             <p className="text-[13px] font-semibold text-[#D4A800]">
                               {coupon.percentage}% off
-                              {coupon.min_order_value > 0 && ` � min ?${coupon.min_order_value}`}
+                              {coupon.min_order_value > 0 && ` • min ₹${coupon.min_order_value}`}
                             </p>
 
                             <p className="text-[12px] text-[#6C665C]">
                               Used {coupon.usage_count}{coupon.usage_limit ? `/${coupon.usage_limit}` : ''} times
-                              {coupon.expiry_date ? ` � expires ${new Date(coupon.expiry_date).toLocaleDateString('en-IN')}` : ''}
+                              {coupon.expiry_date ? ` • expires ${new Date(coupon.expiry_date).toLocaleDateString('en-IN')}` : ''}
                             </p>
                           </div>
 
@@ -3094,7 +3095,7 @@ export default function Dashboard() {
                                 coupon.is_active ? 'bg-[#FCE7EA] text-[#D4A800] hover:bg-[#F8D7DD]' : 'bg-[#F8EDD9] text-[#9A6700] hover:bg-[#F2E0B9]'
                               }`}
                             >
-                              {coupon.is_active ? l('Active', '???????') : l('Off', '????')}
+                              {coupon.is_active ? l('Active', 'செயலில்') : l('Off', 'முடக்கு')}
                             </button>
                             <button
                               onClick={() => startEditCoupon(coupon)}
@@ -3116,7 +3117,7 @@ export default function Dashboard() {
 
                   {coupons.length === 0 && (
                     <div className="rounded-[22px] border border-dashed border-[#E7CFAA] bg-[#FFF8F3] py-12 text-center text-[14px] font-bold text-[#D4A800]">
-                      {l('No coupons yet. Create your first coupon!', '??????? ??????? ?????. ????? ??????? ??????????????!')}
+                      {l('No coupons yet. Create your first coupon!', 'இதுவரை கூப்பன்கள் இல்லை. முதல் கூப்பனை உருவாக்கவும்!')}
                     </div>
                   )}
                 </div>

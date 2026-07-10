@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Link } from 'react-router-dom'
 import {
-  Search, Trash2, Plus, Receipt, Printer,
+  Search, Trash2, Plus, Receipt, Printer, User,
   RefreshCw, ShoppingBag, MessageCircle,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Wifi, WifiOff, Layers, X, ChevronDown,
@@ -545,7 +545,7 @@ export default function Pos(props: PosProps = {}) {
           </div>
 
           {/* Actions */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 min-[360px]:grid-cols-3 gap-2 min-[360px]:gap-3">
             <button onClick={() => sendPosWhatsApp(invoice)}
               className="flex items-center justify-center gap-2 py-3 rounded-xl bg-yellow/100 hover:bg-green-600 text-white font-bold text-sm transition-colors">
               <MessageCircle size={16} /> WhatsApp
@@ -571,7 +571,7 @@ export default function Pos(props: PosProps = {}) {
                 total: invoice.total
               })
             }}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-[#F0E6C8] hover:border-yellow-darkDark text-textMain font-bold text-sm transition-colors">
+              className="flex items-center justify-center gap-1.5 min-[360px]:gap-2 py-3 px-2 rounded-xl border-2 border-[#F0E6C8] hover:border-yellow-darkDark text-textMain font-bold text-xs min-[360px]:text-sm transition-colors">
               <Printer size={16} /> {l('Print Receipt', 'ரசீது அச்சிடு')}
             </button>
             <button onClick={clearAll}
@@ -662,13 +662,16 @@ export default function Pos(props: PosProps = {}) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="block text-[13px] md:text-[10px] font-black text-[#6B7280] tracking-wider uppercase mb-1.5">Customer Name</label>
-                  <input 
-                    type="text" 
-                    value={customer.name}
-                    onChange={e => setCustomer({...customer, name: e.target.value})}
-                    placeholder="Enter name"
-                    className="w-full h-12 px-4 bg-white border border-[#F0E6C8]/60 rounded-xl focus:outline-none focus:border-[#D4A800] text-[16px] md:text-[13px] font-bold text-[#1A1A1A] placeholder:text-gray-400 placeholder:font-medium"
-                  />
+                  <div className="relative">
+                    <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-[#6B7280] pointer-events-none z-10" />
+                    <input 
+                      type="text" 
+                      value={customer.name}
+                      onChange={e => setCustomer({...customer, name: e.target.value})}
+                      placeholder="Enter name"
+                      className="w-full h-12 pl-12 pr-4 bg-white border border-[#F0E6C8]/60 rounded-xl focus:outline-none focus:border-[#D4A800] text-[16px] md:text-[13px] font-bold text-[#1A1A1A] placeholder:text-gray-400 placeholder:font-medium"
+                    />
+                  </div>
                 </div>
                 <div>
                   <label className="block text-[13px] md:text-[10px] font-black text-[#6B7280] tracking-wider uppercase mb-1.5">Mobile Number (WhatsApp)</label>
@@ -876,13 +879,16 @@ export default function Pos(props: PosProps = {}) {
                 </div>
                 <div className="p-3 border-b border-[#F0E6C8]/40">
                   <span className="text-[13px] md:text-[#6B7280] uppercase block mb-1">Customer Name</span>
-                  <input
-                    type="text"
-                    value={customer.name}
-                    onChange={e => setCustomer({...customer, name: e.target.value})}
-                    placeholder="Enter name (optional)"
-                    className="w-full h-11 px-3 bg-white border border-[#F0E6C8]/60 rounded-lg text-[16px] md:text-[12px] font-bold text-[#1A1A1A] focus:outline-none focus:border-[#D4A800]"
-                  />
+                  <div className="relative">
+                    <User size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280] pointer-events-none z-10" />
+                    <input
+                      type="text"
+                      value={customer.name}
+                      onChange={e => setCustomer({...customer, name: e.target.value})}
+                      placeholder="Enter name (optional)"
+                      className="w-full h-11 pl-10 pr-3 bg-white border border-[#F0E6C8]/60 rounded-lg text-[16px] md:text-[12px] font-bold text-[#1A1A1A] focus:outline-none focus:border-[#D4A800]"
+                    />
+                  </div>
                 </div>
                 <div className="p-3 border-b border-[#F0E6C8]/40">
                   <span className="text-[13px] md:text-[#6B7280] uppercase block mb-1">Phone Number</span>
