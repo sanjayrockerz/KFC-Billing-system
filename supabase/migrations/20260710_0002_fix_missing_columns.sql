@@ -71,12 +71,16 @@ DELETE FROM product_variants;
 DELETE FROM products WHERE name NOT IN ('Bone Shot','Big Shot','Strips','Loaded Fries','French Fries','Wrap','Burger');
 DELETE FROM categories WHERE name_en NOT IN ('Chicken','Sides','Burgers & Wraps','Beverages');
 
--- 5. Re-ensure KFC categories exist
+-- 5. Remove default image placeholders
+ALTER TABLE products ALTER COLUMN image SET DEFAULT '';
+ALTER TABLE products ALTER COLUMN image_url SET DEFAULT '';
+
+-- 7. Re-ensure KFC categories exist
 INSERT INTO categories (name_en, sort_order) VALUES
   ('Chicken', 1), ('Sides', 2), ('Burgers & Wraps', 3), ('Beverages', 4)
 ON CONFLICT DO NOTHING;
 
--- 6. Re-ensure KFC products exist
+-- 8. Re-ensure KFC products exist
 DO $$
 DECLARE
   cat_chicken BIGINT; cat_sides BIGINT; cat_wraps BIGINT;
@@ -85,24 +89,24 @@ BEGIN
   SELECT id INTO cat_sides FROM categories WHERE name_en = 'Sides' LIMIT 1;
   SELECT id INTO cat_wraps FROM categories WHERE name_en = 'Burgers & Wraps' LIMIT 1;
 
-  INSERT INTO products (name, category, category_id, price, stock, description, sort_order, image, image_url) VALUES
-    ('Bone Shot', 'Chicken', cat_chicken, 120.00, 100, 'Crispy Korean fried chicken bone-in pieces.', 1, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
-    ('Big Shot', 'Chicken', cat_chicken, 180.00, 100, 'Large boneless chicken pieces with Korean sauce.', 2, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
-    ('Strips', 'Chicken', cat_chicken, 150.00, 100, 'Tender crispy chicken strips with dip.', 3, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
-    ('Loaded Fries', 'Sides', cat_sides, 130.00, 100, 'Fries loaded with cheese, sauce & chicken topping.', 4, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
-    ('French Fries', 'Sides', cat_sides, 70.00, 100, 'Classic crispy salted french fries.', 5, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
-    ('Wrap', 'Burgers & Wraps', cat_wraps, 140.00, 100, 'Tortilla wrap with crispy chicken, veggies & sauce.', 6, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
-    ('Burger', 'Burgers & Wraps', cat_wraps, 160.00, 100, 'Chicken burger with lettuce, tomato, cheese & sauce.', 7, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg')
+  INSERT INTO products (name, category, category_id, price, stock, description, sort_order) VALUES
+    ('Bone Shot', 'Chicken', cat_chicken, 120.00, 100, 'Crispy Korean fried chicken bone-in pieces.', 1),
+    ('Big Shot', 'Chicken', cat_chicken, 180.00, 100, 'Large boneless chicken pieces with Korean sauce.', 2),
+    ('Strips', 'Chicken', cat_chicken, 150.00, 100, 'Tender crispy chicken strips with dip.', 3),
+    ('Loaded Fries', 'Sides', cat_sides, 130.00, 100, 'Fries loaded with cheese, sauce & chicken topping.', 4),
+    ('French Fries', 'Sides', cat_sides, 70.00, 100, 'Classic crispy salted french fries.', 5),
+    ('Wrap', 'Burgers & Wraps', cat_wraps, 140.00, 100, 'Tortilla wrap with crispy chicken, veggies & sauce.', 6),
+    ('Burger', 'Burgers & Wraps', cat_wraps, 160.00, 100, 'Chicken burger with lettuce, tomato, cheese & sauce.', 7)
   ON CONFLICT DO NOTHING;
 END $$;
 
--- 7. Update store settings
+-- 9. Update store settings
 INSERT INTO store_settings (name, owner_name, phone, address, gst_enabled)
 SELECT 'Korean Fried Chicken', 'Sulficker Roshan N', '+91 9342489391',
   'Nanjappa Garden, Selvapuram, SBI Bank Opposite, Shivalaya Mahal Road, Komarapalayam, Coimbatore', false
 WHERE NOT EXISTS (SELECT 1 FROM store_settings);
 
--- 8. Ensure RLS policies allow public access
+-- 10. Ensure RLS policies allow public access
 ALTER TABLE products ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS products_public ON products;
 CREATE POLICY products_public ON products FOR ALL USING (true) WITH CHECK (true);

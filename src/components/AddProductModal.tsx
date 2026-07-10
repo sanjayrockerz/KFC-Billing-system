@@ -42,7 +42,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
         unit_label: 'pc'
       })
       if (dbErr) throw dbErr
-      await fetchProducts()
+      await fetchProducts(true)
       onSuccess()
       onClose()
     } catch (err: any) {

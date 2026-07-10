@@ -84,9 +84,8 @@ const recalc = (item: PosItem, nextQty: number): PosItem => {
 // ── Category colours ───────────────────────────────────────────────────────
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const CAT_COLOR: Record<string, string> = {
-  'Pooja Items': '#7C3AED', 'Herbal Powder': '#D97706', 'Herbal Oil': '#0D9488',
-  'Spices & Condiments': '#DC2626', 'Grains & Pulses': '#92400E',
-  'Honey & Liquids': '#B45309', 'Bundle Packages': '#1D4ED8',
+  'Chicken': '#DC2626', 'Sides': '#D97706',
+  'Burgers & Wraps': '#7C3AED', 'Beverages': '#0D9488',
 }
 
 // ══════════════════════════════════════════════════════════════════════════

@@ -74,8 +74,8 @@ CREATE TABLE IF NOT EXISTS products (
   benefits_ta TEXT DEFAULT '',
   price NUMERIC(10,2) NOT NULL DEFAULT 0,
   offer_price NUMERIC(10,2),
-  image TEXT DEFAULT '/assets/images/default-product.jpg',
-  image_url TEXT DEFAULT '/assets/images/default-product.jpg',
+  image TEXT DEFAULT '',
+  image_url TEXT DEFAULT '',
   unit_type TEXT DEFAULT 'unit' CHECK (unit_type IN ('unit','weight','volume','bundle')),
   unit_label TEXT DEFAULT 'piece',
   base_quantity NUMERIC(10,3) DEFAULT 1,
@@ -433,13 +433,13 @@ BEGIN
   SELECT id INTO cat_wraps FROM categories WHERE name_en = 'Burgers & Wraps' LIMIT 1;
   INSERT INTO products (name, category, category_id, price, stock, description, sort_order, image, image_url)
   VALUES
-    ('Bone Shot', 'Chicken', cat_chicken, 120.00, 100, 'Crispy Korean fried chicken bone-in pieces.', 1, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
-    ('Big Shot', 'Chicken', cat_chicken, 180.00, 100, 'Large boneless chicken pieces with Korean sauce.', 2, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
-    ('Strips', 'Chicken', cat_chicken, 150.00, 100, 'Tender crispy chicken strips with dip.', 3, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
-    ('Loaded Fries', 'Sides', cat_sides, 130.00, 100, 'Fries loaded with cheese, sauce & chicken topping.', 4, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
-    ('French Fries', 'Sides', cat_sides, 70.00, 100, 'Classic crispy salted french fries.', 5, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
-    ('Wrap', 'Burgers & Wraps', cat_wraps, 140.00, 100, 'Tortilla wrap with crispy chicken, veggies & sauce.', 6, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg'),
-    ('Burger', 'Burgers & Wraps', cat_wraps, 160.00, 100, 'Chicken burger with lettuce, tomato, cheese & sauce.', 7, '/assets/images/default-product.jpg', '/assets/images/default-product.jpg')
+    ('Bone Shot', 'Chicken', cat_chicken, 120.00, 100, 'Crispy Korean fried chicken bone-in pieces.', 1),
+    ('Big Shot', 'Chicken', cat_chicken, 180.00, 100, 'Large boneless chicken pieces with Korean sauce.', 2),
+    ('Strips', 'Chicken', cat_chicken, 150.00, 100, 'Tender crispy chicken strips with dip.', 3),
+    ('Loaded Fries', 'Sides', cat_sides, 130.00, 100, 'Fries loaded with cheese, sauce & chicken topping.', 4),
+    ('French Fries', 'Sides', cat_sides, 70.00, 100, 'Classic crispy salted french fries.', 5),
+    ('Wrap', 'Burgers & Wraps', cat_wraps, 140.00, 100, 'Tortilla wrap with crispy chicken, veggies & sauce.', 6),
+    ('Burger', 'Burgers & Wraps', cat_wraps, 160.00, 100, 'Chicken burger with lettuce, tomato, cheese & sauce.', 7)
   ON CONFLICT DO NOTHING;
 END $$;
 
