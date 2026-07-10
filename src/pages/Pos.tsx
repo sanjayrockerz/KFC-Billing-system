@@ -380,7 +380,7 @@ export default function Pos(props: PosProps = {}) {
     if (!items.length) { setError('Add at least one product.'); return }
     // Validate required phone
     const normalizedPhone = normalizePhone(customer.phone || '')
-    if (!normalizedPhone) { setError('Please enter a valid Malaysian mobile number (e.g. 0123456789 or +60 12-345 6789)'); return }
+    if (!normalizedPhone) { setError('Please enter a valid Indian mobile number (e.g. 9876543210 or +91 9876543210)'); return }
     // Validate payment amount
     if (!cashReceived.trim()) { setError('Enter the amount received from customer'); return }
     if (cashReceivedNum < total) { setError(`Insufficient payment. Customer still owes ${formatCurrency(total - cashReceivedNum)}`); return }
@@ -673,12 +673,12 @@ export default function Pos(props: PosProps = {}) {
                 <div>
                   <label className="block text-[13px] md:text-[10px] font-black text-[#6B7280] tracking-wider uppercase mb-1.5">Mobile Number (WhatsApp)</label>
                   <div className="relative">
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[16px] md:text-[13px] font-black text-[#1A1A1A] pointer-events-none z-10">+60</span>
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[16px] md:text-[13px] font-black text-[#1A1A1A] pointer-events-none z-10">+91</span>
                     <input 
                       type="text" 
                       value={customer.phone}
                       onChange={e => setCustomer({...customer, phone: e.target.value})}
-                      placeholder="12-345 6789"
+                      placeholder="9876543210"
                       className="w-full h-12 pl-14 pr-4 bg-white border border-[#F0E6C8]/60 rounded-xl focus:outline-none focus:border-[#D4A800] text-[16px] md:text-[13px] font-bold text-[#1A1A1A] placeholder:text-gray-400 placeholder:font-medium"
                     />
                   </div>
@@ -887,12 +887,12 @@ export default function Pos(props: PosProps = {}) {
                 <div className="p-3 border-b border-[#F0E6C8]/40">
                   <span className="text-[13px] md:text-[#6B7280] uppercase block mb-1">Phone Number</span>
                   <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[16px] md:text-[12px] font-black text-[#1A1A1A] pointer-events-none z-10">+60</span>
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[16px] md:text-[12px] font-black text-[#1A1A1A] pointer-events-none z-10">+91</span>
                     <input
                       type="text"
                       value={customer.phone}
                       onChange={e => setCustomer({...customer, phone: e.target.value})}
-                      placeholder="12-345 6789"
+                      placeholder="9876543210"
                       className={`w-full h-11 pl-11 pr-3 bg-white border rounded-lg text-[16px] md:text-[12px] font-bold text-[#1A1A1A] focus:outline-none ${customer.phone && !normalizePhone(customer.phone) ? 'border-red-400 bg-red-50' : 'border-[#F0E6C8]/60 focus:border-[#D4A800]'}`}
                     />
                   </div>

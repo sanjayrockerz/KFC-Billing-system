@@ -1,55 +1,53 @@
 import { BRAND_WHATSAPP_LINK } from './brand'
 
-const MY_CODE = '60'
-
 /**
- * Normalizes any Malaysian phone input to the 11-12 digit form 60XXXXXXXXX.
+ * Normalizes any Indian phone input to the 12-digit form 91XXXXXXXXXX.
  *
  * Accepted inputs:
- *   0123456789          → 60123456789
- *   012-345 6789        → 60123456789
- *   +60123456789        → 60123456789
- *   +60 12-345 6789     → 60123456789
- *   60123456789         → 60123456789 (already normalized)
- *   1123456789          → 601123456789
+ *   9876543210          → 919876543210
+ *   09876543210         → 919876543210
+ *   +919876543210       → 919876543210
+ *   +91 98765 43210     → 919876543210
+ *   919876543210        → 919876543210 (already normalized)
  *
  * Returns null for anything that cannot be reduced to a valid
- * Malaysian mobile number (starts with 1 after country code).
+ * 10-digit Indian subscriber number (first digit 6–9).
  */
 export function normalizePhone(input: string): string | null {
   if (!input) return null
 
+  // Strip everything except digits
   const raw = input.replace(/\D/g, '')
   if (!raw) return null
 
   let digits = raw
 
-  if (digits.startsWith('60')) {
-    // keep as-is
-  } else if (digits.startsWith('+60') || digits.startsWith('0060')) {
-    digits = '60' + digits.replace(/^0{0,2}60/, '')
-  } else if (digits.startsWith('0')) {
-    digits = '60' + digits.slice(1)
+  if (digits.length === 12 && digits.startsWith('91')) {
+    // Already 91XXXXXXXXXX — validate subscriber part below
+  } else if (digits.length === 11 && digits.startsWith('0')) {
+    // 0XXXXXXXXXX → drop leading 0, prepend 91
+    digits = '91' + digits.slice(1)
+  } else if (digits.length === 10) {
+    // XXXXXXXXXX → prepend 91
+    digits = '91' + digits
   } else {
-    // assume subscriber digits without country code (e.g. 1123456789)
-    digits = '60' + digits
+    return null
   }
 
-  // After +60, subscriber portion must start with 1 and be 9-10 digits
-  // Total E.164 with 60: 11-12 digits
-  if (!/^601\d{8,9}$/.test(digits)) return null
+  // Subscriber portion must start with 6–9 and be exactly 10 digits
+  if (!/^91[6-9]\d{9}$/.test(digits)) return null
 
   return digits
 }
 
-/** Returns true when the input can be normalized to a valid Malaysian number. */
+/** Returns true when the input can be normalized to a valid Indian number. */
 export function isValidPhone(input: string): boolean {
   return normalizePhone(input) !== null
 }
 
 /**
- * Returns the subscriber number without country code (after +60).
- * Useful for display or storing in DB alongside a known +60 prefix.
+ * Returns the 10-digit subscriber number (no country code).
+ * Useful for display or storing in DB alongside a known +91 prefix.
  */
 export function getSubscriberDigits(input: string): string | null {
   const normalized = normalizePhone(input)
@@ -57,7 +55,7 @@ export function getSubscriberDigits(input: string): string | null {
 }
 
 /**
- * Builds a wa.me URL for the given Malaysian phone number.
+ * Builds a wa.me URL for the given Indian phone number.
  * Falls back to the store's WhatsApp link if the number is invalid.
  */
 export function toWhatsAppUrl(phone: string, fallback?: string): string {

@@ -109,7 +109,7 @@ export default function Profile() {
     const normalizedPhone = normalizePhone(editPhone)
     const subscriberDigits = normalizedPhone ? (getSubscriberDigits(normalizedPhone) ?? '') : ''
     if (!trimName || trimName.length < 2) { setSaveErr('Name must be at least 2 characters.'); return }
-    if (editPhone && !normalizedPhone) { setSaveErr('Enter a valid Malaysian mobile number (e.g. 0123456789).'); return }
+    if (editPhone && !normalizedPhone) { setSaveErr('Enter a valid 10-digit Indian mobile number.'); return }
     if (!user) return
 
     setSaving(true); setSaveErr('')
@@ -361,18 +361,19 @@ export default function Profile() {
                     <div>
                       <label className="block text-[11px] font-bold text-textMuted uppercase tracking-wide mb-1.5">
                         Mobile Number
-                        <span className="ml-1 font-normal normal-case text-[10px] text-gray-400">Malaysian mobile (e.g. 0123456789)</span>
+                        <span className="ml-1 font-normal normal-case text-[10px] text-gray-400">10-digit Indian mobile</span>
                       </label>
                       <div className="flex gap-2">
                         <span className="flex items-center px-3 py-3 bg-[#F7F6F2] border-2 border-[#F0E6C8] rounded-xl text-[13px] font-bold text-textMuted shrink-0 select-none">
-                          🇲🇾 +60
+                          🇮🇳 +91
                         </span>
                         <input
                           type="tel"
+                          maxLength={10}
                           className="flex-1 px-4 py-3 rounded-xl border-2 border-[#F0E6C8] focus:border-yellow-darkDark outline-none text-[13px]"
                           value={editPhone}
                           onChange={e => { setEditPhone(e.target.value.replace(/\D/g, '')); setSaveErr('') }}
-                          placeholder="12-345 6789"
+                          placeholder="9876543210"
                         />
                       </div>
                     </div>

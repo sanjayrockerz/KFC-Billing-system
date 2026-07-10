@@ -128,7 +128,7 @@ export default function Checkout() {
     }
 
     if (!isValidPhone(form.phone)) {
-      setError('Please enter a valid Malaysian WhatsApp number (e.g. 0123456789 or +60 12-345 6789)')
+      setError('Please enter a valid Indian WhatsApp number (e.g. 9876543210 or +91 9876543210)')
       return
     }
 
@@ -322,12 +322,12 @@ export default function Checkout() {
                 </label>
                 <div className="flex gap-2">
                   <span className="flex items-center px-3 py-3 bg-[#F7F6F2] border-2 border-[#F0E6C8] rounded-xl text-[13px] font-bold text-textMuted shrink-0">
-                    🇲🇾 +60
+                    🇮🇳 +91
                   </span>
                   <input
                     value={form.phone}
                     onChange={e => setForm({ ...form, phone: e.target.value })}
-                    placeholder="12-345 6789"
+                    placeholder="9876543210"
                     className={`flex-1 px-4 py-2.5 sm:py-3 border-2 rounded-xl outline-none transition-colors ${
                       form.phone && !isValidPhone(form.phone)
                         ? 'border-red-400 focus:border-red-500'
@@ -339,7 +339,7 @@ export default function Checkout() {
                   />
                 </div>
                 {form.phone && !isValidPhone(form.phone) && (
-                  <p className="mt-1 text-xs text-red-500 font-medium">Invalid number — enter Malaysian mobile (e.g. 0123456789)</p>
+                  <p className="mt-1 text-xs text-red-500 font-medium">Invalid number — enter 10 digits or full number with +91</p>
                 )}
                 {form.phone && isValidPhone(form.phone) && (
                   <p className="mt-1 text-xs text-yellow-dark font-medium">✓ Valid Malaysian mobile number</p>
