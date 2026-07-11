@@ -925,8 +925,8 @@ export default function Pos(props: PosProps = {}) {
         </div>
 
         {/* RIGHT COLUMN (approx 32%) */}
-        <div className="flex-[1] flex flex-col gap-6 lg:sticky lg:top-4 lg:max-h-[calc(100vh-100px)] pb-24 lg:pb-0">
-          <div className="bg-[#FAF9F6] rounded-2xl border border-[#F0E6C8]/60 shadow-sm overflow-hidden flex flex-col h-full max-h-full">
+        <div className="flex-[1] flex min-h-0 h-[calc(100vh-8rem)] max-h-[calc(100vh-8rem)] flex-col gap-6 pb-24 lg:sticky lg:top-4 lg:h-[calc(100vh-7rem)] lg:max-h-none lg:pb-0">
+          <div className="bg-[#FAF9F6] rounded-2xl border border-[#F0E6C8]/60 shadow-sm overflow-hidden flex min-h-0 flex-col lg:h-full">
             
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-[#F0E6C8]/60 bg-white shrink-0">
@@ -941,7 +941,7 @@ export default function Pos(props: PosProps = {}) {
             </div>
 
             {/* Content body */}
-            <div className="p-4 flex flex-col gap-3 bg-white flex-1 overflow-y-auto">
+            <div className="p-4 flex min-h-0 flex-col gap-3 bg-white flex-1 overflow-y-auto">
               
               {/* Info Table */}
               <div className="border border-[#F0E6C8]/40 rounded-xl overflow-hidden text-[11px] font-bold">
@@ -1109,12 +1109,6 @@ export default function Pos(props: PosProps = {}) {
 
               <div className="h-px bg-[#F0E6C8]/60 my-2"></div>
 
-              {/* Grand Total */}
-              <div className="flex items-center justify-between">
-                <span className="text-[14px] font-black text-[#1A1A1A] uppercase tracking-wider">Grand Total</span>
-                <span className="text-[24px] font-black text-[#D4A800] tracking-tight">{formatCurrency(total)}</span>
-              </div>
-
               {/* Cash Payment */}
               <div className="mt-2">
                 <div className="border border-[#F0E6C8]/60 rounded-xl p-4 bg-white relative">
@@ -1144,7 +1138,11 @@ export default function Pos(props: PosProps = {}) {
             </div>
             
             {/* Action Buttons Fixed Footer */}
-            <div className="sticky bottom-0 p-4 md:p-5 border-t border-[#F0E6C8]/60 bg-white shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+            <div className="sticky bottom-0 z-20 p-4 md:p-5 border-t border-[#F0E6C8]/60 bg-white shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+              <div className="flex items-center justify-between gap-3 mb-3">
+                <span className="text-[13px] font-black text-[#1A1A1A] uppercase tracking-wider">Grand Total</span>
+                <span className="text-[22px] font-black text-[#D4A800] tracking-tight">{formatCurrency(total)}</span>
+              </div>
               <button 
                 type="button"
                 onClick={generateBill}
