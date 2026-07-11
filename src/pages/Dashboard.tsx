@@ -2689,11 +2689,18 @@ export default function Dashboard() {
                             </div>
                           </td>
                           <td className="px-3 py-3">
-                            <button type="button" onClick={() => setInvoiceDetailId(isInvoiceExpanded ? null : o.id)}
-                              className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10px] font-black transition-colors ${isInvoiceExpanded ? 'bg-[#1A1A1A] text-white' : 'bg-blue-50 text-blue-700 hover:bg-blue-100'}`}>
-                              {isInvoiceExpanded ? <X size={12} /> : <Eye size={12} />}
-                              {isInvoiceExpanded ? 'Close' : 'View Details'}
-                            </button>
+                            <div className="flex items-center gap-1.5">
+                              <Link to={`/invoice/${o.invoice_no}`}
+                                className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10px] font-black text-white bg-[#D4A800] hover:bg-[#C49600] transition-colors"
+                                title="View Full Invoice">
+                                <FileText size={12} /> View
+                              </Link>
+                              <button type="button" onClick={() => setInvoiceDetailId(isInvoiceExpanded ? null : o.id)}
+                                className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10px] font-black transition-colors ${isInvoiceExpanded ? 'bg-[#1A1A1A] text-white' : 'bg-blue-50 text-blue-700 hover:bg-blue-100'}`}>
+                                {isInvoiceExpanded ? <X size={12} /> : <Eye size={12} />}
+                                {isInvoiceExpanded ? 'Close' : 'Details'}
+                              </button>
+                            </div>
                           </td>
                         </tr>
                         {isInvoiceExpanded && (

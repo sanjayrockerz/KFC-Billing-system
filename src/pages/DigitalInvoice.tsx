@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { Invoice } from '../components/Invoice'
-import { Printer, ArrowLeft, Receipt } from 'lucide-react'
+import { Printer, ArrowLeft, Receipt, Share2, MessageCircle } from 'lucide-react'
 import { printThermalReceipt } from '../lib/thermalPrint'
 import { invoicePdfFile } from '../lib/invoicePdf'
 import { normalizeStructuredOrderItem } from '../lib/retail'
+import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
+import { formatCurrency } from '../lib/retail'
+import { uploadInvoicePdf } from '../lib/storage'
+import { normalizePhone, toWhatsAppUrl } from '../lib/phone'
 
 type DigitalInvoiceRow = {
   invoice_no: string; customer_name: string; phone: string; address: string; items: unknown
@@ -68,12 +72,65 @@ export default function DigitalInvoice() {
     const url = URL.createObjectURL(file); const link = document.createElement('a'); link.href = url; link.download = file.name; link.click(); setTimeout(() => URL.revokeObjectURL(url), 1000)
   }
 
+  const shareOnWhatsApp = async () => {
+    if (!invoice) return
+
+    const items = normalizedItems.map(item => ({
+      name: item.name,
+      qty: item.quantity,
+      unit: item.unit,
+      unitType: item.unit_type as 'unit' | 'weight' | 'volume' | 'bundle',
+      rate: item.base_price,
+      lineTotal: item.line_total,
+    }))
+
+    const subtotalCalc = items.reduce((sum, item) => sum + item.lineTotal, 0)
+
+    const whatsAppMessage = buildProfessionalWhatsAppMessage({
+      customerName: invoice.customer_name,
+      phone: invoice.phone,
+      invoiceNumber: invoice.invoice_no,
+      invoiceDate: invoice.created_at,
+      paymentMode: invoice.payment_mode || invoice.payment_method || 'POS',
+      items,
+      subtotal: subtotalCalc,
+      couponDiscount: discount,
+      manualDiscountAmount: Number(invoice.manual_discount_amount || 0),
+      shipping,
+      gstAmount: Number(invoice.total_gst || invoice.gst_amount || 0),
+      total: Number(invoice.total || 0),
+    })
+
+    let pdfUrl = ''
+    try {
+      const pdfFile = await invoicePdfFile({
+        invoiceNo: invoice.invoice_no, date: invoice.created_at, customerName: invoice.customer_name,
+        phone: invoice.phone, address: invoice.address, items: normalizedItems as unknown as Array<Record<string, unknown>>,
+        subtotal: subtotalCalc, shipping, total: Number(invoice.total || 0), discountAmount: discount,
+        manualDiscountAmount: Number(invoice.manual_discount_amount || 0), gstAmount: Number(invoice.total_gst || invoice.gst_amount || 0),
+        couponCode: invoice.coupon_code, paymentMode: invoice.payment_mode || invoice.payment_method || undefined,
+      })
+      pdfUrl = await uploadInvoicePdf(pdfFile, invoice.invoice_no)
+    } catch (err) {
+      console.error('Failed to upload invoice PDF:', err)
+    }
+
+    const messageWithLink = pdfUrl
+      ? `${whatsAppMessage}\n\n📄 Download Invoice PDF: ${pdfUrl}`
+      : whatsAppMessage
+
+    const phoneNumber = normalizePhone(invoice.phone) || ''
+    const waUrl = toWhatsAppUrl(phoneNumber, messageWithLink)
+    window.open(waUrl, '_blank')
+  }
+
   return (
     <div className="min-h-screen bg-[#f9faf6] font-sans pb-12 print:bg-white print:pb-0">
       <div className="bg-[#f9faf6] p-4 sticky top-0 z-50 print:hidden flex items-center justify-between max-w-4xl mx-auto">
         <Link to="/" className="flex items-center gap-2 text-yellow-dark hover:text-[#2d5a27] font-semibold text-sm transition-colors bg-white border border-[#F0E6C8]/40 px-4 py-2 rounded-full shadow-sm"><ArrowLeft size={16} /> Back</Link>
         <div className="flex items-center gap-2">
           <button onClick={() => void downloadPdf()} className="flex items-center gap-2 bg-[#881337] text-white px-5 py-2 rounded-full font-bold text-sm shadow-md hover:bg-[#6c0f2c] transition-colors"><Printer size={16} /> PDF</button>
+          <button onClick={() => void shareOnWhatsApp()} className="flex items-center gap-2 bg-green-600 text-white px-5 py-2 rounded-full font-bold text-sm shadow-md hover:bg-green-700 transition-colors"><MessageCircle size={16} /> WhatsApp</button>
           <button onClick={() => printThermalReceipt({ invoiceNo: invoice.invoice_no, date: invoice.created_at, customerName: invoice.customer_name, phone: invoice.phone, items: normalizedItems.map(item => ({ name: item.name, qty: item.quantity, unit: item.unit, price: item.base_price, line_total: item.line_total })), subtotal, shipping, couponDiscount: discount, totalGst: Number(invoice.total_gst || invoice.gst_amount || 0), total: Number(invoice.total || 0) })} className="flex items-center gap-2 bg-yellow-dark text-white px-5 py-2 rounded-full font-bold text-sm shadow-md hover:bg-yellow-dark transition-colors"><Receipt size={16} /> Print Receipt</button>
         </div>
       </div>
