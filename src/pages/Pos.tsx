@@ -21,11 +21,9 @@ import {
   formatQuantityDisplay,
 } from '../lib/retail'
 import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
-import { generateInvoicePdf } from '../lib/generateInvoicePdf'
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { getProductImage, onImgError } from '../lib/productImages'
 import { normalizePhone, toWhatsAppUrl } from '../lib/phone'
-import { uploadInvoicePdf } from '../lib/storage'
 import { useLangStore } from '../store/langStore'
 import type { ProductVariant } from '../services/variantService'
 
@@ -488,7 +486,7 @@ const sendPosWhatsApp = async (inv: InvoiceSnap) => {
         gstAmount: inv.gstAmount,
         total: inv.total,
       })
-      const pdfBlob = await generateInvoicePdf({
+      /* const pdfBlob = await generateInvoicePdf({
         invoiceNo: inv.invoiceNo,
         date: inv.date,
         customerName: inv.customerName,
@@ -514,15 +512,9 @@ const sendPosWhatsApp = async (inv: InvoiceSnap) => {
         paymentMode: inv.paymentMode,
         amountReceived: inv.amountReceived,
         balanceReturned: inv.balanceReturned,
-      })
-      // Upload PDF to storage and get public URL
-      let pdfUrl = ''
-      try {
-        const pdfFile = new File([pdfBlob], `${inv.invoiceNo}.pdf`, { type: 'application/pdf' })
-        pdfUrl = await uploadInvoicePdf(pdfFile, inv.invoiceNo)
-      } catch (err) {
-        console.error('Failed to upload invoice PDF:', err)
-      }
+      }) */
+      /* Uploading a PDF is intentionally not part of the WhatsApp button. */
+      const pdfUrl = ''
       // Append PDF link to message
       const messageWithLink = pdfUrl
         ? `${message}\n\n📄 Download Invoice PDF: ${pdfUrl}`

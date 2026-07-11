@@ -228,33 +228,6 @@ export default function Dashboard() {
   const [searchResults, setSearchResults] = useState<DashboardOrder[]>([])
   const [searchLoading, setSearchLoading] = useState(false)
 
-  // Password protection for sensitive tabs
-  const [protectedTabs, setProtectedTabs] = useState<Set<TabKey>>(new Set())
-  const [showPasswordModal, setShowPasswordModal] = useState<TabKey | null>(null)
-  const [passwordInput, setPasswordInput] = useState('')
-
-  const PROTECTED_TAB_KEYS: TabKey[] = ['pos_analytics', 'coupons', 'history']
-  const DASHBOARD_PASSWORD = import.meta.env.VITE_DASHBOARD_PASSWORD || ''
-
-  const handleTabClick = (tabKey: TabKey) => {
-    if (PROTECTED_TAB_KEYS.includes(tabKey) && !protectedTabs.has(tabKey)) {
-      setShowPasswordModal(tabKey)
-      return
-    }
-    setTab(tabKey)
-  }
-
-  const verifyPassword = () => {
-    if (passwordInput === DASHBOARD_PASSWORD) {
-      setProtectedTabs(prev => new Set(prev).add(showPasswordModal!))
-      setTab(showPasswordModal!)
-      setShowPasswordModal(null)
-      setPasswordInput('')
-    } else {
-      alert('Incorrect password')
-      setPasswordInput('')
-    }
-  }
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     try {
       return window.localStorage.getItem('dashboard-sidebar-collapsed') === '1'
