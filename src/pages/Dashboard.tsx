@@ -286,13 +286,14 @@ export default function Dashboard() {
     const completedOrders = nonCancelled.filter(o => isCompletedStatus(o.status))
     const pendingOrders   = nonCancelled.filter(o => normalizeStatus(o.status) === 'pending')
 
-    // WhatsApp = online_request type (all statuses, no revenue)
+    // Keep all online_request rows visible in WhatsApp Center. Completed ones
+    // are also included in billable analytics below as online sales.
     const waOrders = dated.filter(o => normalizeOrderType(o.order_type) === 'online_request')
 
-    // Billable = completed and NOT online_request
-    const billableCompleted = completedOrders.filter(o => normalizeOrderType(o.order_type) !== 'online_request')
+    // Billable = every completed sale except the legacy request-only type.
+    const billableCompleted = completedOrders.filter(o => normalizeOrderType(o.order_type) !== 'whatsapp_request')
     const offlinePOS  = billableCompleted.filter(o => normalizeOrderType(o.order_type) === 'pos_sale' && normalizeOrderMode(o.order_mode) !== 'online')
-    const onlinePOS   = billableCompleted.filter(o => normalizeOrderType(o.order_type) === 'pos_sale' && normalizeOrderMode(o.order_mode) === 'online')
+    const onlinePOS   = billableCompleted.filter(o => normalizeOrderMode(o.order_mode) === 'online' || normalizeOrderType(o.order_type) === 'online_request')
     const manualSales = billableCompleted.filter(o => normalizeOrderType(o.order_type) === 'manual_sale')
 
     // Revenue (WhatsApp never included)
@@ -300,6 +301,7 @@ export default function Dashboard() {
     const posRevenue         = offlinePOS.reduce((s, o) => s + toNumber(o.total, 0), 0)
     const onlinePosRevenue   = onlinePOS.reduce((s, o) => s + toNumber(o.total, 0), 0)
     const manualRevenue      = manualSales.reduce((s, o) => s + toNumber(o.total, 0), 0)
+    const avgRevenuePerBill  = billableCompleted.length > 0 ? completedRevenue / billableCompleted.length : 0
 
     const toLocalDateKey = (value: string | Date) => {
       const date = value instanceof Date ? value : new Date(value)
@@ -570,6 +572,7 @@ export default function Dashboard() {
       todayManualRevenue,
       todayProductHourlyTrend,
       avgItemsPerBill,
+      avgRevenuePerBill,
       categoryDist,
       totalCouponDiscounts,
       totalCouponOrders,
@@ -2305,7 +2308,7 @@ export default function Dashboard() {
                   {[
                     { label: 'Total Products Sold', value: String(Math.round(analytics.totalProductsSold)), icon: <Package size={18} />, from: 'from-emerald-500 to-teal-600' },
                     { label: 'Total Revenue', value: formatCurrency(analytics.totalCompletedRevenue), icon: <IndianRupee size={18} />, from: 'from-blue-500 to-indigo-600' },
-                    { label: 'Avg Items / Bill', value: analytics.avgItemsPerBill.toFixed(1), icon: <ShoppingCart size={18} />, from: 'from-violet-500 to-purple-600' },
+                    { label: 'Avg Revenue / Bill', value: formatCurrency(analytics.avgRevenuePerBill), icon: <IndianRupee size={18} />, from: 'from-violet-500 to-purple-600' },
                     { label: 'Top Product', value: analytics.bestProduct.length > 15 ? analytics.bestProduct.slice(0, 15) + '...' : analytics.bestProduct, icon: <Trophy size={18} />, from: 'from-amber-500 to-orange-600' },
                   ].map((card, i) => (
                     <div key={i} className={`relative overflow-hidden rounded-2xl p-5 shadow-lg border border-white/20 bg-gradient-to-br ${card.from}`}>
@@ -2383,6 +2386,7 @@ export default function Dashboard() {
                             <th className="px-4 py-2.5 font-black">Qty Sold</th>
                             <th className="px-4 py-2.5 font-black">Revenue</th>
                             <th className="px-4 py-2.5 font-black">Bills</th>
+                            <th className="px-4 py-2.5 font-black">Avg / Bill</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-[#F0E6C8]/20">
@@ -2394,6 +2398,7 @@ export default function Dashboard() {
                               <td className="px-4 py-2 font-bold">{Math.round(p.qty)}</td>
                               <td className="px-4 py-2 font-bold text-yellow-dark">{formatCurrency(p.revenue)}</td>
                               <td className="px-4 py-2 text-[#6B7280]">{p.billCount}</td>
+                              <td className="px-4 py-2 font-bold text-[#245C2A]">{formatCurrency(p.billCount > 0 ? p.revenue / p.billCount : 0)}</td>
                             </tr>
                           ))}
                         </tbody>

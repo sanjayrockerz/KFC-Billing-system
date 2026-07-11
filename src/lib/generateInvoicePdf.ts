@@ -31,7 +31,7 @@ export interface PdfInvoiceData {
 }
 
 export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Blob> {
-  return createInvoicePdf({
+  return await createInvoicePdf({
     invoiceNo: data.invoiceNo,
     date: data.date,
     customerName: data.customerName,
