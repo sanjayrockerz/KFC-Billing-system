@@ -1,5 +1,8 @@
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import type { StructuredOrderItem } from '../lib/retail'
+import { invoicePdfFile } from '../lib/invoicePdf'
+import { uploadInvoicePdf } from '../lib/storage'
+import { normalizeStructuredOrderItem } from '../lib/retail'
 
 type CreateOrderInput = {
   customerName: string
@@ -25,6 +28,7 @@ type CreatedOrder = {
   orderId: string
   invoiceNo: string
   createdAt: string
+  invoiceUrl?: string
 }
 
 export const createOrderWithStock = async (input: CreateOrderInput): Promise<CreatedOrder> => {
@@ -44,7 +48,6 @@ export const createOrderWithStock = async (input: CreateOrderInput): Promise<Cre
   const couponPercentage = Number(input.couponPercentage || 0)
   const totalGst       = Number(input.totalGst || 0)
   const gstEnabled     = Boolean(input.gstEnabled)
-  const effectiveDiscount = discountAmount + manualDiscountAmount
 
   if (!isSupabaseConfigured) {
     throw new Error('Supabase is required to create orders')
@@ -98,9 +101,39 @@ export const createOrderWithStock = async (input: CreateOrderInput): Promise<Cre
     throw new Error('Order RPC returned an invalid payload')
   }
 
+  // Generate and upload invoice PDF
+  let invoiceUrl: string | undefined
+  try {
+    const pdfFile = await invoicePdfFile({
+      invoiceNo,
+      date: new Date().toISOString(),
+      customerName,
+      phone,
+      address,
+      items: input.items.map(item => normalizeStructuredOrderItem(item as unknown as Record<string, unknown>)),
+      subtotal: input.items.reduce((sum, item) => sum + (item.line_total || 0), 0),
+      shipping: deliveryCharge,
+      discountAmount,
+      manualDiscountAmount,
+      couponCode,
+      gstAmount: totalGst,
+      total: input.items.reduce((sum, item) => sum + (item.line_total || 0), 0) + deliveryCharge - discountAmount - manualDiscountAmount + totalGst,
+      paymentMode: input.orderMode === 'online' ? 'Online' : 'POS',
+    })
+    invoiceUrl = await uploadInvoicePdf(pdfFile, invoiceNo)
+    
+    // Update order with invoice URL
+    if (invoiceUrl && isSupabaseConfigured) {
+      await supabase.from('orders').update({ invoice_url: invoiceUrl }).eq('id', orderId)
+    }
+  } catch (err) {
+    console.error('Failed to generate/upload invoice PDF:', err)
+  }
+
   return {
     orderId,
     invoiceNo,
     createdAt: new Date().toISOString(),
+    invoiceUrl,
   }
 }

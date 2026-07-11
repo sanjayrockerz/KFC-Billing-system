@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { Link } from 'react-router-dom'
 import {
-  Search, Trash2, Plus, Receipt, Printer, User,
+  Download, Search, Trash2, Plus, Receipt, Printer, User,
   RefreshCw, ShoppingBag, MessageCircle,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Wifi, WifiOff, Layers, X, ChevronDown,
@@ -61,6 +61,7 @@ type InvoiceSnap = {
   amountReceived: number
   balanceReturned: number
   paymentMode: string
+  invoiceUrl?: string
 }
 
 // ── Helpers ────────────────────────────────────────────────────────────────
@@ -444,6 +445,7 @@ export default function Pos(props: PosProps = {}) {
         amountReceived: cashReceivedNum,
         balanceReturned: balanceToReturn,
         paymentMode: orderMode === 'online' ? 'Online' : cashReceivedNum > 0 ? 'Cash' : 'POS',
+        invoiceUrl: created.invoiceUrl,
       })
       setItems([])
       setCustomer({ name: '', phone: '', address: '' })
@@ -609,12 +611,17 @@ const sendPosWhatsApp = async (inv: InvoiceSnap) => {
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3">
+{/* Actions */}
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-4 sm:gap-3">
             <button onClick={() => void sendPosWhatsApp(invoice)} disabled={sharingInvoice}
               className="flex min-w-0 w-full items-center justify-center gap-2 py-3 px-2 rounded-xl bg-yellow/100 hover:bg-green-600 disabled:opacity-60 text-white font-bold text-xs sm:text-sm transition-colors">
               <MessageCircle size={16} /> {sharingInvoice ? 'Preparing PDF…' : 'WhatsApp + PDF'}
             </button>
+            {invoice.invoiceUrl && (
+              <a href={invoice.invoiceUrl} target="_blank" rel="noopener noreferrer" className="flex min-w-0 w-full items-center justify-center gap-2 py-3 px-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs sm:text-sm transition-colors">
+                <Download size={16} /> Download PDF
+              </a>
+            )}
             <button onClick={() => {
               printThermalReceipt({
                 invoiceNo: invoice.invoiceNo,

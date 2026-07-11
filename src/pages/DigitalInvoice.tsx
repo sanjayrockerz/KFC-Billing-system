@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react'
-import { useParams, Link, useNavigate } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { supabase, isSupabaseConfigured } from '../lib/supabase'
 import { Invoice } from '../components/Invoice'
-import { Printer, ArrowLeft, Receipt, Share2, MessageCircle } from 'lucide-react'
+import { Printer, ArrowLeft, Receipt, MessageCircle, Download } from 'lucide-react'
 import { printThermalReceipt } from '../lib/thermalPrint'
 import { invoicePdfFile } from '../lib/invoicePdf'
 import { normalizeStructuredOrderItem } from '../lib/retail'
 import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
-import { formatCurrency } from '../lib/retail'
 import { uploadInvoicePdf } from '../lib/storage'
 import { normalizePhone, toWhatsAppUrl } from '../lib/phone'
 
@@ -17,6 +16,7 @@ type DigitalInvoiceRow = {
   discount_amount?: number | null; manual_discount_amount?: number | null
   total_gst?: number | null; gst_amount?: number | null; coupon_code?: string | null
   payment_mode?: string | null; payment_method?: string | null; status?: string | null; created_at: string
+  invoice_url?: string | null
 }
 
 const orderItems = (value: unknown): Record<string, unknown>[] => {
@@ -62,6 +62,17 @@ export default function DigitalInvoice() {
   const subtotal = normalizedItems.reduce((sum, item) => sum + item.line_total, 0) || Number(invoice.total || 0) - shipping + discount
 
   const downloadPdf = async () => {
+    // If invoice URL is stored, use it directly
+    if (invoice.invoice_url) {
+      const link = document.createElement('a')
+      link.href = invoice.invoice_url
+      link.download = `Invoice-${invoice.invoice_no}.pdf`
+      link.target = '_blank'
+      link.click()
+      return
+    }
+
+    // Otherwise generate on-the-fly
     const file = await invoicePdfFile({
       invoiceNo: invoice.invoice_no, date: invoice.created_at, customerName: invoice.customer_name,
       phone: invoice.phone, address: invoice.address, items: normalizedItems as unknown as Array<Record<string, unknown>>,
@@ -101,18 +112,21 @@ export default function DigitalInvoice() {
       total: Number(invoice.total || 0),
     })
 
-    let pdfUrl = ''
-    try {
-      const pdfFile = await invoicePdfFile({
-        invoiceNo: invoice.invoice_no, date: invoice.created_at, customerName: invoice.customer_name,
-        phone: invoice.phone, address: invoice.address, items: normalizedItems as unknown as Array<Record<string, unknown>>,
-        subtotal: subtotalCalc, shipping, total: Number(invoice.total || 0), discountAmount: discount,
-        manualDiscountAmount: Number(invoice.manual_discount_amount || 0), gstAmount: Number(invoice.total_gst || invoice.gst_amount || 0),
-        couponCode: invoice.coupon_code, paymentMode: invoice.payment_mode || invoice.payment_method || undefined,
-      })
-      pdfUrl = await uploadInvoicePdf(pdfFile, invoice.invoice_no)
-    } catch (err) {
-      console.error('Failed to upload invoice PDF:', err)
+    // Use stored invoice URL if available
+    let pdfUrl = invoice.invoice_url || ''
+    if (!pdfUrl) {
+      try {
+        const pdfFile = await invoicePdfFile({
+          invoiceNo: invoice.invoice_no, date: invoice.created_at, customerName: invoice.customer_name,
+          phone: invoice.phone, address: invoice.address, items: normalizedItems as unknown as Array<Record<string, unknown>>,
+          subtotal: subtotalCalc, shipping, total: Number(invoice.total || 0), discountAmount: discount,
+          manualDiscountAmount: Number(invoice.manual_discount_amount || 0), gstAmount: Number(invoice.total_gst || invoice.gst_amount || 0),
+          couponCode: invoice.coupon_code, paymentMode: invoice.payment_mode || invoice.payment_method || undefined,
+        })
+        pdfUrl = await uploadInvoicePdf(pdfFile, invoice.invoice_no)
+      } catch (err) {
+        console.error('Failed to upload invoice PDF:', err)
+      }
     }
 
     const messageWithLink = pdfUrl
@@ -130,6 +144,9 @@ export default function DigitalInvoice() {
         <Link to="/" className="flex items-center gap-2 text-yellow-dark hover:text-[#2d5a27] font-semibold text-sm transition-colors bg-white border border-[#F0E6C8]/40 px-4 py-2 rounded-full shadow-sm"><ArrowLeft size={16} /> Back</Link>
         <div className="flex items-center gap-2">
           <button onClick={() => void downloadPdf()} className="flex items-center gap-2 bg-[#881337] text-white px-5 py-2 rounded-full font-bold text-sm shadow-md hover:bg-[#6c0f2c] transition-colors"><Printer size={16} /> PDF</button>
+          {invoice.invoice_url && (
+            <a href={invoice.invoice_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-blue-600 text-white px-5 py-2 rounded-full font-bold text-sm shadow-md hover:bg-blue-700 transition-colors"><Download size={16} /> Download</a>
+          )}
           <button onClick={() => void shareOnWhatsApp()} className="flex items-center gap-2 bg-green-600 text-white px-5 py-2 rounded-full font-bold text-sm shadow-md hover:bg-green-700 transition-colors"><MessageCircle size={16} /> WhatsApp</button>
           <button onClick={() => printThermalReceipt({ invoiceNo: invoice.invoice_no, date: invoice.created_at, customerName: invoice.customer_name, phone: invoice.phone, items: normalizedItems.map(item => ({ name: item.name, qty: item.quantity, unit: item.unit, price: item.base_price, line_total: item.line_total })), subtotal, shipping, couponDiscount: discount, totalGst: Number(invoice.total_gst || invoice.gst_amount || 0), total: Number(invoice.total || 0) })} className="flex items-center gap-2 bg-yellow-dark text-white px-5 py-2 rounded-full font-bold text-sm shadow-md hover:bg-yellow-dark transition-colors"><Receipt size={16} /> Print Receipt</button>
         </div>
