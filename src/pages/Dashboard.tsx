@@ -446,13 +446,17 @@ export default function Dashboard() {
       .map(([name, data]) => ({ name, value: data.revenue }))
 
     // Trend charts
+    // Always render a complete Jan–Dec calendar for one year. When the year
+    // changes, this automatically switches to the new year without trailing
+    // months from the previous year.
+    const chartYear = analyticsDateFrom ? Number(analyticsDateFrom.slice(0, 4)) || new Date().getFullYear() : new Date().getFullYear()
     const monthlyRevenueMap = new Map<string, number>()
-    billableCompleted.forEach(o => {
+    billableCompleted.filter(o => new Date(o.created_at).getFullYear() === chartYear).forEach(o => {
       const k = toLocalMonthKey(o.created_at)
       monthlyRevenueMap.set(k, (monthlyRevenueMap.get(k) || 0) + toNumber(o.total, 0))
     })
     const monthlyTrend = Array.from({ length: 12 }, (_, i) => {
-      const d = new Date(); d.setMonth(d.getMonth() - (11 - i))
+      const d = new Date(chartYear, i, 1)
       const k = toLocalMonthKey(d)
       return { key: k, month: d.toLocaleDateString('en-IN', { month: 'short' }), revenue: monthlyRevenueMap.get(k) || 0 }
     })
@@ -583,6 +587,7 @@ export default function Dashboard() {
       bestCategory,
       bestProduct,
       monthlyTrend,
+      monthlyTrendYear: chartYear,
       channelDistribution,
       statusDistribution,
       topCoupons,
@@ -1914,7 +1919,7 @@ export default function Dashboard() {
                 <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
                   <div className="xl:col-span-2 bg-white rounded-card border border-borderLight p-6 shadow-soft">
                     <div className="flex items-center gap-3 mb-6">
-                      <h3 className="text-[16px] font-bold text-[#111111]">Revenue Trend This Year 2026</h3>
+                      <h3 className="text-[16px] font-bold text-[#111111]">Revenue Trend {analytics.monthlyTrendYear}</h3>
                     </div>
                     <div className="flex items-end gap-4 mb-4">
                       <span className="text-[24px] font-bold text-[#111111]">{formatCurrency(analytics.totalCompletedRevenue)}</span>

@@ -17,11 +17,16 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
   const [editForm, setEditForm] = useState({ name: '', category: '', price: '' })
   const [editLoading, setEditLoading] = useState(false)
   const [editError, setEditError] = useState('')
+  const [categoryRows, setCategoryRows] = useState<{ id: string | number; name_en: string; is_active?: boolean }[]>([])
+  const [newCategory, setNewCategory] = useState('')
+  const [addingCategory, setAddingCategory] = useState(false)
 
   const categories = useMemo(() => {
-    const cats = Array.from(new Set(products.filter(p => p.isActive).map(p => p.category))).filter(Boolean)
+    const productCats = products.filter(p => p.isActive).map(p => p.category)
+    const managedCats = categoryRows.filter(c => c.is_active !== false).map(c => c.name_en)
+    const cats = Array.from(new Set([...managedCats, ...productCats])).filter(Boolean)
     return ['All', ...cats]
-  }, [products])
+  }, [products, categoryRows])
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -70,7 +75,30 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
     await fetchProducts(true)
   }
 
-  useEffect(() => { if (isOpen) void fetchProducts() }, [isOpen])
+  const addCategory = async () => {
+    const name = newCategory.trim()
+    if (!name) return
+    setAddingCategory(true)
+    const { data, error: categoryError } = await supabase.from('categories')
+      .insert({ name_en: name, name_ta: '', is_active: true })
+      .select('id, name_en, is_active')
+      .single()
+    if (categoryError) setEditError(categoryError.message)
+    else if (data) {
+      setCategoryRows(prev => [...prev, data])
+      setEditForm(prev => ({ ...prev, category: data.name_en }))
+      setNewCategory('')
+    }
+    setAddingCategory(false)
+  }
+
+  useEffect(() => {
+    if (!isOpen) return
+    void fetchProducts()
+    void supabase.from('categories').select('id, name_en, is_active').order('sort_order').then(({ data }) => {
+      setCategoryRows((data || []) as { id: string | number; name_en: string; is_active?: boolean }[])
+    })
+  }, [isOpen, fetchProducts])
 
   if (!isOpen) return null
 
@@ -97,9 +125,20 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-[10px] font-black text-[#6B7280] tracking-wider uppercase mb-1.5">Category</label>
-                  <input type="text" value={editForm.category}
-                    onChange={e => setEditForm({...editForm, category: e.target.value})}
-                    className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#F0E6C8]/60 rounded-xl focus:outline-none focus:border-[#D4A800] text-[13px] font-bold" />
+                  <div className="flex gap-2">
+                    <select required value={editForm.category} onChange={e => setEditForm({...editForm, category: e.target.value})}
+                      className="min-w-0 flex-1 px-4 py-3 bg-[#F7F6F2] border border-[#F0E6C8]/60 rounded-xl focus:outline-none focus:border-[#D4A800] text-[13px] font-bold">
+                      <option value="">Select category...</option>
+                      {categories.filter(c => c !== 'All').map(category => <option key={category} value={category}>{category}</option>)}
+                    </select>
+                  </div>
+                  <div className="mt-2 flex gap-2">
+                    <input value={newCategory} onChange={e => setNewCategory(e.target.value)} placeholder="New category name"
+                      onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void addCategory() } }}
+                      className="min-w-0 flex-1 rounded-xl border border-[#F0E6C8]/60 bg-white px-3 py-2 text-[12px] font-semibold outline-none focus:border-[#D4A800]" />
+                    <button type="button" disabled={addingCategory || !newCategory.trim()} onClick={() => void addCategory()}
+                      className="rounded-xl bg-[#1A1A1A] px-3 py-2 text-[11px] font-black text-white disabled:opacity-50">{addingCategory ? 'Adding…' : 'Add'}</button>
+                  </div>
                 </div>
                 <div>
                   <label className="block text-[10px] font-black text-[#6B7280] tracking-wider uppercase mb-1.5">Price (₹)</label>

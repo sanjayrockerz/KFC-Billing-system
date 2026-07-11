@@ -143,7 +143,6 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Blob> {
   // Column positions (measured from left margin m)
   const clSn = 0
   const clProd = 8
-  const clProdW = cw - 8 - 80
   const clQty = cw - 80
   const clRate = cw - 56
   const clAmt = cw - 28
@@ -151,21 +150,24 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Blob> {
   // Table header row
   doc.setFillColor(245, 243, 240)
   doc.rect(m, y - 3.5, cw, 6.5, 'F')
-  setColor(GREY); bold(7.5)
+  setColor(GREY); bold(8)
   text('#', m + clSn + 2, y)
   text('Product', m + clProd + 2, y)
   text('Qty', m + clQty - 1, y, 'right')
   text('Rate', m + clRate - 1, y, 'right')
   text('Amount', m + clAmt - 1, y, 'right')
 
-  const rowH = 6.5
+  const rowH = 8
   y += rowH
 
   // Table rows
   data.items.forEach((item, idx) => {
     if (y > ph - 55) { doc.addPage(); y = m + 10; line(y - 4); y += 6 }
 
-    const rowBottom = y + (item.nameTa ? 8 : rowH) - 1
+    const productLines = doc.splitTextToSize(item.name, clQty - clProd - 6) as string[]
+    const productHeight = productLines.length * 4.2 + (item.nameTa ? 4 : 0)
+    const currentRowH = Math.max(rowH, productHeight + 2)
+    const rowBottom = y + currentRowH - 1
 
     // Light row line
     doc.setDrawColor(243, 240, 235); doc.setLineWidth(0.2)
@@ -173,18 +175,18 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Blob> {
 
     setColor(DARK); norm(8)
     text(String(idx + 1), m + clSn + 2, y + 3.5)
-    setColor(DARK); bold(8)
-    text(item.name, m + clProd + 2, y + 3.5, 'left')
+    setColor(DARK); bold(9)
+    doc.text(productLines, m + clProd + 2, y + 4.5, { baseline: 'top' })
     if (item.nameTa) {
       setColor('#9CA3AF'); norm(6.5)
-      text(item.nameTa, m + clProd + 2, y + 8, 'left')
+      text(item.nameTa, m + clProd + 2, y + productLines.length * 4.2 + 5, 'left')
     }
-    setColor(DARK); norm(8)
-    text(String(item.qty), m + clQty - 1, y + 3.5, 'right')
-    setColor(GREY); norm(8)
-    text(formatCurrency(item.rate), m + clRate - 1, y + 3.5, 'right')
-    setColor(DARK); bold(8)
-    text(formatCurrency(item.lineTotal), m + clAmt - 1, y + 3.5, 'right')
+    setColor(DARK); norm(9)
+    text(`${item.qty} ${item.unit || ''}`.trim(), m + clQty - 1, y + 4.5, 'right')
+    setColor(GREY); norm(9)
+    text(formatCurrency(item.rate), m + clRate - 1, y + 4.5, 'right')
+    setColor(DARK); bold(9)
+    text(formatCurrency(item.lineTotal), m + clAmt - 1, y + 4.5, 'right')
 
     y = rowBottom + 0.5
   })
