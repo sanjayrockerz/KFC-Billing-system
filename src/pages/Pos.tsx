@@ -514,34 +514,25 @@ export default function Pos(props: PosProps = {}) {
         amountReceived: inv.amountReceived,
         balanceReturned: inv.balanceReturned,
       })
-      const file = new File([pdfBlob], `${inv.invoiceNo}.pdf`, { type: 'application/pdf' })
-      if (typeof navigator.share === 'function' && navigator.canShare?.({ files: [file] })) {
-        await navigator.share({
-          files: [file],
-          title: `Invoice ${inv.invoiceNo}`,
-          text: message,
-        })
-      } else {
-        fallbackSharePdf(file, inv, message)
-      }
-    } catch (err: unknown) {
-      // A cancelled native share should not unexpectedly open a second tab.
-      // Other failures still get the desktop/manual attachment fallback.
-      if (err instanceof DOMException && err.name === 'AbortError') return
+      // Save the PDF first, then go directly to this invoice's customer.
+      // wa.me opens the conversation for the exact number; it does not show
+      // the native share-options chooser.
+      fallbackSharePdf(pdfBlob, inv, message)
+    } catch {
       fallbackSharePdf(null, inv)
     } finally {
       setSharingInvoice(false)
     }
   }
 
-  const fallbackSharePdf = (file: File | null, inv: InvoiceSnap, preparedMessage?: string) => {
+  const fallbackSharePdf = (file: Blob | null, inv: InvoiceSnap, preparedMessage?: string) => {
     if (file) {
       const url = URL.createObjectURL(file)
       const a = document.createElement('a')
       a.href = url
       a.download = `${inv.invoiceNo}.pdf`
       a.click()
-      URL.revokeObjectURL(url)
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000)
     }
     const waLink = toWhatsAppUrl(inv.phone || customer.phone || '')
     const text = encodeURIComponent(preparedMessage || buildProfessionalWhatsAppMessage({
@@ -564,7 +555,7 @@ export default function Pos(props: PosProps = {}) {
       gstAmount: inv.gstAmount,
       total: inv.total,
     }))
-    window.open(`${waLink}?text=${text}`, '_blank', 'noopener,noreferrer')
+    window.setTimeout(() => window.location.assign(`${waLink}?text=${text}`), file ? 150 : 0)
   }
 
   // ══ INVOICE SCREEN ════════════════════════════════════════════════════
