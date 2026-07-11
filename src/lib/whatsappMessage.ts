@@ -26,17 +26,17 @@ type BuildWhatsAppMessageInput = {
   invoiceUrl?: string
 }
 
-const divider = '\u2501'.repeat(18)
+const divider = '-'.repeat(18)
 const emoji = {
-  shoppingBag: '\u{1F6CD}\uFE0F',
-  receipt: '\u{1F9FE}',
-  shoppingCart: '\u{1F6D2}',
-  money: '\u{1F4B0}',
-  document: '\u{1F4C4}',
-  heart: '\u2764\uFE0F',
-  pin: '\u{1F4CD}',
-  phone: '\u{1F4DE}',
-  smile: '\u{1F60A}',
+  shoppingBag: String.fromCodePoint(0x1F6CD, 0xFE0F),
+  receipt: String.fromCodePoint(0x1F9FE),
+  shoppingCart: String.fromCodePoint(0x1F6D2),
+  money: String.fromCodePoint(0x1F4B0),
+  document: String.fromCodePoint(0x1F4C4),
+  heart: String.fromCodePoint(0x2764, 0xFE0F),
+  pin: String.fromCodePoint(0x1F4CD),
+  phone: String.fromCodePoint(0x1F4DE),
+  smile: String.fromCodePoint(0x1F60A),
 }
 
 export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInput) => {
@@ -100,7 +100,7 @@ export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInpu
     '',
     `Payment Mode : ${paymentMode}`,
     '',
-    input.invoiceUrl ? `${emoji.document} *Download Invoice:* ${input.invoiceUrl}` : '',
+    input.invoiceUrl ? `${emoji.document} *Download Invoice:*\n${input.invoiceUrl}` : '',
     '',
     `We sincerely thank you for choosing *Korean Fried Chicken*. ${emoji.heart}`,
     '',

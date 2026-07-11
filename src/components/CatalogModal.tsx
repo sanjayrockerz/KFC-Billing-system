@@ -92,6 +92,20 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
     setAddingCategory(false)
   }
 
+  const deleteCategory = async (category: { id: string | number; name_en: string }) => {
+    if (!window.confirm(`Delete category "${category.name_en}"?`)) return
+    setEditError('')
+    const { error: categoryError } = await supabase.from('categories').delete().eq('id', category.id)
+    if (categoryError) {
+      setEditError(categoryError.message)
+      return
+    }
+    setCategoryRows(prev => prev.filter(row => row.id !== category.id))
+    if (editForm.category === category.name_en) {
+      setEditForm(prev => ({ ...prev, category: '' }))
+    }
+  }
+
   useEffect(() => {
     if (!isOpen) return
     void fetchProducts()
@@ -139,6 +153,22 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
                     <button type="button" disabled={addingCategory || !newCategory.trim()} onClick={() => void addCategory()}
                       className="rounded-xl bg-[#1A1A1A] px-3 py-2 text-[11px] font-black text-white disabled:opacity-50">{addingCategory ? 'Adding…' : 'Add'}</button>
                   </div>
+                  {categoryRows.filter(category => category.is_active !== false).length > 0 && (
+                    <div className="mt-3 rounded-xl border border-[#F0E6C8]/50 bg-white p-3">
+                      <p className="mb-2 text-[10px] font-black uppercase tracking-wider text-[#6B7280]">Manage categories</p>
+                      <div className="space-y-1.5">
+                        {categoryRows.filter(category => category.is_active !== false).map(category => (
+                          <div key={category.id} className="flex items-center justify-between gap-2 rounded-lg bg-[#F7F6F2] px-3 py-2">
+                            <span className="truncate text-[12px] font-bold text-[#1A1A1A]">{category.name_en}</span>
+                            <button type="button" onClick={() => void deleteCategory(category)} title={`Delete ${category.name_en}`} aria-label={`Delete ${category.name_en}`}
+                              className="shrink-0 rounded-lg p-1.5 text-red-400 transition-colors hover:bg-red-50 hover:text-red-600">
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <label className="block text-[10px] font-black text-[#6B7280] tracking-wider uppercase mb-1.5">Price (₹)</label>

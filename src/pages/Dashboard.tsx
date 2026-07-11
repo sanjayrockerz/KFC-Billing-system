@@ -3,7 +3,7 @@ import {
   BarChart2, Trash2, Edit2, List, ShoppingCart, LayoutDashboard,
   Box, AlertCircle, ArrowUp, ArrowDown, Power, Download, TrendingUp,
   Package, IndianRupee, Search, RefreshCw, ShieldCheck, ShieldOff, Trophy,
-  MessageCircle, ChevronDown, Eye, X, FileText, Lock,
+  MessageCircle, ChevronDown, Eye, X, FileText, Lock, Tags,
 } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
@@ -52,6 +52,8 @@ type DashboardCoupon = {
 type TabKey = 'overview' | 'whatsapp' | 'pos_analytics' | 'billing' | 'products' | 'categories' | 'coupons' | 'users' | 'history'
 type PosAnalyticsTab = 'revenue' | 'today' | 'products' | 'categories' | 'coupons'
 type ProfileUser = { id: string; email: string; name: string; mobile: string; role: string; created_at: string }
+
+const DASHBOARD_PASSWORD = 'sulficker11'
 
 const normalizeStatus = (v: unknown) => String(v || '').trim().toLowerCase()
 const normalizeOrderType = (v: unknown) => String(v || '').trim().toLowerCase() || 'pos_sale'
@@ -255,12 +257,14 @@ export default function Dashboard() {
   const [unlockedTabs, setUnlockedTabs] = useState<Set<TabKey>>(new Set())
   const [showPasswordPrompt, setShowPasswordPrompt] = useState<TabKey | null>(null)
   const [passwordInput, setPasswordInput] = useState('')
+  const [passwordError, setPasswordError] = useState('')
   const PROTECTED_TABS: TabKey[] = ['pos_analytics', 'coupons', 'history']
-  const DASHBOARD_PASSWORD = import.meta.env.VITE_DASHBOARD_PASSWORD || ''
 
   const handleTabClick = (newTab: TabKey) => {
     if (PROTECTED_TABS.includes(newTab) && !unlockedTabs.has(newTab)) {
       setShowPasswordPrompt(newTab)
+      setPasswordInput('')
+      setPasswordError('')
       return
     }
     setTab(newTab)
@@ -272,9 +276,11 @@ export default function Dashboard() {
       setUnlockedTabs(prev => new Set(prev).add(showPasswordPrompt))
       setShowPasswordPrompt(null)
       setPasswordInput('')
+      setPasswordError('')
       setTab(showPasswordPrompt)
     } else {
       setPasswordInput('')
+      setPasswordError('Incorrect password')
     }
   }
 
@@ -1159,6 +1165,7 @@ export default function Dashboard() {
     { id: 'billing',       icon: <ShoppingCart size={20} />,     label: 'Billing Panel' },
     { id: 'history',       icon: <List size={20} />,             label: 'Order History' },
     { id: 'pos_analytics', icon: <BarChart2 size={20} />,        label: 'Analytics Dashboard' },
+    { id: 'categories',    icon: <Tags size={20} />,              label: 'Categories' },
     { id: 'coupons',       icon: <Box size={20} />,              label: 'Coupons' },
   ]
 
@@ -1183,6 +1190,7 @@ export default function Dashboard() {
               className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#F0E6C8]/40 rounded-xl text-[15px] font-semibold text-[#1A1A1A] placeholder:text-[#8A9384] focus:outline-none focus:ring-2 focus:ring-[#D4A800]/15"
               autoFocus
             />
+            {passwordError && <p className="text-sm font-bold text-red-600">{passwordError}</p>}
             <button
               type="submit"
               className="w-full py-3 bg-[#D4A800] text-white font-black rounded-xl hover:bg-[#C49600] transition-colors"
@@ -1191,7 +1199,7 @@ export default function Dashboard() {
             </button>
           </form>
           <button
-            onClick={() => { setShowPasswordPrompt(null); setPasswordInput('') }}
+            onClick={() => { setShowPasswordPrompt(null); setPasswordInput(''); setPasswordError('') }}
             className="mt-4 w-full py-2 text-[#6B7280] hover:text-[#1A1A1A] font-medium transition-colors"
           >
             {l('Cancel', 'ரத்து செய்')}

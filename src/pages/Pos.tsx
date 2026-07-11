@@ -468,6 +468,7 @@ export default function Pos(props: PosProps = {}) {
 const sendPosWhatsApp = async (inv: InvoiceSnap) => {
     setSharingInvoice(true)
     try {
+      const invoiceUrl = inv.invoiceUrl || `${window.location.origin}/invoice/${encodeURIComponent(inv.invoiceNo)}`
       const message = buildProfessionalWhatsAppMessage({
         customerName: inv.customerName,
         phone: inv.phone,
@@ -487,36 +488,12 @@ couponDiscount: inv.couponDiscount,
         shipping: inv.shipping,
         gstAmount: inv.gstAmount,
         total: inv.total,
-        invoiceUrl: inv.invoiceUrl,
+        invoiceUrl,
       })
-      // Open WhatsApp with message (includes invoice URL if available)
       const waLink = toWhatsAppUrl(inv.phone || customer.phone || '', message)
       window.location.assign(waLink)
-} catch {
-      // Fallback: open WhatsApp with just the message (no PDF link)
-      const msg = buildProfessionalWhatsAppMessage({
-        customerName: inv.customerName,
-        phone: inv.phone,
-        invoiceNumber: inv.invoiceNo,
-        paymentMode: inv.paymentMode || 'POS',
-        items: inv.items.map((item) => ({
-          name: item.name,
-          qty: item.qty,
-          unit: item.selectedUnit,
-          unitType: item.unitType,
-          rate: item.basePrice,
-          lineTotal: item.lineTotal,
-        })),
-        subtotal: inv.subtotal,
-        couponDiscount: inv.couponDiscount,
-        manualDiscountAmount: inv.manualDiscountAmount,
-        shipping: inv.shipping,
-        gstAmount: inv.gstAmount,
-        total: inv.total,
-        invoiceUrl: inv.invoiceUrl,
-      })
-      const waLink = toWhatsAppUrl(inv.phone || customer.phone || '', msg)
-      window.location.assign(waLink)
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Could not open WhatsApp')
     } finally {
       setSharingInvoice(false)
     }
