@@ -32,6 +32,7 @@ interface BookedOrderSnapshot {
   discountAmount: number
   total: number
   couponCode?: string
+  invoiceUrl?: string
 }
 
 export default function Checkout() {
@@ -112,6 +113,7 @@ export default function Checkout() {
       subtotal: snapshot.subtotal,
       couponDiscount: snapshot.discountAmount,
       total: snapshot.total,
+      invoiceUrl: snapshot.invoiceUrl,
     }))
   }
 
@@ -185,6 +187,7 @@ export default function Checkout() {
         discountAmount,
         total:         finalTotal,
         couponCode:    appliedCoupon?.code,
+        invoiceUrl:    created.invoiceUrl,
       }
 
       const waText = buildWhatsAppMessage(snapshot, itemsSnapshot)
@@ -222,6 +225,7 @@ export default function Checkout() {
         subtotal: booked.subtotal,
         couponDiscount: booked.discountAmount,
         total: booked.total,
+        invoiceUrl: booked.invoiceUrl,
       })
     )
 
