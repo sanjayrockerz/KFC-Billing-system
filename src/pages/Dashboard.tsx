@@ -3638,6 +3638,10 @@ export default function Dashboard() {
             </p>
           </div>
         )}
+
+        <footer className="mt-10 border-t border-[#E7E7E7] px-2 py-5 text-center text-[11px] font-semibold text-[#8A9384]">
+          © 2026 Powered by Cenexa Systems. All rights reserved.
+        </footer>
       </main>
     </div>
   )
