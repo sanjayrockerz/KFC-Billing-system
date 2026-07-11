@@ -26,6 +26,19 @@ type BuildWhatsAppMessageInput = {
   invoiceUrl?: string
 }
 
+const divider = '\u2501'.repeat(18)
+const emoji = {
+  shoppingBag: '\u{1F6CD}\uFE0F',
+  receipt: '\u{1F9FE}',
+  shoppingCart: '\u{1F6D2}',
+  money: '\u{1F4B0}',
+  document: '\u{1F4C4}',
+  heart: '\u2764\uFE0F',
+  pin: '\u{1F4CD}',
+  phone: '\u{1F4DE}',
+  smile: '\u{1F60A}',
+}
+
 export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInput) => {
   const dateStr = input.invoiceDate || new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
   const customerName = input.customerName || 'Valued Customer'
@@ -33,7 +46,7 @@ export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInpu
   const paymentMode = input.paymentMode || 'POS'
 
   const itemLines = input.items.map(item => (
-    `• ${item.name}\n  Qty : ${item.qty} × ${formatCurrency(item.rate)}\n  Amount : ${formatCurrency(item.lineTotal)}`
+    `\u2022 ${item.name}\n  Qty : ${item.qty} \u00D7 ${formatCurrency(item.rate)}\n  Amount : ${formatCurrency(item.lineTotal)}`
   ))
 
   const couponLine = (input.couponDiscount || 0) > 0
@@ -49,15 +62,15 @@ export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInpu
     ? `Delivery Charges   : ${formatCurrency(input.shipping || 0)}` : ''
 
   return [
-    `🛍️ *Thank you for shopping with Korean Fried Chicken!*`,
+    `${emoji.shoppingBag} *Thank you for shopping with Korean Fried Chicken!*`,
     '',
     `Dear *${customerName}*,`,
     '',
     `We truly appreciate your purchase and hope you enjoyed your shopping experience with us.`,
     '',
-    `━━━━━━━━━━━━━━━━━━`,
-    `🧾 *INVOICE SUMMARY*`,
-    `━━━━━━━━━━━━━━━━━━`,
+    divider,
+    `${emoji.receipt} *INVOICE SUMMARY*`,
+    divider,
     '',
     `Invoice No : ${input.invoiceNumber}`,
     `Date : ${dateStr}`,
@@ -65,15 +78,15 @@ export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInpu
     `Customer : ${customerName}`,
     `Phone : ${phone}`,
     '',
-    `━━━━━━━━━━━━━━━━━━`,
-    `🛒 *ITEMS PURCHASED*`,
-    `━━━━━━━━━━━━━━━━━━`,
+    divider,
+    `${emoji.shoppingCart} *ITEMS PURCHASED*`,
+    divider,
     '',
     ...itemLines,
     '',
-    `━━━━━━━━━━━━━━━━━━`,
-    `💰 *BILL SUMMARY*`,
-    `━━━━━━━━━━━━━━━━━━`,
+    divider,
+    `${emoji.money} *BILL SUMMARY*`,
+    divider,
     '',
     `Subtotal           : ${formatCurrency(input.subtotal)}`,
     couponLine,
@@ -81,25 +94,25 @@ export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInpu
     gstLine,
     deliveryLine,
     '',
-    `━━━━━━━━━━━━━━━━━━`,
+    divider,
     `*Grand Total : ${formatCurrency(input.total)}*`,
-    `━━━━━━━━━━━━━━━━━━`,
+    divider,
     '',
     `Payment Mode : ${paymentMode}`,
     '',
-    input.invoiceUrl ? `📄 *Download Invoice:* ${input.invoiceUrl}` : '',
+    input.invoiceUrl ? `${emoji.document} *Download Invoice:* ${input.invoiceUrl}` : '',
     '',
-    `We sincerely thank you for choosing *Korean Fried Chicken*. ❤️`,
+    `We sincerely thank you for choosing *Korean Fried Chicken*. ${emoji.heart}`,
     '',
     `We look forward to serving you again.`,
     '',
-    `📍 *Korean Fried Chicken*`,
+    `${emoji.pin} *Korean Fried Chicken*`,
     `Nanjappa Garden, Selvapuram,`,
     `SBI Bank Opposite, Shivalaya Mahal Road,`,
     `Komarapalayam, Coimbatore`,
     '',
-    `📞 ${BRAND_PHONE_DISPLAY}`,
+    `${emoji.phone} ${BRAND_PHONE_DISPLAY}`,
     '',
-    `Have a wonderful day! 😊`,
+    `Have a wonderful day! ${emoji.smile}`,
   ].filter(Boolean).join('\n')
 }

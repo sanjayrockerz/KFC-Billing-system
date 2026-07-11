@@ -109,7 +109,7 @@ export default function DigitalInvoice() {
       shipping,
       gstAmount: Number(invoice.total_gst || invoice.gst_amount || 0),
       total: Number(invoice.total || 0),
-      invoiceUrl: invoice.invoice_url,
+      invoiceUrl: invoice.invoice_url ?? undefined,
     })
 
     const phoneNumber = normalizePhone(invoice.phone) || ''

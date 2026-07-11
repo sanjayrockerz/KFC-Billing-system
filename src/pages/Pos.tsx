@@ -445,7 +445,7 @@ export default function Pos(props: PosProps = {}) {
         amountReceived: cashReceivedNum,
         balanceReturned: balanceToReturn,
         paymentMode: orderMode === 'online' ? 'Online' : cashReceivedNum > 0 ? 'Cash' : 'POS',
-        invoiceUrl: created.invoiceUrl,
+        invoiceUrl: created.invoiceUrl || `${window.location.origin}/invoice/${encodeURIComponent(created.invoiceNo)}`,
       })
       setItems([])
       setCustomer({ name: '', phone: '', address: '' })
