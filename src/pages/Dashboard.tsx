@@ -3,7 +3,7 @@ import {
   BarChart2, Trash2, Edit2, List, ShoppingCart, LayoutDashboard,
   Box, AlertCircle, ArrowUp, ArrowDown, Power, Download, TrendingUp,
   Package, IndianRupee, Search, RefreshCw, ShieldCheck, ShieldOff, Trophy,
-  MessageCircle, ChevronDown, Eye, X, FileText,
+  MessageCircle, ChevronDown, Eye, X, FileText, Lock,
 } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
@@ -227,6 +227,34 @@ export default function Dashboard() {
   const [datePreset, setDatePreset] = useState<'today' | 'week' | 'month' | 'custom' | ''>('')
   const [searchResults, setSearchResults] = useState<DashboardOrder[]>([])
   const [searchLoading, setSearchLoading] = useState(false)
+
+  // Password protection for sensitive tabs
+  const [protectedTabs, setProtectedTabs] = useState<Set<TabKey>>(new Set())
+  const [showPasswordModal, setShowPasswordModal] = useState<TabKey | null>(null)
+  const [passwordInput, setPasswordInput] = useState('')
+
+  const PROTECTED_TAB_KEYS: TabKey[] = ['pos_analytics', 'coupons', 'history']
+  const DASHBOARD_PASSWORD = import.meta.env.VITE_DASHBOARD_PASSWORD || ''
+
+  const handleTabClick = (tabKey: TabKey) => {
+    if (PROTECTED_TAB_KEYS.includes(tabKey) && !protectedTabs.has(tabKey)) {
+      setShowPasswordModal(tabKey)
+      return
+    }
+    setTab(tabKey)
+  }
+
+  const verifyPassword = () => {
+    if (passwordInput === DASHBOARD_PASSWORD) {
+      setProtectedTabs(prev => new Set(prev).add(showPasswordModal!))
+      setTab(showPasswordModal!)
+      setShowPasswordModal(null)
+      setPasswordInput('')
+    } else {
+      alert('Incorrect password')
+      setPasswordInput('')
+    }
+  }
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     try {
       return window.localStorage.getItem('dashboard-sidebar-collapsed') === '1'
@@ -249,6 +277,33 @@ export default function Dashboard() {
   const [usersError, setUsersError] = useState('')
   const [userSearch, setUserSearch] = useState('')
   const [roleUpdating, setRoleUpdating] = useState<string | null>(null)
+
+  // Password protection for sensitive tabs
+  const [unlockedTabs, setUnlockedTabs] = useState<Set<TabKey>>(new Set())
+  const [showPasswordPrompt, setShowPasswordPrompt] = useState<TabKey | null>(null)
+  const [passwordInput, setPasswordInput] = useState('')
+  const PROTECTED_TABS: TabKey[] = ['pos_analytics', 'coupons', 'history']
+  const DASHBOARD_PASSWORD = import.meta.env.VITE_DASHBOARD_PASSWORD || ''
+
+  const handleTabClick = (newTab: TabKey) => {
+    if (PROTECTED_TABS.includes(newTab) && !unlockedTabs.has(newTab)) {
+      setShowPasswordPrompt(newTab)
+      return
+    }
+    setTab(newTab)
+  }
+
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (passwordInput === DASHBOARD_PASSWORD && showPasswordPrompt) {
+      setUnlockedTabs(prev => new Set(prev).add(showPasswordPrompt))
+      setShowPasswordPrompt(null)
+      setPasswordInput('')
+      setTab(showPasswordPrompt)
+    } else {
+      setPasswordInput('')
+    }
+  }
 
   const isAdmin = true // bypassed for local demo
   const { lang } = useLangStore()
@@ -1134,6 +1189,45 @@ export default function Dashboard() {
     { id: 'coupons',       icon: <Box size={20} />,              label: 'Coupons' },
   ]
 
+  const isTabLocked = (tabKey: TabKey) => PROTECTED_TABS.includes(tabKey) && !unlockedTabs.has(tabKey)
+
+  // Password prompt modal
+  if (showPasswordPrompt) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <Lock size={28} className="text-yellow-dark" />
+            <h2 className="text-xl font-black text-[#1A1A1A]">{l('Protected Section', 'பாதுகாப்பு பகுதி')}</h2>
+          </div>
+          <p className="text-[#6B7280] mb-6">{l('Enter password to access', 'அணைப்பைத் திறக்க கடவுச்சொல்லை உள்ளிடவும்')}</p>
+          <form onSubmit={handlePasswordSubmit} className="space-y-4">
+            <input
+              type="password"
+              value={passwordInput}
+              onChange={e => setPasswordInput(e.target.value)}
+              placeholder={l('Password', 'கடவுச்சொல்')}
+              className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#F0E6C8]/40 rounded-xl text-[15px] font-semibold text-[#1A1A1A] placeholder:text-[#8A9384] focus:outline-none focus:ring-2 focus:ring-[#D4A800]/15"
+              autoFocus
+            />
+            <button
+              type="submit"
+              className="w-full py-3 bg-[#D4A800] text-white font-black rounded-xl hover:bg-[#C49600] transition-colors"
+            >
+              {l('Unlock', 'திறக்கவும்')}
+            </button>
+          </form>
+          <button
+            onClick={() => { setShowPasswordPrompt(null); setPasswordInput('') }}
+            className="mt-4 w-full py-2 text-[#6B7280] hover:text-[#1A1A1A] font-medium transition-colors"
+          >
+            {l('Cancel', 'ரத்து செய்')}
+          </button>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="admin-shell min-h-screen bg-bgMain flex flex-col lg:flex-row">
       {/* Sidebar */}
@@ -1176,27 +1270,30 @@ export default function Dashboard() {
           className={`flex lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 px-3 py-2 lg:py-2 lg:flex-grow transition-all duration-300 ${sidebarCollapsed ? 'lg:px-2' : 'lg:px-4'}`}
           style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
         >
-          {navItems.map(item => (
-            <button
-              key={item.id}
-              onClick={() => setTab(item.id)}
-              title={item.label}
-              className={[
-                'shrink-0 flex flex-col lg:flex-row items-center justify-center',
-                'gap-1 lg:gap-3',
-                'w-[64px] h-[64px] lg:h-[48px]',
-                sidebarCollapsed ? 'lg:w-[48px] lg:justify-center mx-auto' : 'lg:w-full lg:px-4 lg:justify-start',
-                'px-0 py-1 lg:py-0',
-                'rounded-xl font-medium text-[11px] lg:text-[14px] transition-all overflow-hidden',
-                tab === item.id ? 'bg-yellow text-[#1A1A1A] shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white',
-              ].join(' ')}
-            >
-              <span className="shrink-0">{item.icon}</span>
-              <span className={`hidden lg:block truncate text-left transition-all duration-200 ${sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'opacity-100 flex-1'}`}>
-                {item.label}
-              </span>
-            </button>
-          ))}
+          {navItems.map(item => {
+            const locked = isTabLocked(item.id)
+            return (
+              <button
+                key={item.id}
+                onClick={() => handleTabClick(item.id)}
+                title={locked ? `${item.label} (Locked)` : item.label}
+                className={[
+                  'shrink-0 flex flex-col lg:flex-row items-center justify-center',
+                  'gap-1 lg:gap-3',
+                  'w-[64px] h-[64px] lg:h-[48px]',
+                  sidebarCollapsed ? 'lg:w-[48px] lg:justify-center mx-auto' : 'lg:w-full lg:px-4 lg:justify-start',
+                  'px-0 py-1 lg:py-0',
+                  'rounded-xl font-medium text-[11px] lg:text-[14px] transition-all overflow-hidden relative',
+                  tab === item.id ? 'bg-yellow text-[#1A1A1A] shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white',
+                ].join(' ')}
+              >
+                <span className="shrink-0 relative">{item.icon}{locked && !sidebarCollapsed && <Lock size={10} className="absolute -top-1 -right-1 text-white/50" />}</span>
+                <span className={`hidden lg:block truncate text-left transition-all duration-200 ${sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'opacity-100 flex-1'}`}>
+                  {item.label}
+                </span>
+              </button>
+            )
+          })}
           
           <button
             onClick={() => { useAdminAuthStore.getState().logout(); navigate('/admin-login', { replace: true }) }}

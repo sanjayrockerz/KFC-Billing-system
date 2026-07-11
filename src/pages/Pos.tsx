@@ -25,6 +25,7 @@ import { generateInvoicePdf } from '../lib/generateInvoicePdf'
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { getProductImage, onImgError } from '../lib/productImages'
 import { normalizePhone, toWhatsAppUrl } from '../lib/phone'
+import { uploadInvoicePdf } from '../lib/storage'
 import { useLangStore } from '../store/langStore'
 import type { ProductVariant } from '../services/variantService'
 
@@ -464,7 +465,7 @@ export default function Pos(props: PosProps = {}) {
   const change = cashReceived && Number(cashReceived) >= total
     ? Number(cashReceived) - total : null
 
-  const sendPosWhatsApp = async (inv: InvoiceSnap) => {
+const sendPosWhatsApp = async (inv: InvoiceSnap) => {
     setSharingInvoice(true)
     try {
       const message = buildProfessionalWhatsAppMessage({
@@ -514,48 +515,48 @@ export default function Pos(props: PosProps = {}) {
         amountReceived: inv.amountReceived,
         balanceReturned: inv.balanceReturned,
       })
-      // Save the PDF first, then go directly to this invoice's customer.
-      // wa.me opens the conversation for the exact number; it does not show
-      // the native share-options chooser.
-      fallbackSharePdf(pdfBlob, inv, message)
-    } catch {
-      fallbackSharePdf(null, inv)
+      // Upload PDF to storage and get public URL
+      let pdfUrl = ''
+      try {
+        const pdfFile = new File([pdfBlob], `${inv.invoiceNo}.pdf`, { type: 'application/pdf' })
+        pdfUrl = await uploadInvoicePdf(pdfFile, inv.invoiceNo)
+      } catch (err) {
+        console.error('Failed to upload invoice PDF:', err)
+      }
+      // Append PDF link to message
+      const messageWithLink = pdfUrl
+        ? `${message}\n\n📄 Download Invoice PDF: ${pdfUrl}`
+        : message
+      // Open WhatsApp with message
+      const waLink = toWhatsAppUrl(inv.phone || customer.phone || '', messageWithLink)
+      window.location.assign(waLink)
+} catch {
+      // Fallback: open WhatsApp with just the message (no PDF link)
+      const msg = buildProfessionalWhatsAppMessage({
+        customerName: inv.customerName,
+        phone: inv.phone,
+        invoiceNumber: inv.invoiceNo,
+        paymentMode: inv.paymentMode || 'POS',
+        items: inv.items.map((item) => ({
+          name: item.name,
+          qty: item.qty,
+          unit: item.selectedUnit,
+          unitType: item.unitType,
+          rate: item.basePrice,
+          lineTotal: item.lineTotal,
+        })),
+        subtotal: inv.subtotal,
+        couponDiscount: inv.couponDiscount,
+        manualDiscountAmount: inv.manualDiscountAmount,
+        shipping: inv.shipping,
+        gstAmount: inv.gstAmount,
+        total: inv.total,
+      })
+      const waLink = toWhatsAppUrl(inv.phone || customer.phone || '', msg)
+      window.location.assign(waLink)
     } finally {
       setSharingInvoice(false)
     }
-  }
-
-  const fallbackSharePdf = (file: Blob | null, inv: InvoiceSnap, preparedMessage?: string) => {
-    if (file) {
-      const url = URL.createObjectURL(file)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `${inv.invoiceNo}.pdf`
-      a.click()
-      window.setTimeout(() => URL.revokeObjectURL(url), 1000)
-    }
-    const waLink = toWhatsAppUrl(inv.phone || customer.phone || '')
-    const text = encodeURIComponent(preparedMessage || buildProfessionalWhatsAppMessage({
-      customerName: inv.customerName,
-      phone: inv.phone,
-      invoiceNumber: inv.invoiceNo,
-      paymentMode: inv.paymentMode || 'POS',
-      items: inv.items.map((item) => ({
-        name: item.name,
-        qty: item.qty,
-        unit: item.selectedUnit,
-        unitType: item.unitType,
-        rate: item.basePrice,
-        lineTotal: item.lineTotal,
-      })),
-      subtotal: inv.subtotal,
-      couponDiscount: inv.couponDiscount,
-      manualDiscountAmount: inv.manualDiscountAmount,
-      shipping: inv.shipping,
-      gstAmount: inv.gstAmount,
-      total: inv.total,
-    }))
-    window.setTimeout(() => window.location.assign(`${waLink}?text=${text}`), file ? 150 : 0)
   }
 
   // ══ INVOICE SCREEN ════════════════════════════════════════════════════
