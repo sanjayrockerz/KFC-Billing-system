@@ -203,6 +203,11 @@ export default function Dashboard() {
   const [quickCategoryName, setQuickCategoryName] = useState('')
   const [quickCategoryOpen, setQuickCategoryOpen] = useState(false)
   const [quickCategorySaving, setQuickCategorySaving] = useState(false)
+
+  const billingCategoryNames = useMemo(() => new Set([
+    ...cats.filter(category => category.is_active !== false).map(category => category.name_en.trim()),
+    ...products.filter(product => product.isActive).map(product => product.category.trim()),
+  ].filter(Boolean)), [cats, products])
   const [coupons, setCoupons] = useState<DashboardCoupon[]>([])
   const [couponForm, setCouponForm] = useState({ code: '', percentage: 10, expiry_date: '', usage_limit: '', min_order_value: '' })
   const [couponSaveError, setCouponSaveError] = useState('')
@@ -3276,7 +3281,7 @@ export default function Dashboard() {
                 <button type="submit" className="px-5 py-3 bg-[#111111] hover:bg-[#333333] transition-colors shadow-sm text-white font-black rounded-xl text-[13px]">{l('Add', 'சேர்')}</button>
               </form>
               <div className="space-y-3">
-                {cats.map(c => (
+                {cats.filter(c => c.is_active !== false && billingCategoryNames.has(c.name_en.trim())).map(c => (
                   <div key={c.id} className="flex items-center justify-between p-4 bg-white border border-[#F3F4F6] shadow-sm rounded-xl transition-colors hover:border-[#D1D5DB]">
                     <div>
                       <p className="text-[14px] font-bold text-[#111111]">{c.name_en}</p>
