@@ -1,5 +1,4 @@
 import 'core-js/stable'
-import 'core-js/features/web.dom-collections.iterator'
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
