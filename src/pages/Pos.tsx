@@ -130,6 +130,7 @@ export default function Pos(props: PosProps = {}) {
   const [gstType, setGstType] = useState<'percent' | 'flat'>('percent')
   const [catalogOpen, setCatalogOpen] = useState(false)
   const [addProductOpen, setAddProductOpen] = useState(false)
+  const [sharingInvoice, setSharingInvoice] = useState(false)
   const searchRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -464,7 +465,28 @@ export default function Pos(props: PosProps = {}) {
     ? Number(cashReceived) - total : null
 
   const sendPosWhatsApp = async (inv: InvoiceSnap) => {
+    setSharingInvoice(true)
     try {
+      const message = buildProfessionalWhatsAppMessage({
+        customerName: inv.customerName,
+        phone: inv.phone,
+        invoiceNumber: inv.invoiceNo,
+        paymentMode: inv.paymentMode || 'POS',
+        items: inv.items.map((item) => ({
+          name: item.name,
+          qty: item.qty,
+          unit: item.selectedUnit,
+          unitType: item.unitType,
+          rate: item.basePrice,
+          lineTotal: item.lineTotal,
+        })),
+        subtotal: inv.subtotal,
+        couponDiscount: inv.couponDiscount,
+        manualDiscountAmount: inv.manualDiscountAmount,
+        shipping: inv.shipping,
+        gstAmount: inv.gstAmount,
+        total: inv.total,
+      })
       const pdfBlob = await generateInvoicePdf({
         invoiceNo: inv.invoiceNo,
         date: inv.date,
@@ -488,19 +510,31 @@ export default function Pos(props: PosProps = {}) {
         gstAmount: inv.gstAmount,
         total: inv.total,
         orderType: inv.orderType === 'online_request' ? 'Online' : 'POS',
+        paymentMode: inv.paymentMode,
+        amountReceived: inv.amountReceived,
+        balanceReturned: inv.balanceReturned,
       })
       const file = new File([pdfBlob], `${inv.invoiceNo}.pdf`, { type: 'application/pdf' })
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: `Invoice ${inv.invoiceNo}` })
+      if (typeof navigator.share === 'function' && navigator.canShare?.({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: `Invoice ${inv.invoiceNo}`,
+          text: message,
+        })
       } else {
-        fallbackSharePdf(file, inv)
+        fallbackSharePdf(file, inv, message)
       }
-    } catch {
+    } catch (err: unknown) {
+      // A cancelled native share should not unexpectedly open a second tab.
+      // Other failures still get the desktop/manual attachment fallback.
+      if (err instanceof DOMException && err.name === 'AbortError') return
       fallbackSharePdf(null, inv)
+    } finally {
+      setSharingInvoice(false)
     }
   }
 
-  const fallbackSharePdf = (file: File | null, inv: InvoiceSnap) => {
+  const fallbackSharePdf = (file: File | null, inv: InvoiceSnap, preparedMessage?: string) => {
     if (file) {
       const url = URL.createObjectURL(file)
       const a = document.createElement('a')
@@ -510,7 +544,7 @@ export default function Pos(props: PosProps = {}) {
       URL.revokeObjectURL(url)
     }
     const waLink = toWhatsAppUrl(inv.phone || customer.phone || '')
-    const text = encodeURIComponent(buildProfessionalWhatsAppMessage({
+    const text = encodeURIComponent(preparedMessage || buildProfessionalWhatsAppMessage({
       customerName: inv.customerName,
       phone: inv.phone,
       invoiceNumber: inv.invoiceNo,
@@ -530,7 +564,7 @@ export default function Pos(props: PosProps = {}) {
       gstAmount: inv.gstAmount,
       total: inv.total,
     }))
-    window.open(`${waLink}?text=${text}`, '_blank')
+    window.open(`${waLink}?text=${text}`, '_blank', 'noopener,noreferrer')
   }
 
   // ══ INVOICE SCREEN ════════════════════════════════════════════════════
@@ -593,9 +627,9 @@ export default function Pos(props: PosProps = {}) {
 
           {/* Actions */}
           <div className="grid grid-cols-1 min-[360px]:grid-cols-3 gap-2 min-[360px]:gap-3">
-            <button onClick={() => sendPosWhatsApp(invoice)}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl bg-yellow/100 hover:bg-green-600 text-white font-bold text-sm transition-colors">
-              <MessageCircle size={16} /> WhatsApp
+            <button onClick={() => void sendPosWhatsApp(invoice)} disabled={sharingInvoice}
+              className="flex items-center justify-center gap-2 py-3 rounded-xl bg-yellow/100 hover:bg-green-600 disabled:opacity-60 text-white font-bold text-sm transition-colors">
+              <MessageCircle size={16} /> {sharingInvoice ? 'Preparing PDF…' : 'WhatsApp + PDF'}
             </button>
             <button onClick={() => {
               printThermalReceipt({

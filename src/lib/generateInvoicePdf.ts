@@ -27,6 +27,9 @@ export interface PdfInvoiceData {
   gstAmount?: number
   total: number
   orderType?: string
+  paymentMode?: string
+  amountReceived?: number
+  balanceReturned?: number
 }
 
 export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Blob> {
@@ -84,6 +87,10 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Blob> {
   if (data.orderType) {
     setColor(GREY); norm(8)
     text(`Mode: ${data.orderType}`, pw / 2, y, 'center'); y += 3
+  }
+  if (data.paymentMode) {
+    setColor(GREY); norm(8)
+    text(`Payment: ${data.paymentMode}`, pw / 2, y, 'center'); y += 3
   }
   y += 4
 
@@ -212,6 +219,12 @@ export async function generateInvoicePdf(data: PdfInvoiceData): Promise<Blob> {
   }
   if (data.gstAmount && data.gstAmount > 0) {
     totalRow('GST', `+${formatCurrency(data.gstAmount)}`)
+  }
+  if (data.amountReceived && data.amountReceived > 0) {
+    totalRow('Received', formatCurrency(data.amountReceived))
+  }
+  if (data.balanceReturned && data.balanceReturned > 0) {
+    totalRow('Change', formatCurrency(data.balanceReturned), '#16A34A', '#16A34A')
   }
   if (data.shipping > 0) {
     totalRow('Delivery', formatCurrency(data.shipping))

@@ -3,7 +3,7 @@ import {
   BarChart2, Trash2, Edit2, List, ShoppingCart, LayoutDashboard,
   Box, AlertCircle, ArrowUp, ArrowDown, Power, Download, TrendingUp,
   Package, IndianRupee, Search, RefreshCw, ShieldCheck, ShieldOff, Trophy,
-  MessageCircle, ChevronDown,
+  MessageCircle, ChevronDown, Eye, X, FileText,
 } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
@@ -13,6 +13,7 @@ import { BRAND_EN, BRAND_ADDRESS, BRAND_PHONE_DISPLAY, BRAND_EMAIL } from '../li
 import { useLangStore } from '../store/langStore'
 import { uploadProductImage } from '../lib/storage'
 import { formatCurrency, normalizeOrderMode, normalizeUnitType, toNumber, type UnitType } from '../lib/retail'
+import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
 import { createVariant, updateVariant, deleteVariant, setDefaultVariant, type ProductVariant } from '../services/variantService'
 import { useVariantStore } from '../store/store'
 import Pos from './Pos'
@@ -62,6 +63,75 @@ const parseOrderItems = (items: unknown): Record<string, unknown>[] => {
   if (Array.isArray(items)) return items.filter((e): e is Record<string, unknown> => typeof e === 'object' && e !== null)
   if (typeof items === 'string') { try { const p = JSON.parse(items); return Array.isArray(p) ? p : [] } catch { return [] } }
   return []
+}
+
+const buildInvoiceWhatsAppMessage = (order: DashboardOrder) => {
+  const items = parseOrderItems(order.items).map(item => {
+    const qty = toNumber(item.quantity ?? item.qty, 0)
+    const lineTotal = toNumber(item.line_total ?? item.lineTotal, 0)
+    return {
+      name: String(item.name || item.product_name || 'Product'),
+      qty,
+      unit: String(item.unit || item.selectedUnit || item.unit_label || 'piece'),
+      unitType: normalizeUnitType(item.unit_type ?? item.unitType) as 'unit' | 'weight' | 'volume' | 'bundle',
+      rate: toNumber(item.base_price ?? item.basePrice ?? item.price, qty > 0 ? lineTotal / qty : 0),
+      lineTotal,
+    }
+  })
+  const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0)
+  return buildProfessionalWhatsAppMessage({
+    customerName: order.customer_name,
+    phone: order.phone,
+    invoiceNumber: order.invoice_no || order.id,
+    invoiceDate: order.created_at,
+    paymentMode: normalizeOrderMode(order.order_mode) === 'online' ? 'Online' : 'POS',
+    items,
+    subtotal,
+    couponDiscount: order.discount_amount,
+    shipping: order.delivery_charge,
+    total: order.total,
+  })
+}
+
+function InvoiceDeliveryDetails({ order }: { order: DashboardOrder }) {
+  const items = parseOrderItems(order.items)
+  const message = buildInvoiceWhatsAppMessage(order)
+  return (
+    <div className="overflow-hidden rounded-2xl border border-blue-100 bg-white shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-3 border-b border-blue-100 bg-blue-50/60 px-4 py-4">
+        <div>
+          <div className="flex items-center gap-2"><FileText size={16} className="text-blue-700" /><h3 className="text-sm font-black text-[#1A1A1A]">Invoice {order.invoice_no || order.id}</h3></div>
+          <p className="mt-1 text-[11px] text-[#6B7280]">Generated {new Date(order.created_at).toLocaleString('en-IN')}</p>
+        </div>
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-[10px] font-black uppercase text-emerald-700"><MessageCircle size={11} /> WhatsApp package ready</span>
+      </div>
+      <div className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
+        <div className="space-y-3">
+          <div className="rounded-xl border border-[#F0E6C8]/60 bg-[#FBFAF6] p-3">
+            <p className="text-[9px] font-black uppercase tracking-wider text-[#6B7280]">PDF attachment</p>
+            <p className="mt-1 text-[12px] font-black text-[#1A1A1A]">{order.invoice_no || order.id}.pdf</p>
+            <p className="mt-1 text-[10px] leading-relaxed text-[#6B7280]">Branded invoice with customer, items, totals, and payment summary.</p>
+          </div>
+          <div className="rounded-xl border border-[#F0E6C8]/60 p-3">
+            <p className="text-[9px] font-black uppercase tracking-wider text-[#6B7280]">WhatsApp recipient</p>
+            <p className="mt-1 text-[12px] font-black text-[#1A1A1A]">{order.customer_name || 'Walk-in Customer'}</p>
+            <p className="text-[11px] text-[#6B7280]">{order.phone || '-'}</p>
+          </div>
+          <div className="rounded-xl border border-[#F0E6C8]/60 p-3">
+            <p className="text-[9px] font-black uppercase tracking-wider text-[#6B7280]">Invoice contents</p>
+            <div className="mt-2 space-y-1">
+              {items.map((item, index) => <div key={`${order.id}-${index}`} className="flex justify-between gap-3 text-[11px]"><span className="truncate font-semibold text-[#1A1A1A]">{String(item.name || item.product_name || 'Product')} × {toNumber(item.quantity ?? item.qty, 0)}</span><span className="shrink-0 font-black text-[#1A1A1A]">{formatCurrency(toNumber(item.line_total ?? item.lineTotal, 0))}</span></div>)}
+            </div>
+            <div className="mt-2 flex justify-between border-t border-[#F0E6C8]/60 pt-2 text-[12px] font-black"><span>Total</span><span>{formatCurrency(order.total)}</span></div>
+          </div>
+        </div>
+        <div>
+          <div className="mb-2 flex items-center justify-between"><p className="text-[9px] font-black uppercase tracking-wider text-[#6B7280]">Message prepared for WhatsApp</p><span className="text-[10px] font-bold text-emerald-700">Text + PDF</span></div>
+          <pre className="max-h-[360px] overflow-auto whitespace-pre-wrap rounded-xl bg-[#1A1A1A] p-4 text-[10px] leading-relaxed text-white">{message}</pre>
+        </div>
+      </div>
+    </div>
+  )
 }
 
 const emptyForm = {
@@ -128,6 +198,9 @@ export default function Dashboard() {
   const [editingProd, setEditingProd] = useState<Product | null>(null)
   const [prodForm, setProdForm] = useState(emptyForm)
   const [newCat, setNewCat] = useState({ name_en: '', name_ta: '' })
+  const [quickCategoryName, setQuickCategoryName] = useState('')
+  const [quickCategoryOpen, setQuickCategoryOpen] = useState(false)
+  const [quickCategorySaving, setQuickCategorySaving] = useState(false)
   const [coupons, setCoupons] = useState<DashboardCoupon[]>([])
   const [couponForm, setCouponForm] = useState({ code: '', percentage: 10, expiry_date: '', usage_limit: '', min_order_value: '' })
   const [couponSaveError, setCouponSaveError] = useState('')
@@ -147,6 +220,7 @@ export default function Dashboard() {
   const [waExpandedId, setWaExpandedId] = useState<string | null>(null)
   const [todayBillsExpandedId, setTodayBillsExpandedId] = useState<string | null>(null)
   const [todayBillsSearch, setTodayBillsSearch] = useState('')
+  const [invoiceDetailId, setInvoiceDetailId] = useState<string | null>(null)
 
   // Search & date filter
   const [search, setSearch] = useState({ invoiceNo: '', phone: '', customerName: '', dateFrom: '', dateTo: '' })
@@ -988,6 +1062,22 @@ export default function Dashboard() {
     e.preventDefault(); if (!newCat.name_en) return
     const { error } = await supabase.from('categories').insert({ ...newCat, is_active: true })
     if (!error) { setNewCat({ name_en: '', name_ta: '' }); await loadData() }
+  }
+
+  const addCategoryFromProductForm = async () => {
+    const name = quickCategoryName.trim()
+    if (!name) return
+    setQuickCategorySaving(true)
+    const { data, error } = await supabase.from('categories').insert({ name_en: name, name_ta: '', is_active: true }).select('id, name_en, name_ta, is_active, sort_order').single()
+    if (!error && data) {
+      setProdForm(f => ({ ...f, category: data.name_en, categoryId: data.id }))
+      setQuickCategoryName('')
+      setQuickCategoryOpen(false)
+      await loadData()
+    } else if (error) {
+      setProductNotice(error.message)
+    }
+    setQuickCategorySaving(false)
   }
 
   const deleteCat = async (c: Category) => {
@@ -2548,7 +2638,7 @@ export default function Dashboard() {
                 <table className="w-full min-w-[800px] text-left text-[13px]">
                   <thead className="bg-[#F7F6F2] text-[10px] uppercase tracking-wider text-[#6B7280]">
                     <tr>
-                      {['Invoice No', 'Customer Name', 'Phone', 'Bill Type', 'Coupon', 'Discount', 'Delivery', 'Total', 'Date', 'Status'].map(h => (
+                      {['Invoice No', 'Customer Name', 'Phone', 'Bill Type', 'Coupon', 'Discount', 'Delivery', 'Total', 'Date', 'Status', 'Details'].map(h => (
                         <th key={h} className="px-3 py-3 font-black">{h}</th>
                       ))}
                     </tr>
@@ -2557,8 +2647,10 @@ export default function Dashboard() {
                     {filteredSearchResults.slice(0, 50).map(o => {
                       const billTypeLabel = normalizeOrderType(o.order_type) === 'manual_sale' ? 'MANUAL' : normalizeOrderMode(o.order_mode) === 'online' ? 'ONLINE' : 'OFFLINE'
                       const billTypeClass = normalizeOrderType(o.order_type) === 'manual_sale' ? 'bg-purple-50 text-purple-700' : normalizeOrderMode(o.order_mode) === 'online' ? 'bg-blue-50 text-blue-700' : 'bg-orange-50 text-orange-700'
+                      const isInvoiceExpanded = invoiceDetailId === o.id
                       return (
-                        <tr key={o.id} className="hover:bg-[#F7F6F2]">
+                        <React.Fragment key={o.id}>
+                        <tr className={`hover:bg-[#F7F6F2] ${isInvoiceExpanded ? 'bg-blue-50/30' : ''}`}>
                           <td className="whitespace-nowrap px-3 py-3 text-[12px] font-bold text-[#1A1A1A]">{o.invoice_no || '-'}</td>
                           <td className="max-w-[110px] truncate px-3 py-3 text-[12px] font-semibold text-[#1A1A1A]">{o.customer_name}</td>
                           <td className="whitespace-nowrap px-3 py-3 text-[12px] text-[#6B7280]">{o.phone}</td>
@@ -2586,11 +2678,26 @@ export default function Dashboard() {
                               </button>
                             </div>
                           </td>
+                          <td className="px-3 py-3">
+                            <button type="button" onClick={() => setInvoiceDetailId(isInvoiceExpanded ? null : o.id)}
+                              className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-[10px] font-black transition-colors ${isInvoiceExpanded ? 'bg-[#1A1A1A] text-white' : 'bg-blue-50 text-blue-700 hover:bg-blue-100'}`}>
+                              {isInvoiceExpanded ? <X size={12} /> : <Eye size={12} />}
+                              {isInvoiceExpanded ? 'Close' : 'View Details'}
+                            </button>
+                          </td>
                         </tr>
+                        {isInvoiceExpanded && (
+                          <tr className="bg-[#FBFAF6]">
+                            <td colSpan={11} className="px-4 pb-5 pt-1">
+                              <InvoiceDeliveryDetails order={o} />
+                            </td>
+                          </tr>
+                        )}
+                        </React.Fragment>
                       )
                     })}
                     {filteredSearchResults.length === 0 && (
-                      <tr><td colSpan={10} className="px-4 py-8 text-center text-[#6B7280]">{l('No matching bills', 'பொருந்தும் பில்கள் இல்லை')}</td></tr>
+                      <tr><td colSpan={11} className="px-4 py-8 text-center text-[#6B7280]">{l('No matching bills', 'பொருந்தும் பில்கள் இல்லை')}</td></tr>
                     )}
                   </tbody>
                 </table>
@@ -2691,15 +2798,24 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <label className="block text-[11px] font-black uppercase text-[#6B7280] tracking-wider mb-1">{l('Category', 'வகை')} *</label>
-                    <select required className="w-full px-4 py-2.5 bg-[#FAFAFA] border border-[#F3F4F6] focus:border-yellow-dark rounded-xl text-[13px] font-bold outline-none transition-colors appearance-none"
+                    <div className="flex gap-2">
+                    <select required className="min-w-0 flex-1 px-4 py-2.5 bg-[#FAFAFA] border border-[#F3F4F6] focus:border-yellow-dark rounded-xl text-[13px] font-bold outline-none transition-colors appearance-none"
                       value={prodForm.category}
                       onChange={e => {
                         const sel = cats.find(c => c.name_en === e.target.value)
                         setProdForm(f => ({ ...f, category: e.target.value, categoryId: sel?.id || null }))
                       }}>
                       <option value="">{l('Select category...', 'வகை தேர்வு செய்யுங்கள்...')}</option>
-                      {cats.map(c => <option key={c.id} value={c.name_en}>{c.name_en}</option>)}
+                      {cats.filter(c => c.is_active !== false).map(c => <option key={c.id} value={c.name_en}>{c.name_en}</option>)}
                     </select>
+                    <button type="button" onClick={() => setQuickCategoryOpen(v => !v)} className="shrink-0 rounded-xl border border-[#D4A800] px-3 text-[11px] font-black text-[#A67C00] hover:bg-[#D4A800]/10">+ Add</button>
+                    </div>
+                    {quickCategoryOpen && (
+                      <div className="mt-2 flex gap-2 rounded-xl border border-[#F0E6C8] bg-[#FFFDF5] p-2">
+                        <input autoFocus value={quickCategoryName} onChange={e => setQuickCategoryName(e.target.value)} placeholder="New category name" onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void addCategoryFromProductForm() } }} className="min-w-0 flex-1 rounded-lg border border-[#F3F4F6] bg-white px-3 py-2 text-[12px] font-semibold outline-none focus:border-[#D4A800]" />
+                        <button type="button" disabled={quickCategorySaving || !quickCategoryName.trim()} onClick={() => void addCategoryFromProductForm()} className="rounded-lg bg-[#1A1A1A] px-3 py-2 text-[11px] font-black text-white disabled:opacity-50">{quickCategorySaving ? 'Adding…' : 'Add'}</button>
+                      </div>
+                    )}
                   </div>
                 </div>
 
