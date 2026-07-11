@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { X, ChevronDown } from 'lucide-react'
+import React, { useState, useEffect } from 'react'
+import { X, Plus } from 'lucide-react'
 import { useProductStore } from '../store/store'
 import { supabase } from '../lib/supabase'
 
@@ -14,40 +14,57 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [categories, setCategories] = useState<string[]>([])
-  const [catOpen, setCatOpen] = useState(false)
-  const catRef = useRef<HTMLDivElement>(null)
+  const [newCategory, setNewCategory] = useState('')
+  const [addCategoryOpen, setAddCategoryOpen] = useState(false)
+  const [addingCategory, setAddingCategory] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
-    category: 'Manual',
+    category: '',
     price: '',
     stock: '10'
   })
 
   useEffect(() => {
     if (!isOpen) return
-    setFormData({ name: '', category: 'Manual', price: '', stock: '10' })
+    setFormData({ name: '', category: '', price: '', stock: '10' })
     setError('')
-    supabase.from('products').select('category').then(({ data }) => {
-      const cats = [...new Set((data ?? []).map(r => String(r.category).trim()).filter(Boolean))]
-      setCategories(cats.sort())
+    setNewCategory('')
+    setAddCategoryOpen(false)
+    Promise.all([
+      supabase.from('categories').select('name_en').eq('is_active', true).order('sort_order'),
+      supabase.from('products').select('category'),
+    ]).then(([categoryResult, productResult]) => {
+      const managed = (categoryResult.data ?? []).map(r => String(r.name_en).trim()).filter(Boolean)
+      const productCats = (productResult.data ?? []).map(r => String(r.category).trim()).filter(Boolean)
+      setCategories([...new Set([...managed, ...productCats])].sort((a, b) => a.localeCompare(b)))
     })
   }, [isOpen])
 
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (catRef.current && !catRef.current.contains(e.target as Node)) setCatOpen(false)
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
-
   if (!isOpen) return null
 
-  const filtered = categories.filter(c => c.toLowerCase().includes(formData.category.toLowerCase()))
+  const addCategory = async () => {
+    const name = newCategory.trim()
+    if (!name) return
+    setAddingCategory(true)
+    const { data, error: categoryError } = await supabase.from('categories')
+      .insert({ name_en: name, name_ta: '', is_active: true })
+      .select('name_en')
+      .single()
+    if (categoryError) setError(categoryError.message)
+    else {
+      const categoryName = String(data?.name_en || name)
+      setCategories(prev => [...new Set([...prev, categoryName])].sort((a, b) => a.localeCompare(b)))
+      setFormData(prev => ({ ...prev, category: categoryName }))
+      setNewCategory('')
+      setAddCategoryOpen(false)
+    }
+    setAddingCategory(false)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!formData.name.trim()) return setError('Name is required')
+    if (!formData.category.trim()) return setError('Please select a category')
     if (!formData.price) return setError('Price is required')
     
     setLoading(true)
@@ -105,30 +122,26 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="relative" ref={catRef}>
+            <div>
               <label className="block text-[10px] font-black text-[#6B7280] tracking-wider uppercase mb-1.5">Category</label>
-              <div className="relative">
-                <input 
-                  type="text" 
-                  value={formData.category}
-                  onChange={e => { setFormData({...formData, category: e.target.value}); setCatOpen(true) }}
-                  onFocus={() => setCatOpen(true)}
-                  className="w-full px-4 py-3 bg-[#F7F6F2] border border-[#F0E6C8]/60 rounded-xl focus:outline-none focus:border-[#D4A800] text-[13px] font-bold pr-8"
-                />
-                <ChevronDown size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280] pointer-events-none" />
+              <div className="flex gap-2">
+                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}
+                  className="min-w-0 flex-1 px-4 py-3 bg-[#F7F6F2] border border-[#F0E6C8]/60 rounded-xl focus:outline-none focus:border-[#D4A800] text-[13px] font-bold">
+                  <option value="">Select category</option>
+                  {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+                <button type="button" onClick={() => setAddCategoryOpen(v => !v)} title="Add category"
+                  className="flex h-[46px] w-[34px] shrink-0 items-center justify-center rounded-xl border border-[#F0E6C8] bg-[#FFFDF5] text-[#9B2335] hover:bg-[#F0E6C8]/40">
+                  <Plus size={14} />
+                </button>
               </div>
-              {catOpen && filtered.length > 0 && (
-                <div className="absolute z-50 top-full mt-1 left-0 right-0 bg-white border border-[#F0E6C8] rounded-xl shadow-lg max-h-36 overflow-y-auto">
-                  {filtered.map(c => (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => { setFormData({...formData, category: c}); setCatOpen(false) }}
-                      className="w-full text-left px-4 py-2.5 text-[13px] font-bold text-[#1A1A1A] hover:bg-[#F7F6F2] transition-colors"
-                    >
-                      {c}
-                    </button>
-                  ))}
+              {addCategoryOpen && (
+                <div className="mt-2 flex gap-2">
+                  <input autoFocus value={newCategory} onChange={e => setNewCategory(e.target.value)} placeholder="New category name"
+                    onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); void addCategory() } }}
+                    className="min-w-0 flex-1 rounded-xl border border-[#F0E6C8]/60 bg-white px-3 py-2.5 text-[12px] font-semibold outline-none focus:border-[#D4A800]" />
+                  <button type="button" disabled={addingCategory || !newCategory.trim()} onClick={() => void addCategory()}
+                    className="rounded-xl bg-[#9B2335] px-3 text-[11px] font-black text-white disabled:opacity-50">{addingCategory ? '...' : 'Add'}</button>
                 </div>
               )}
             </div>
