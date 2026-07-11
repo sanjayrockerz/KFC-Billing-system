@@ -28,15 +28,9 @@ type BuildWhatsAppMessageInput = {
 
 const divider = '-'.repeat(18)
 const emoji = {
-  shoppingBag: String.fromCodePoint(0x1F6CD, 0xFE0F),
-  receipt: String.fromCodePoint(0x1F9FE),
-  shoppingCart: String.fromCodePoint(0x1F6D2),
-  money: String.fromCodePoint(0x1F4B0),
-  document: String.fromCodePoint(0x1F4C4),
-  heart: String.fromCodePoint(0x2764, 0xFE0F),
-  pin: String.fromCodePoint(0x1F4CD),
-  phone: String.fromCodePoint(0x1F4DE),
-  smile: String.fromCodePoint(0x1F60A),
+  check: String.fromCodePoint(0x2705),
+  heart: String.fromCodePoint(0x2764),
+  phone: String.fromCodePoint(0x260E),
 }
 
 export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInput) => {
@@ -62,14 +56,15 @@ export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInpu
     ? `Delivery Charges   : ${formatCurrency(input.shipping || 0)}` : ''
 
   return [
-    `${emoji.shoppingBag} *Thank you for shopping with Korean Fried Chicken!*`,
+    `${emoji.check} *Thank you for shopping with Korean Fried Chicken!*`,
     '',
     `Dear *${customerName}*,`,
+    input.invoiceUrl ? `*Download Invoice PDF:*\n${input.invoiceUrl}` : '',
     '',
     `We truly appreciate your purchase and hope you enjoyed your shopping experience with us.`,
     '',
     divider,
-    `${emoji.receipt} *INVOICE SUMMARY*`,
+    `${emoji.check} *INVOICE SUMMARY*`,
     divider,
     '',
     `Invoice No : ${input.invoiceNumber}`,
@@ -79,13 +74,13 @@ export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInpu
     `Phone : ${phone}`,
     '',
     divider,
-    `${emoji.shoppingCart} *ITEMS PURCHASED*`,
+    `${emoji.check} *ITEMS PURCHASED*`,
     divider,
     '',
     ...itemLines,
     '',
     divider,
-    `${emoji.money} *BILL SUMMARY*`,
+    `${emoji.check} *BILL SUMMARY*`,
     divider,
     '',
     `Subtotal           : ${formatCurrency(input.subtotal)}`,
@@ -100,19 +95,18 @@ export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInpu
     '',
     `Payment Mode : ${paymentMode}`,
     '',
-    input.invoiceUrl ? `${emoji.document} *Download Invoice:*\n${input.invoiceUrl}` : '',
     '',
     `We sincerely thank you for choosing *Korean Fried Chicken*. ${emoji.heart}`,
     '',
     `We look forward to serving you again.`,
     '',
-    `${emoji.pin} *Korean Fried Chicken*`,
+    `*Korean Fried Chicken*`,
     `Nanjappa Garden, Selvapuram,`,
     `SBI Bank Opposite, Shivalaya Mahal Road,`,
     `Komarapalayam, Coimbatore`,
     '',
     `${emoji.phone} ${BRAND_PHONE_DISPLAY}`,
     '',
-    `Have a wonderful day! ${emoji.smile}`,
+    `Have a wonderful day! ${emoji.check}`,
   ].filter(Boolean).join('\n')
 }
