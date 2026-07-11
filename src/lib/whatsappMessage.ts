@@ -23,6 +23,7 @@ type BuildWhatsAppMessageInput = {
   shipping?: number
   gstAmount?: number
   total: number
+  invoiceUrl?: string
 }
 
 export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInput) => {
@@ -85,6 +86,8 @@ export const buildProfessionalWhatsAppMessage = (input: BuildWhatsAppMessageInpu
     `━━━━━━━━━━━━━━━━━━`,
     '',
     `Payment Mode : ${paymentMode}`,
+    '',
+    input.invoiceUrl ? `📄 *Download Invoice:* ${input.invoiceUrl}` : '',
     '',
     `We sincerely thank you for choosing *Korean Fried Chicken*. ❤️`,
     '',

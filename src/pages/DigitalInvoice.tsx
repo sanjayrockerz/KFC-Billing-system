@@ -7,7 +7,6 @@ import { printThermalReceipt } from '../lib/thermalPrint'
 import { invoicePdfFile } from '../lib/invoicePdf'
 import { normalizeStructuredOrderItem } from '../lib/retail'
 import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
-import { uploadInvoicePdf } from '../lib/storage'
 import { normalizePhone, toWhatsAppUrl } from '../lib/phone'
 
 type DigitalInvoiceRow = {
@@ -110,31 +109,11 @@ export default function DigitalInvoice() {
       shipping,
       gstAmount: Number(invoice.total_gst || invoice.gst_amount || 0),
       total: Number(invoice.total || 0),
+      invoiceUrl: invoice.invoice_url,
     })
 
-    // Use stored invoice URL if available
-    let pdfUrl = invoice.invoice_url || ''
-    if (!pdfUrl) {
-      try {
-        const pdfFile = await invoicePdfFile({
-          invoiceNo: invoice.invoice_no, date: invoice.created_at, customerName: invoice.customer_name,
-          phone: invoice.phone, address: invoice.address, items: normalizedItems as unknown as Array<Record<string, unknown>>,
-          subtotal: subtotalCalc, shipping, total: Number(invoice.total || 0), discountAmount: discount,
-          manualDiscountAmount: Number(invoice.manual_discount_amount || 0), gstAmount: Number(invoice.total_gst || invoice.gst_amount || 0),
-          couponCode: invoice.coupon_code, paymentMode: invoice.payment_mode || invoice.payment_method || undefined,
-        })
-        pdfUrl = await uploadInvoicePdf(pdfFile, invoice.invoice_no)
-      } catch (err) {
-        console.error('Failed to upload invoice PDF:', err)
-      }
-    }
-
-    const messageWithLink = pdfUrl
-      ? `${whatsAppMessage}\n\n📄 Download Invoice PDF: ${pdfUrl}`
-      : whatsAppMessage
-
     const phoneNumber = normalizePhone(invoice.phone) || ''
-    const waUrl = toWhatsAppUrl(phoneNumber, messageWithLink)
+    const waUrl = toWhatsAppUrl(phoneNumber, whatsAppMessage)
     window.open(waUrl, '_blank')
   }
 

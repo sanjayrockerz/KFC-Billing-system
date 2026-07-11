@@ -482,47 +482,15 @@ const sendPosWhatsApp = async (inv: InvoiceSnap) => {
           lineTotal: item.lineTotal,
         })),
         subtotal: inv.subtotal,
-        couponDiscount: inv.couponDiscount,
+couponDiscount: inv.couponDiscount,
         manualDiscountAmount: inv.manualDiscountAmount,
         shipping: inv.shipping,
         gstAmount: inv.gstAmount,
         total: inv.total,
+        invoiceUrl: inv.invoiceUrl,
       })
-      /* const pdfBlob = await generateInvoicePdf({
-        invoiceNo: inv.invoiceNo,
-        date: inv.date,
-        customerName: inv.customerName,
-        phone: inv.phone,
-        address: inv.address,
-        items: inv.items.map((item) => ({
-          name: item.name,
-          nameTa: item.nameTa,
-          qty: item.qty,
-          unit: item.selectedUnit,
-          unitType: item.unitType,
-          rate: item.basePrice,
-          lineTotal: item.lineTotal,
-        })),
-        subtotal: inv.subtotal,
-        shipping: inv.shipping,
-        discountAmount: inv.couponDiscount,
-        couponCode: inv.couponCode,
-        manualDiscountAmount: inv.manualDiscountAmount,
-        gstAmount: inv.gstAmount,
-        total: inv.total,
-        orderType: inv.orderType === 'online_request' ? 'Online' : 'POS',
-        paymentMode: inv.paymentMode,
-        amountReceived: inv.amountReceived,
-        balanceReturned: inv.balanceReturned,
-      }) */
-      /* Uploading a PDF is intentionally not part of the WhatsApp button. */
-      const pdfUrl = ''
-      // Append PDF link to message
-      const messageWithLink = pdfUrl
-        ? `${message}\n\n📄 Download Invoice PDF: ${pdfUrl}`
-        : message
-      // Open WhatsApp with message
-      const waLink = toWhatsAppUrl(inv.phone || customer.phone || '', messageWithLink)
+      // Open WhatsApp with message (includes invoice URL if available)
+      const waLink = toWhatsAppUrl(inv.phone || customer.phone || '', message)
       window.location.assign(waLink)
 } catch {
       // Fallback: open WhatsApp with just the message (no PDF link)
@@ -545,6 +513,7 @@ const sendPosWhatsApp = async (inv: InvoiceSnap) => {
         shipping: inv.shipping,
         gstAmount: inv.gstAmount,
         total: inv.total,
+        invoiceUrl: inv.invoiceUrl,
       })
       const waLink = toWhatsAppUrl(inv.phone || customer.phone || '', msg)
       window.location.assign(waLink)
