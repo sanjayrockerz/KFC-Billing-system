@@ -57,8 +57,8 @@ export default function DigitalInvoice() {
   const discount = Number(invoice.discount_amount || 0)
   const subtotal = normalizedItems.reduce((sum, item) => sum + item.line_total, 0) || Number(invoice.total || 0) - shipping + discount
 
-  const downloadPdf = () => {
-    const file = invoicePdfFile({
+  const downloadPdf = async () => {
+    const file = await invoicePdfFile({
       invoiceNo: invoice.invoice_no, date: invoice.created_at, customerName: invoice.customer_name,
       phone: invoice.phone, address: invoice.address, items: normalizedItems as unknown as Array<Record<string, unknown>>,
       subtotal, shipping, total: Number(invoice.total || 0), discountAmount: discount,
@@ -73,11 +73,11 @@ export default function DigitalInvoice() {
       <div className="bg-[#f9faf6] p-4 sticky top-0 z-50 print:hidden flex items-center justify-between max-w-4xl mx-auto">
         <Link to="/" className="flex items-center gap-2 text-yellow-dark hover:text-[#2d5a27] font-semibold text-sm transition-colors bg-white border border-[#F0E6C8]/40 px-4 py-2 rounded-full shadow-sm"><ArrowLeft size={16} /> Back</Link>
         <div className="flex items-center gap-2">
-          <button onClick={downloadPdf} className="flex items-center gap-2 bg-[#881337] text-white px-5 py-2 rounded-full font-bold text-sm shadow-md hover:bg-[#6c0f2c] transition-colors"><Printer size={16} /> PDF</button>
+          <button onClick={() => void downloadPdf()} className="flex items-center gap-2 bg-[#881337] text-white px-5 py-2 rounded-full font-bold text-sm shadow-md hover:bg-[#6c0f2c] transition-colors"><Printer size={16} /> PDF</button>
           <button onClick={() => printThermalReceipt({ invoiceNo: invoice.invoice_no, date: invoice.created_at, customerName: invoice.customer_name, phone: invoice.phone, items: normalizedItems.map(item => ({ name: item.name, qty: item.quantity, unit: item.unit, price: item.base_price, line_total: item.line_total })), subtotal, shipping, couponDiscount: discount, totalGst: Number(invoice.total_gst || invoice.gst_amount || 0), total: Number(invoice.total || 0) })} className="flex items-center gap-2 bg-yellow-dark text-white px-5 py-2 rounded-full font-bold text-sm shadow-md hover:bg-yellow-dark transition-colors"><Receipt size={16} /> Print Receipt</button>
         </div>
       </div>
-      <div className="max-w-3xl mx-auto mt-4 print:mt-0 px-2 sm:px-0"><div className="bg-white shadow-xl rounded-2xl overflow-hidden print:shadow-none print:rounded-none border border-[#F0E6C8]/20 print:border-none"><Invoice invoiceNo={invoice.invoice_no} date={invoice.created_at} customerName={invoice.customer_name} phone={invoice.phone} address={invoice.address} items={invoiceItems} subtotal={subtotal} shipping={shipping} discountAmount={discount} manualDiscountAmount={Number(invoice.manual_discount_amount || 0)} gstAmount={Number(invoice.total_gst || invoice.gst_amount || 0)} couponCode={invoice.coupon_code} total={Number(invoice.total || 0)} status={invoice.status || 'completed'} /></div></div>
+      <div className="max-w-3xl mx-auto mt-4 print:mt-0 px-2 sm:px-0"><div className="bg-white shadow-xl rounded-2xl overflow-hidden print:shadow-none print:rounded-none border border-[#F0E6C8]/20 print:border-none"><Invoice invoiceNo={invoice.invoice_no} date={invoice.created_at} customerName={invoice.customer_name} phone={invoice.phone} address={invoice.address} items={invoiceItems} subtotal={subtotal} shipping={shipping} discountAmount={discount} manualDiscountAmount={Number(invoice.manual_discount_amount || 0)} gstAmount={Number(invoice.total_gst || invoice.gst_amount || 0)} couponCode={invoice.coupon_code} total={Number(invoice.total || 0)} status={invoice.status || 'completed'} paymentMode={invoice.payment_mode || invoice.payment_method || undefined} /></div></div>
     </div>
   )
 }

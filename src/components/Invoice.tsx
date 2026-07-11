@@ -36,6 +36,7 @@ export interface InvoiceProps {
   couponCode?: string | null
   manualDiscountAmount?: number
   gstAmount?: number
+  paymentMode?: string
 }
 
 export const Invoice: React.FC<InvoiceProps> = ({
@@ -55,6 +56,7 @@ export const Invoice: React.FC<InvoiceProps> = ({
   couponCode,
   manualDiscountAmount = 0,
   gstAmount = 0,
+  paymentMode,
 }) => {
   const dateStr = (() => {
     try { return new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) }
@@ -125,6 +127,7 @@ export const Invoice: React.FC<InvoiceProps> = ({
           <div style={{ fontSize: 14, fontWeight: 800, color: '#1a1a2e' }}>{customerName}</div>
           <div style={{ fontSize: 12, color: '#555', marginTop: 3 }}>{phone}</div>
           <div style={{ fontSize: 11, color: '#777', marginTop: 4, lineHeight: 1.5, wordBreak: 'break-word' }}>{address}</div>
+          {paymentMode && <div style={{ fontSize: 10, color: '#777', marginTop: 4 }}>Payment: {paymentMode}</div>}
         </div>
       </div>
 
