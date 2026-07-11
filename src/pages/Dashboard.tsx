@@ -1831,9 +1831,9 @@ export default function Dashboard() {
               <p className="text-[13px] text-[#6B7280]">Real time store & channel insights</p>
             </div>
 
-            <div className="flex flex-wrap items-center justify-between gap-4 border-b border-[#E7E7E7] pb-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[#E7E7E7] pb-4">
               {/* Sub-tabs */}
-              <div className="flex gap-6">
+              <div className="flex max-w-full gap-3 overflow-x-auto sm:gap-6">
                 {([
                   { id: 'revenue' as const,    label: 'REVENUE' },
                   { id: 'today' as const,      label: 'TODAY\'S SALES' },
@@ -1841,7 +1841,7 @@ export default function Dashboard() {
                   { id: 'coupons' as const,    label: 'COUPONS' },
                 ]).map(({ id, label }) => (
                   <button key={id} onClick={() => setPosAnalyticsTab(id as PosAnalyticsTab)}
-                    className={`pb-4 text-[13px] font-bold tracking-wide transition-colors relative ${posAnalyticsTab === id ? 'text-yellow-dark' : 'text-[#6B7280] hover:text-[#111111]'}`}>
+                    className={`shrink-0 pb-4 text-[11px] sm:text-[13px] font-bold tracking-wide transition-colors relative ${posAnalyticsTab === id ? 'text-yellow-dark' : 'text-[#6B7280] hover:text-[#111111]'}`}>
                     {label}
                     {posAnalyticsTab === id && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-yellow-dark rounded-t-md" />}
                   </button>
@@ -1849,17 +1849,17 @@ export default function Dashboard() {
               </div>
 
               {/* Date filter */}
-              <div className="flex items-center gap-4">
-                <div className="flex items-center bg-[#F8F8F8] rounded-full p-1">
-                  <span className="text-[10px] font-bold uppercase text-[#6B7280] ml-3 mr-2">Period:</span>
+              <div className="flex w-full flex-wrap items-center gap-2 xl:w-auto">
+                <div className="flex max-w-full flex-wrap items-center bg-[#F8F8F8] rounded-full p-1">
+                  <span className="text-[9px] font-bold uppercase text-[#6B7280] ml-2 mr-1">Period:</span>
                   {(['all', 'today', 'week', 'month', 'year'] as const).map(preset => (
                     <button key={preset} type="button" onClick={() => applyAnalyticsPreset(preset)}
-                      className={`px-4 py-1.5 rounded-full text-[11px] font-bold uppercase transition-all ${analyticsDatePreset === preset ? 'bg-yellow-dark text-white shadow-sm' : 'text-[#6B7280] hover:text-[#111111]'}`}>
+                      className={`px-2 py-1.5 rounded-full text-[10px] font-bold uppercase transition-all ${analyticsDatePreset === preset ? 'bg-yellow-dark text-white shadow-sm' : 'text-[#6B7280] hover:text-[#111111]'}`}>
                       {preset === 'all' ? 'All Time' : preset === 'today' ? 'Today' : preset === 'week' ? 'This Week' : preset === 'month' ? 'This Month' : 'This Year'}
                     </button>
                   ))}
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex max-w-full flex-wrap items-center gap-2">
                   <div className="flex items-center border border-[#E7E7E7] rounded-xl px-3 py-1.5 bg-white">
                     <span className="text-[10px] uppercase font-bold text-[#6B7280] mr-2">From:</span>
                     <input type="date" value={analyticsDateFrom} onChange={e => { setAnalyticsDateFrom(e.target.value); setAnalyticsDatePreset('custom'); }} className="text-[12px] font-semibold text-[#111111] bg-transparent outline-none" />

@@ -617,9 +617,9 @@ export default function Pos(props: PosProps = {}) {
           </div>
 
           {/* Actions */}
-          <div className="grid grid-cols-1 min-[360px]:grid-cols-3 gap-2 min-[360px]:gap-3">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-3">
             <button onClick={() => void sendPosWhatsApp(invoice)} disabled={sharingInvoice}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl bg-yellow/100 hover:bg-green-600 disabled:opacity-60 text-white font-bold text-sm transition-colors">
+              className="flex min-w-0 w-full items-center justify-center gap-2 py-3 px-2 rounded-xl bg-yellow/100 hover:bg-green-600 disabled:opacity-60 text-white font-bold text-xs sm:text-sm transition-colors">
               <MessageCircle size={16} /> {sharingInvoice ? 'Preparing PDF…' : 'WhatsApp + PDF'}
             </button>
             <button onClick={() => {
@@ -643,11 +643,11 @@ export default function Pos(props: PosProps = {}) {
                 total: invoice.total
               })
             }}
-              className="flex items-center justify-center gap-1.5 min-[360px]:gap-2 py-3 px-2 rounded-xl border-2 border-[#F0E6C8] hover:border-yellow-darkDark text-textMain font-bold text-xs min-[360px]:text-sm transition-colors">
+              className="flex min-w-0 w-full items-center justify-center gap-1.5 py-3 px-2 rounded-xl border-2 border-[#F0E6C8] hover:border-yellow-darkDark text-textMain font-bold text-xs sm:text-sm transition-colors">
               <Printer size={16} /> {l('Print Receipt', 'ரசீது அச்சிடு')}
             </button>
             <button onClick={clearAll}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl bg-yellow-dark hover:bg-yellow-dark text-white font-bold text-sm transition-colors">
+              className="flex min-w-0 w-full items-center justify-center gap-2 py-3 px-2 rounded-xl bg-yellow-dark hover:bg-yellow-dark text-white font-bold text-xs sm:text-sm transition-colors">
               <RefreshCw size={16} /> New Sale
             </button>
           </div>
@@ -769,28 +769,28 @@ export default function Pos(props: PosProps = {}) {
                 <Receipt size={16} className="text-[#D4A800]" />
                 Order Items
               </h3>
-              <div className="flex items-center gap-2">
+              <div className="flex w-full flex-wrap items-center gap-1.5 sm:w-auto">
                 <button 
                   onClick={clearAll}
-                  className="px-3 py-1.5 rounded-lg border border-[#F0E6C8]/60 text-[11px] font-black text-[#6B7280] hover:bg-[#F7F6F2] transition-colors flex items-center gap-1.5"
+                  className="shrink-0 px-2.5 py-1.5 rounded-lg border border-[#F0E6C8]/60 text-[10px] font-black text-[#6B7280] hover:bg-[#F7F6F2] transition-colors flex items-center gap-1"
                 >
                   <Trash2 size={12} /> CLEAR ORDER
                 </button>
                 <button 
                   onClick={() => setCatalogOpen(true)}
-                  className="px-3 py-1.5 rounded-lg border border-[#D4A800] text-[#D4A800] text-[11px] font-black hover:bg-[#D4A800]/5 transition-colors flex items-center gap-1.5"
+                  className="shrink-0 px-2.5 py-1.5 rounded-lg border border-[#D4A800] text-[#D4A800] text-[10px] font-black hover:bg-[#D4A800]/5 transition-colors flex items-center gap-1"
                 >
                   <Search size={12} /> SEARCH CATALOG
                 </button>
                 <button 
                   onClick={() => setAddProductOpen(true)}
-                  className="px-3 py-1.5 rounded-lg bg-[#D4A800] text-white text-[11px] font-black hover:bg-[#C49600] transition-colors flex items-center gap-1.5"
+                  className="shrink-0 px-2.5 py-1.5 rounded-lg bg-[#D4A800] text-white text-[10px] font-black hover:bg-[#C49600] transition-colors flex items-center gap-1"
                 >
                   <Plus size={12} /> ADD TO CATALOG
                 </button>
                 <button 
                   onClick={() => setManualOpen(true)}
-                  className="px-3 py-1.5 rounded-lg border border-[#D4A800] text-[#D4A800] text-[11px] font-black hover:bg-[#D4A800]/5 transition-colors flex items-center gap-1.5"
+                  className="shrink-0 px-2.5 py-1.5 rounded-lg border border-[#D4A800] text-[#D4A800] text-[10px] font-black hover:bg-[#D4A800]/5 transition-colors flex items-center gap-1"
                 >
                   <Plus size={12} /> ADD CUSTOM ITEM
                 </button>
