@@ -127,7 +127,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label className="block text-[10px] font-black text-[#6B7280] tracking-wider uppercase mb-1.5">Category</label>
               <div className="flex gap-2">
@@ -135,7 +135,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
                   const selected = categories.find(category => category.name_en === e.target.value)
                   setFormData({...formData, category: e.target.value, categoryId: selected?.id ?? null})
                 }}
-                  className="min-w-0 flex-1 px-4 py-3 bg-[#F7F6F2] border border-[#F0E6C8]/60 rounded-xl focus:outline-none focus:border-[#D4A800] text-[13px] font-bold">
+                  className="h-12 min-w-0 flex-1 px-4 bg-[#F7F6F2] border border-[#F0E6C8]/60 rounded-xl focus:outline-none focus:border-[#D4A800] text-[13px] font-bold">
                   <option value="">Select category</option>
                   {categories.map(c => <option key={c.id} value={c.name_en}>{c.name_en}</option>)}
                 </select>

@@ -208,6 +208,13 @@ export default function Dashboard() {
     ...cats.filter(category => category.is_active !== false).map(category => category.name_en.trim()),
     ...products.filter(product => product.isActive).map(product => product.category.trim()),
   ].filter(Boolean)), [cats, products])
+  const productCategoryOptions = useMemo(() => {
+    const activeCategories = cats.filter(category => category.is_active !== false)
+    if (prodForm.category && !activeCategories.some(category => category.name_en === prodForm.category)) {
+      return [{ id: '__current__', name_en: prodForm.category, name_ta: '', is_active: true }, ...activeCategories]
+    }
+    return activeCategories
+  }, [cats, prodForm.category])
   const [coupons, setCoupons] = useState<DashboardCoupon[]>([])
   const [couponForm, setCouponForm] = useState({ code: '', percentage: 10, expiry_date: '', usage_limit: '', min_order_value: '' })
   const [couponSaveError, setCouponSaveError] = useState('')
@@ -331,6 +338,8 @@ export default function Dashboard() {
 
     // Billable = every completed sale except the legacy request-only type.
     const billableCompleted = completedOrders.filter(o => normalizeOrderType(o.order_type) !== 'whatsapp_request')
+    const allBillableCompleted = orders
+      .filter(o => isCompletedStatus(o.status) && normalizeOrderType(o.order_type) !== 'whatsapp_request')
     const offlinePOS  = billableCompleted.filter(o => normalizeOrderType(o.order_type) === 'pos_sale' && normalizeOrderMode(o.order_mode) !== 'online')
     const onlinePOS   = billableCompleted.filter(o => normalizeOrderMode(o.order_mode) === 'online' || normalizeOrderType(o.order_type) === 'online_request')
     const manualSales = billableCompleted.filter(o => normalizeOrderType(o.order_type) === 'manual_sale')
@@ -490,9 +499,9 @@ export default function Dashboard() {
     // Always render a complete Jan–Dec calendar for one year. When the year
     // changes, this automatically switches to the new year without trailing
     // months from the previous year.
-    const chartYear = analyticsDateFrom ? Number(analyticsDateFrom.slice(0, 4)) || new Date().getFullYear() : new Date().getFullYear()
+    const chartYear = new Date().getFullYear()
     const monthlyRevenueMap = new Map<string, number>()
-    billableCompleted.filter(o => new Date(o.created_at).getFullYear() === chartYear).forEach(o => {
+    allBillableCompleted.filter(o => new Date(o.created_at).getFullYear() === chartYear).forEach(o => {
       const k = toLocalMonthKey(o.created_at)
       monthlyRevenueMap.set(k, (monthlyRevenueMap.get(k) || 0) + toNumber(o.total, 0))
     })
@@ -503,7 +512,7 @@ export default function Dashboard() {
     })
 
     const weeklyRevenueMap = new Map<string, number>()
-    billableCompleted.forEach(o => {
+    allBillableCompleted.forEach(o => {
       const k = toLocalDateKey(o.created_at)
       weeklyRevenueMap.set(k, (weeklyRevenueMap.get(k) || 0) + toNumber(o.total, 0))
     })
@@ -955,9 +964,16 @@ export default function Dashboard() {
         }).filter(Boolean)
       }
 
+      const selectedCategory = cats.find(category => category.name_en === prodForm.category && category.is_active !== false)
+      if (!selectedCategory) {
+        setProductNotice('Please select a category from the category list')
+        setLoading(false)
+        return
+      }
+
       const payload = {
         name: prodForm.name.trim(), name_ta: prodForm.nameTa.trim(), tamil_name: prodForm.nameTa.trim(),
-        category: prodForm.category.trim(), category_id: prodForm.categoryId || null,
+        category: selectedCategory.name_en, category_id: selectedCategory.id,
         remedy: prodForm.remedy, price: toNumber(prodForm.price, 0),
         offer_price: prodForm.offerPrice === '' ? null : toNumber(prodForm.offerPrice, 0),
         purchase_price: prodForm.purchasePrice === '' ? null : toNumber(prodForm.purchasePrice, 0),
@@ -1299,7 +1315,7 @@ export default function Dashboard() {
       </aside>
 
       {/* Main */}
-      <main className="flex-grow p-4 sm:p-6 lg:p-8 overflow-x-hidden">
+      <main className="flex-grow min-w-0 min-h-screen flex flex-col p-4 sm:p-6 lg:p-8 overflow-x-hidden">
 
         {/* ΓöÇΓöÇ ANALYTICS TAB ΓöÇΓöÇ */}
 
@@ -2090,7 +2106,7 @@ export default function Dashboard() {
                               formatter={(value) => formatCurrency(toNumber(value as number | string, 0))}
                               labelFormatter={(_, payload) => {
                                 const point = payload?.[0]?.payload as { day?: string; date?: string } | undefined
-                                return point ? `${point.day || 'Day'} � ${point.date || ''}` : 'Weekly Revenue'
+                                return point ? `${point.day || 'Day'} · ${point.date || ''}` : 'Weekly Revenue'
                               }}
                             />
                             <Bar dataKey="revenue" fill="#1A1A1A" radius={[4, 4, 0, 0]} barSize={22} />
@@ -2840,7 +2856,7 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="col-span-2">
                     <label className="block text-[11px] font-black uppercase text-[#6B7280] tracking-wider mb-1">{l('Product Name', 'பொருள் பெயர்')} *</label>
                     <input required className="w-full px-4 py-2.5 bg-[#FAFAFA] border border-[#F3F4F6] focus:border-yellow-dark rounded-xl text-[13px] font-bold outline-none transition-colors"
@@ -2899,14 +2915,14 @@ export default function Dashboard() {
                   <div>
                     <label className="block text-[11px] font-black uppercase text-[#6B7280] tracking-wider mb-1">{l('Category', 'வகை')} *</label>
                     <div className="flex gap-2">
-                    <select required className="min-w-0 flex-1 px-4 py-2.5 bg-[#FAFAFA] border border-[#F3F4F6] focus:border-yellow-dark rounded-xl text-[13px] font-bold outline-none transition-colors appearance-none"
+                    <select required className="h-11 min-w-0 flex-1 bg-[#FAFAFA] px-3 sm:px-4 border border-[#F3F4F6] focus:border-yellow-dark rounded-xl text-[13px] font-bold outline-none transition-colors appearance-none"
                       value={prodForm.category}
                       onChange={e => {
                         const sel = cats.find(c => c.name_en === e.target.value)
                         setProdForm(f => ({ ...f, category: e.target.value, categoryId: sel?.id || null }))
                       }}>
                       <option value="">{l('Select category...', 'வகை தேர்வு செய்யுங்கள்...')}</option>
-                      {cats.filter(c => c.is_active !== false).map(c => <option key={c.id} value={c.name_en}>{c.name_en}</option>)}
+                      {productCategoryOptions.map(c => <option key={c.id} value={c.name_en}>{c.name_en}</option>)}
                     </select>
                     <button type="button" onClick={() => setQuickCategoryOpen(v => !v)} className="shrink-0 rounded-xl border border-[#D4A800] px-3 text-[11px] font-black text-[#A67C00] hover:bg-[#D4A800]/10">+ Add</button>
                     </div>
@@ -3652,8 +3668,8 @@ export default function Dashboard() {
           </div>
         )}
 
-        <footer className="mt-10 border-t border-[#E7E7E7] px-2 py-5 text-center text-[11px] font-semibold text-[#8A9384]">
-          © 2026 Powered by Cenexa Systems. All rights reserved.
+        <footer className="mt-auto w-full border-t border-[#E7E7E7] px-2 pt-6 pb-2 text-center text-[11px] font-semibold tracking-wide text-[#8A9384]">
+          © 2026 · Powered by Cenexa Systems · All rights reserved.
         </footer>
       </main>
     </div>
