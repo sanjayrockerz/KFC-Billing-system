@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { X, Search, ShoppingBag, Edit2, Trash2 } from 'lucide-react'
 import { useProductStore, type Product } from '../store/store'
 import { supabase } from '../lib/supabase'
+import { CATALOG_CATEGORIES, canonicalCatalogCategory } from '../lib/catalogCategories'
 
 interface CatalogModalProps {
   isOpen: boolean
@@ -21,16 +22,27 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
   const [newCategory, setNewCategory] = useState('')
   const [addingCategory, setAddingCategory] = useState(false)
 
+  const visibleCategoryRows = useMemo(() => {
+    const uniqueCategories = new Map<string, { id: string | number; name_en: string; is_active?: boolean; sort_order?: number }>()
+    categoryRows
+      .filter(category => category.is_active !== false)
+      .forEach(category => {
+        const canonicalName = canonicalCatalogCategory(category.name_en)
+        if (canonicalName && !uniqueCategories.has(canonicalName)) {
+          uniqueCategories.set(canonicalName, { ...category, name_en: canonicalName })
+        }
+      })
+    return Array.from(uniqueCategories.values())
+  }, [categoryRows])
+
   const categories = useMemo(() => {
-    const managedCats = categoryRows.filter(c => c.is_active !== false).map(c => c.name_en)
-    const cats = Array.from(new Set(managedCats)).filter(Boolean)
-    return ['All', ...cats]
-  }, [products, categoryRows])
+    return ['All', ...CATALOG_CATEGORIES.filter(category => visibleCategoryRows.some(row => row.name_en === category))]
+  }, [visibleCategoryRows])
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
     let src = products.filter(p => p.isActive)
-    if (activeCategory !== 'All') src = src.filter(p => p.category === activeCategory)
+    if (activeCategory !== 'All') src = src.filter(p => canonicalCatalogCategory(p.category) === activeCategory)
     if (q) src = src.filter(p =>
       p.name.toLowerCase().includes(q) ||
       (p.nameTa || '').toLowerCase().includes(q) ||
@@ -84,15 +96,24 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
   const addCategory = async () => {
     const name = newCategory.trim()
     if (!name) return
+    const canonicalName = canonicalCatalogCategory(name)
+    if (!canonicalName) {
+      setEditError(`Only these categories are allowed: ${CATALOG_CATEGORIES.join(', ')}`)
+      return
+    }
+    if (categoryRows.some(category => canonicalCatalogCategory(category.name_en) === canonicalName)) {
+      setEditError(`${canonicalName} already exists`)
+      return
+    }
     setAddingCategory(true)
     const { data, error: categoryError } = await supabase.from('categories')
-      .insert({ name_en: name, name_ta: '', is_active: true })
+      .insert({ name_en: canonicalName, name_ta: '', is_active: true })
       .select('id, name_en, is_active')
       .single()
     if (categoryError) setEditError(categoryError.message)
     else if (data) {
       setCategoryRows(prev => [...prev, data])
-      setEditForm(prev => ({ ...prev, category: data.name_en }))
+      setEditForm(prev => ({ ...prev, category: canonicalName }))
       setNewCategory('')
     }
     setAddingCategory(false)
@@ -165,7 +186,7 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
                     <div className="mt-3 rounded-xl border border-[#F0E6C8]/50 bg-white p-3">
                       <p className="mb-2 text-[10px] font-black uppercase tracking-wider text-[#6B7280]">Manage categories</p>
                       <div className="max-h-40 space-y-1.5 overflow-y-auto pr-1">
-                        {categoryRows.filter(category => category.is_active !== false).map(category => (
+                        {visibleCategoryRows.map(category => (
                           <div key={category.id} className="flex items-center justify-between gap-2 rounded-lg bg-[#F7F6F2] px-3 py-2">
                             <span className="truncate text-[12px] font-bold text-[#1A1A1A]">{category.name_en}</span>
                             <button type="button" onClick={() => void deleteCategory(category)} title={`Delete ${category.name_en}`} aria-label={`Delete ${category.name_en}`}
