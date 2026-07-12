@@ -11,6 +11,7 @@ import { debounce } from '../lib/debounce'
 import { useAuthStore, useAdminAuthStore, useProductStore, type Product } from '../store/store'
 import { BRAND_EN, BRAND_ADDRESS, BRAND_PHONE_DISPLAY, BRAND_EMAIL } from '../lib/brand'
 import { useLangStore } from '../store/langStore'
+import AdminFooter from '../components/AdminFooter'
 import { uploadProductImage } from '../lib/storage'
 import { formatCurrency, normalizeOrderMode, normalizeUnitType, toNumber, type UnitType } from '../lib/retail'
 import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
@@ -1184,9 +1185,9 @@ export default function Dashboard() {
 
   const navItems: Array<{ id: TabKey; icon: React.ReactNode; label: string }> = [
     { id: 'billing',       icon: <ShoppingCart size={20} />,     label: 'Billing Panel' },
+    { id: 'categories',    icon: <Tags size={20} />,              label: 'Categories' },
     { id: 'history',       icon: <List size={20} />,             label: 'Order History' },
     { id: 'pos_analytics', icon: <BarChart2 size={20} />,        label: 'Analytics Dashboard' },
-    { id: 'categories',    icon: <Tags size={20} />,              label: 'Categories' },
     { id: 'coupons',       icon: <Box size={20} />,              label: 'Coupons' },
   ]
 
@@ -1272,6 +1273,20 @@ export default function Dashboard() {
           className={`flex lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 px-3 py-2 lg:py-2 lg:flex-grow transition-all duration-300 ${sidebarCollapsed ? 'lg:px-2' : 'lg:px-4'}`}
           style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' } as React.CSSProperties}
         >
+          <button
+            onClick={() => { useAdminAuthStore.getState().logout(); navigate('/admin-login', { replace: true }) }}
+            className={[
+              'shrink-0 flex flex-col lg:flex-row items-center justify-center',
+              'gap-1 lg:gap-3',
+              'w-[64px] h-[64px] lg:h-[48px] mb-1',
+              sidebarCollapsed ? 'lg:w-[48px] lg:justify-center mx-auto' : 'lg:w-full lg:px-4 lg:justify-start',
+              'px-0 py-1 lg:py-0',
+              'rounded-xl font-medium text-[11px] lg:text-[14px] transition-all text-white/70 hover:bg-white/10 hover:text-white overflow-hidden',
+            ].join(' ')}
+          >
+            <span className="shrink-0"><Power size={20} /></span>
+            <span className={`hidden lg:block truncate text-left transition-all duration-200 ${sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'opacity-100 flex-1'}`}>Logout</span>
+          </button>
           {navItems.map(item => {
             const locked = isTabLocked(item.id)
             return (
@@ -1297,20 +1312,6 @@ export default function Dashboard() {
             )
           })}
           
-          <button
-            onClick={() => { useAdminAuthStore.getState().logout(); navigate('/admin-login', { replace: true }) }}
-            className={[
-              'shrink-0 flex flex-col lg:flex-row items-center justify-center',
-              'gap-1 lg:gap-3',
-              'w-[64px] h-[64px] lg:h-[48px]',
-              sidebarCollapsed ? 'lg:w-[48px] lg:justify-center mx-auto' : 'lg:w-full lg:px-4 lg:justify-start',
-              'px-0 py-1 lg:py-0',
-              'rounded-xl font-medium text-[11px] lg:text-[14px] transition-all text-white/70 hover:bg-white/10 hover:text-white lg:mt-auto mb-4 overflow-hidden',
-            ].join(' ')}
-          >
-            <span className="shrink-0"><Power size={20} /></span>
-            <span className={`hidden lg:block truncate text-left transition-all duration-200 ${sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'opacity-100 flex-1'}`}>Logout</span>
-          </button>
         </nav>
       </aside>
 
@@ -3668,9 +3669,10 @@ export default function Dashboard() {
           </div>
         )}
 
-        <footer className="mt-auto w-full border-t border-[#E7E7E7] px-2 pt-6 pb-2 text-center text-[11px] font-semibold tracking-wide text-[#8A9384]">
+        <footer className="hidden">
           © 2026 · Powered by Cenexa Systems · All rights reserved.
         </footer>
+        <AdminFooter />
       </main>
     </div>
   )

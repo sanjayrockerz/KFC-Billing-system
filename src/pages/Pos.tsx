@@ -11,6 +11,7 @@ import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { useProductStore, useVariantStore, type Product } from '../store/store'
 import { Invoice } from '../components/Invoice'
 import CatalogModal from '../components/CatalogModal'
+import AdminFooter from '../components/AdminFooter'
 import AddProductModal from '../components/AddProductModal'
 import { printThermalReceipt } from '../lib/thermalPrint'
 import { createOrderWithStock } from '../services/orderService'
@@ -890,7 +891,7 @@ couponDiscount: inv.couponDiscount,
             <div className="p-4 flex min-h-0 flex-col gap-3 bg-white flex-1 overflow-y-auto">
               
               {/* Info Table */}
-              <div className="border border-[#F0E6C8]/40 rounded-xl overflow-hidden text-[11px] font-bold">
+              <div className="sticky top-0 z-10 border border-[#F0E6C8]/40 rounded-xl overflow-hidden bg-white text-[11px] font-bold shadow-sm">
                 <div className="flex justify-between p-3 border-b border-[#F0E6C8]/40 bg-[#FAFAFA]">
                   <span className="text-[13px] md:text-[#6B7280] uppercase">Source</span>
                   <span className="text-[#D4A800] border border-[#D4A800]/30 bg-[#D4A800]/5 px-1.5 rounded uppercase text-[13px] md:text-[11px]">{orderMode.toUpperCase()}</span>
@@ -1029,10 +1030,10 @@ couponDiscount: inv.couponDiscount,
               )}
 
               {/* Summary calculations */}
-              <div className="space-y-2 mt-2">
+              <div className="space-y-2 mt-2 rounded-xl border border-[#D4A800]/30 bg-[#FFFDF2] p-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-[12px] font-black text-[#6B7280]">Subtotal ({items.length} items)</span>
-                  <span className="text-[13px] font-black text-[#1A1A1A]">{formatCurrency(subtotal)}</span>
+                  <span className="text-[13px] font-black uppercase tracking-wide text-[#1A1A1A]">Subtotal ({items.length} items)</span>
+                  <span className="text-[16px] font-black text-[#1A1A1A]">{formatCurrency(subtotal)}</span>
                 </div>
                 
                 {billGstEnabled && totalGst > 0 && (
@@ -1084,9 +1085,9 @@ couponDiscount: inv.couponDiscount,
             </div>
             
             {/* Action Buttons Fixed Footer */}
-            <div className="sticky bottom-0 z-20 p-4 md:p-5 border-t border-[#F0E6C8]/60 bg-white shrink-0 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+            <div className="sticky bottom-0 z-20 p-4 md:p-5 border-t-2 border-[#D4A800]/40 bg-white shrink-0 shadow-[0_-6px_24px_rgba(0,0,0,0.12)]">
               <div className="flex items-center justify-between gap-3 mb-3">
-                <span className="text-[13px] font-black text-[#1A1A1A] uppercase tracking-wider">Grand Total</span>
+                <span className="text-[14px] font-black text-[#1A1A1A] uppercase tracking-wider">Grand Total</span>
                 <span className="text-[22px] font-black text-[#D4A800] tracking-tight">{formatCurrency(total)}</span>
               </div>
               <button 
@@ -1102,6 +1103,8 @@ couponDiscount: inv.couponDiscount,
         </div>
 
       </div>
+
+      <AdminFooter />
 
       {catalogOpen && (
         <CatalogModal 
