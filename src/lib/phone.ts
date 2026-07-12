@@ -60,9 +60,12 @@ export function getSubscriberDigits(input: string): string | null {
  */
 export function toWhatsAppUrl(phone: string, message?: string): string {
   const normalized = normalizePhone(phone)
+  const encodedMessage = message
+    ? encodeURIComponent(message.replace(/\r\n?/g, '\n').normalize('NFC'))
+    : ''
   if (normalized) {
     const base = `https://wa.me/${normalized}`
-    return message ? `${base}?text=${encodeURIComponent(message)}` : base
+    return message ? `${base}?text=${encodedMessage}` : base
   }
-  return message ? `${BRAND_WHATSAPP_LINK}?text=${encodeURIComponent(message)}` : BRAND_WHATSAPP_LINK
+  return message ? `${BRAND_WHATSAPP_LINK}?text=${encodedMessage}` : BRAND_WHATSAPP_LINK
 }

@@ -37,7 +37,7 @@ type Category = { id: string | number; name_en: string; name_ta: string; is_acti
 type DashboardOrder = {
   id: string; invoice_no: string; customer_name: string; phone: string; address: string
   created_at: string; total: number; status: string; order_mode: string; order_type: string; user_id: string | null; items: unknown
-  coupon_code: string; discount_amount: number; delivery_charge: number
+  coupon_code: string; discount_amount: number; delivery_charge: number; invoice_url: string
 }
 type DashboardOrderItem = { order_id: string; product_name: string; quantity: number; line_total: number; is_manual?: boolean | null }
 type DashboardCoupon = {
@@ -93,6 +93,9 @@ const buildInvoiceWhatsAppMessage = (order: DashboardOrder) => {
     couponDiscount: order.discount_amount,
     shipping: order.delivery_charge,
     total: order.total,
+    invoiceUrl: order.invoice_url || (order.invoice_no
+      ? `${window.location.origin}/invoice/${encodeURIComponent(order.invoice_no)}`
+      : undefined),
   })
 }
 
@@ -319,6 +322,7 @@ export default function Dashboard() {
     coupon_code: String(row.coupon_code || ''),
     discount_amount: toNumber(row.discount_amount, 0),
     delivery_charge: toNumber(row.delivery_charge, 0),
+    invoice_url: String(row.invoice_url || ''),
   })
 
   // Analytics (date-aware)
@@ -487,10 +491,11 @@ export default function Dashboard() {
     const topCategories = Array.from(categoryMap.values()).sort((a, b) => b.revenue - a.revenue)
     const bestProduct   = topProducts[0]?.name || 'No sales yet'
     const bestCategory  = topCategories[0]?.name || 'No sales yet'
-
-    // Average items per bill
-    const avgItemsPerBill = billableCompleted.length > 0
-      ? totalProductsSold / billableCompleted.length : 0
+    const totalProductRevenue = topProducts.reduce((sum, product) => sum + product.revenue, 0)
+    const averageProductRevenue = totalProductsSold > 0 ? totalProductRevenue / totalProductsSold : 0
+    const highestRevenueProduct = [...topProducts].sort((a, b) => b.revenue - a.revenue)[0]?.name || 'No sales yet'
+    const lowestSellingProduct = [...topProducts].sort((a, b) => a.qty - b.qty || a.revenue - b.revenue)[0]?.name || 'No sales yet'
+    const totalCatalogProducts = products.filter(product => product.isActive).length
 
     // Category distribution for chart
     const categoryDist = Array.from(categoryMap.entries()).sort((a, b) => b[1].revenue - a[1].revenue).slice(0, 8)
@@ -620,7 +625,6 @@ export default function Dashboard() {
       todayOnlineRevenue,
       todayManualRevenue,
       todayProductHourlyTrend,
-      avgItemsPerBill,
       avgRevenuePerBill,
       categoryDist,
       totalCouponDiscounts,
@@ -636,8 +640,13 @@ export default function Dashboard() {
       manualRevenue: manualRevenue || totalManualRevenue,
       monthlyRevenue,
       totalProductsSold,
+      totalProductRevenue,
+      averageProductRevenue,
+      totalCatalogProducts,
       bestCategory,
       bestProduct,
+      highestRevenueProduct,
+      lowestSellingProduct,
       monthlyTrend,
       monthlyTrendYear: chartYear,
       channelDistribution,
@@ -677,7 +686,7 @@ export default function Dashboard() {
       const [cRes, oRes] = await Promise.all([
         supabase.from('categories').select('id, name_en, name_ta, is_active, sort_order').order('sort_order'),
         supabase.from('orders')
-          .select('id, invoice_no, customer_name, phone, address, created_at, total, status, order_mode, order_type, user_id, items, coupon_code, discount_amount, delivery_charge')
+          .select('id, invoice_no, customer_name, phone, address, created_at, total, status, order_mode, order_type, user_id, items, coupon_code, discount_amount, delivery_charge, invoice_url')
           .order('created_at', { ascending: false })
           .limit(1000),
       ])
@@ -921,7 +930,7 @@ export default function Dashboard() {
     setSearchLoading(true)
     try {
       let q = supabase.from('orders')
-        .select('id, invoice_no, customer_name, phone, address, created_at, total, status, order_mode, order_type, items, coupon_code, discount_amount, delivery_charge')
+          .select('id, invoice_no, customer_name, phone, address, created_at, total, status, order_mode, order_type, items, coupon_code, discount_amount, delivery_charge, invoice_url')
         .neq('order_type', 'online_request')
         .order('created_at', { ascending: false })
         .limit(500)
@@ -1619,7 +1628,9 @@ export default function Dashboard() {
                         const isExpanded = waExpandedId === order.id
 
                         // WhatsApp message text
-                        const waMsg = [
+                        const waMsg = buildInvoiceWhatsAppMessage(order)
+                        /* Legacy inline message retained only as a migration marker; all displayed/copyable text uses the shared formatter.
+                        const legacyWaMsg = [
                           `??? *Thank you for shopping with Korean Fried Chicken!*`,
                           '',
                           `Dear *${order.customer_name || 'Valued Customer'}*,`,
@@ -1671,7 +1682,7 @@ export default function Dashboard() {
                           `?? +91 9342489391`,
                           '',
                           `Have a wonderful day! ??`,
-                        ].filter(Boolean).join('\n')
+                        ].filter(Boolean).join('\n') */
 
                         return (
                           <React.Fragment key={order.id}>
@@ -2404,12 +2415,14 @@ export default function Dashboard() {
             {posAnalyticsTab === 'products' && (
               <div className="space-y-6">
                 {/* Key metrics row */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
                   {[
+                    { label: 'Total Products', value: String(analytics.totalCatalogProducts), icon: <Package size={18} />, from: 'from-slate-500 to-slate-700' },
                     { label: 'Total Products Sold', value: String(Math.round(analytics.totalProductsSold)), icon: <Package size={18} />, from: 'from-emerald-500 to-teal-600' },
-                    { label: 'Total Revenue', value: formatCurrency(analytics.totalCompletedRevenue), icon: <IndianRupee size={18} />, from: 'from-blue-500 to-indigo-600' },
-                    { label: 'Avg Revenue / Bill', value: formatCurrency(analytics.avgRevenuePerBill), icon: <IndianRupee size={18} />, from: 'from-violet-500 to-purple-600' },
-                    { label: 'Top Product', value: analytics.bestProduct.length > 15 ? analytics.bestProduct.slice(0, 15) + '...' : analytics.bestProduct, icon: <Trophy size={18} />, from: 'from-amber-500 to-orange-600' },
+                    { label: 'Average Product Revenue', value: `${formatCurrency(analytics.averageProductRevenue)} / Product`, icon: <IndianRupee size={18} />, from: 'from-violet-500 to-purple-600' },
+                    { label: 'Top Selling Product', value: analytics.bestProduct, icon: <Trophy size={18} />, from: 'from-amber-500 to-orange-600' },
+                    { label: 'Highest Revenue Product', value: analytics.highestRevenueProduct, icon: <IndianRupee size={18} />, from: 'from-blue-500 to-indigo-600' },
+                    { label: 'Lowest Selling Product', value: analytics.lowestSellingProduct, icon: <Package size={18} />, from: 'from-rose-500 to-red-600' },
                   ].map((card, i) => (
                     <div key={i} className={`relative overflow-hidden rounded-2xl p-5 shadow-lg border border-white/20 bg-gradient-to-br ${card.from}`}>
                       <div className="absolute inset-0 bg-gradient-to-tl from-white/30 via-white/10 to-transparent" />
