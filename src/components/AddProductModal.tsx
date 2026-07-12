@@ -9,34 +9,34 @@ interface AddProductModalProps {
   onSuccess: () => void
 }
 
+type CategoryOption = { id: string | number; name_en: string }
+
 export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProductModalProps) {
   const { fetchProducts } = useProductStore()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [categories, setCategories] = useState<string[]>([])
+  const [categories, setCategories] = useState<CategoryOption[]>([])
   const [newCategory, setNewCategory] = useState('')
   const [addCategoryOpen, setAddCategoryOpen] = useState(false)
   const [addingCategory, setAddingCategory] = useState(false)
   const [formData, setFormData] = useState({
     name: '',
     category: '',
+    categoryId: null as string | number | null,
     price: '',
     stock: '10'
   })
 
   useEffect(() => {
     if (!isOpen) return
-    setFormData({ name: '', category: '', price: '', stock: '10' })
+    setFormData({ name: '', category: '', categoryId: null, price: '', stock: '10' })
     setError('')
     setNewCategory('')
     setAddCategoryOpen(false)
     Promise.all([
-      supabase.from('categories').select('name_en').eq('is_active', true).order('sort_order'),
-      supabase.from('products').select('category'),
-    ]).then(([categoryResult, productResult]) => {
-      const managed = (categoryResult.data ?? []).map(r => String(r.name_en).trim()).filter(Boolean)
-      const productCats = (productResult.data ?? []).map(r => String(r.category).trim()).filter(Boolean)
-      setCategories([...new Set([...managed, ...productCats])].sort((a, b) => a.localeCompare(b)))
+      supabase.from('categories').select('id, name_en').eq('is_active', true).order('sort_order'),
+    ]).then(([categoryResult]) => {
+      setCategories((categoryResult.data ?? []) as CategoryOption[])
     })
   }, [isOpen])
 
@@ -48,13 +48,18 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     setAddingCategory(true)
     const { data, error: categoryError } = await supabase.from('categories')
       .insert({ name_en: name, name_ta: '', is_active: true })
-      .select('name_en')
+      .select('id, name_en')
       .single()
     if (categoryError) setError(categoryError.message)
     else {
       const categoryName = String(data?.name_en || name)
-      setCategories(prev => [...new Set([...prev, categoryName])].sort((a, b) => a.localeCompare(b)))
-      setFormData(prev => ({ ...prev, category: categoryName }))
+      const categoryId = data?.id ?? null
+      if (categoryId == null) {
+        setError('Category was created without an id')
+      } else {
+        setCategories(prev => [...prev, { id: categoryId, name_en: categoryName }].sort((a, b) => a.name_en.localeCompare(b.name_en)))
+        setFormData(prev => ({ ...prev, category: categoryName, categoryId }))
+      }
       setNewCategory('')
       setAddCategoryOpen(false)
     }
@@ -73,6 +78,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
       const { error: dbErr } = await supabase.from('products').insert({
         name: formData.name.trim(),
         category: formData.category.trim(),
+        category_id: formData.categoryId,
         price: Number(formData.price),
         stock: Number(formData.stock),
         is_active: true,
@@ -125,10 +131,13 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
             <div>
               <label className="block text-[10px] font-black text-[#6B7280] tracking-wider uppercase mb-1.5">Category</label>
               <div className="flex gap-2">
-                <select value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})}
+                <select value={formData.category} onChange={e => {
+                  const selected = categories.find(category => category.name_en === e.target.value)
+                  setFormData({...formData, category: e.target.value, categoryId: selected?.id ?? null})
+                }}
                   className="min-w-0 flex-1 px-4 py-3 bg-[#F7F6F2] border border-[#F0E6C8]/60 rounded-xl focus:outline-none focus:border-[#D4A800] text-[13px] font-bold">
                   <option value="">Select category</option>
-                  {categories.map(c => <option key={c} value={c}>{c}</option>)}
+                  {categories.map(c => <option key={c.id} value={c.name_en}>{c.name_en}</option>)}
                 </select>
                 <button type="button" onClick={() => setAddCategoryOpen(v => !v)} title="Add category"
                   className="flex h-[46px] w-[34px] shrink-0 items-center justify-center rounded-xl border border-[#F0E6C8] bg-[#FFFDF5] text-[#9B2335] hover:bg-[#F0E6C8]/40">

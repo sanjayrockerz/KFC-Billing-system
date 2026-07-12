@@ -17,14 +17,13 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
   const [editForm, setEditForm] = useState({ name: '', category: '', price: '' })
   const [editLoading, setEditLoading] = useState(false)
   const [editError, setEditError] = useState('')
-  const [categoryRows, setCategoryRows] = useState<{ id: string | number; name_en: string; is_active?: boolean }[]>([])
+  const [categoryRows, setCategoryRows] = useState<{ id: string | number; name_en: string; is_active?: boolean; sort_order?: number }[]>([])
   const [newCategory, setNewCategory] = useState('')
   const [addingCategory, setAddingCategory] = useState(false)
 
   const categories = useMemo(() => {
-    const productCats = products.filter(p => p.isActive).map(p => p.category)
     const managedCats = categoryRows.filter(c => c.is_active !== false).map(c => c.name_en)
-    const cats = Array.from(new Set([...managedCats, ...productCats])).filter(Boolean)
+    const cats = Array.from(new Set(managedCats)).filter(Boolean)
     return ['All', ...cats]
   }, [products, categoryRows])
 
@@ -58,9 +57,16 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
     if (!editForm.price) { setEditError('Price is required'); return }
     setEditLoading(true)
     setEditError('')
+    const selectedCategory = categoryRows.find(category => category.name_en === editForm.category)
+    if (!selectedCategory) {
+      setEditError('Please select a valid category')
+      setEditLoading(false)
+      return
+    }
     const { error } = await supabase.from('products').update({
       name: editForm.name.trim(),
       category: editForm.category.trim(),
+      category_id: selectedCategory.id,
       price: Number(editForm.price),
     }).eq('id', editingProduct.id)
     if (error) { setEditError(error.message); setEditLoading(false); return }
@@ -101,6 +107,8 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
       return
     }
     setCategoryRows(prev => prev.filter(row => row.id !== category.id))
+    await fetchProducts(true)
+    setActiveCategory('All')
     if (editForm.category === category.name_en) {
       setEditForm(prev => ({ ...prev, category: '' }))
     }
@@ -110,7 +118,7 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
     if (!isOpen) return
     void fetchProducts()
     void supabase.from('categories').select('id, name_en, is_active').order('sort_order').then(({ data }) => {
-      setCategoryRows((data || []) as { id: string | number; name_en: string; is_active?: boolean }[])
+      setCategoryRows((data || []) as { id: string | number; name_en: string; is_active?: boolean; sort_order?: number }[])
     })
   }, [isOpen, fetchProducts])
 
