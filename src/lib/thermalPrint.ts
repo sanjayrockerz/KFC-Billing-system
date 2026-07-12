@@ -1,4 +1,4 @@
-import { BRAND_EN, BRAND_TA, BRAND_WHATSAPP } from './brand'
+import { BRAND_EN, BRAND_WHATSAPP } from './brand'
 import { formatCurrency } from './retail'
 
 export interface ThermalReceiptData {
@@ -159,7 +159,6 @@ export function printThermalReceipt(data: ThermalReceiptData) {
 
         <div class="text-center mt-2" style="font-size: 11px;">
           <div class="font-bold">Thank you for visiting!</div>
-          <div>Visit again</div>
         </div>
       </body>
     </html>

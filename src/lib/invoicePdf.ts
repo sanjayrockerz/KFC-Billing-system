@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf'
-import { BRAND_ADDRESS, BRAND_EMAIL, BRAND_EN, BRAND_PHONE_DISPLAY, BRAND_WHATSAPP_LINK } from './brand'
-import { formatCurrency, formatQuantityDisplay, normalizeStructuredOrderItem } from './retail'
+import { BRAND_EN } from './brand'
+import { formatQuantityDisplay, normalizeStructuredOrderItem } from './retail'
 
 export type InvoicePdfData = {
   invoiceNo: string; date: string; customerName: string; phone: string; address: string
@@ -67,7 +67,7 @@ export async function createInvoicePdf(data: InvoicePdfData): Promise<Blob> {
   doc.setFontSize(9); rows.forEach(([label, value, color]) => { doc.setFont('helvetica', 'normal'); doc.setTextColor(color); doc.text(label, summaryLeft, y, { align: 'right' }); doc.setFont('helvetica', 'bold'); doc.text(value, amountX, y, { align: 'right' }); y += 7 })
   doc.setDrawColor(green); doc.setLineWidth(0.6); doc.line(left, y - 4, right, y - 4); doc.setFont('helvetica', 'bold'); doc.setFontSize(14); doc.setTextColor(green); doc.text('TOTAL', summaryLeft, y + 7, { align: 'right' }); doc.text(money(data.total), amountX, y + 7, { align: 'right' })
 
-  const footerY = pageHeight - 29; doc.setDrawColor(lightLine); doc.setLineWidth(0.2); doc.line(left, footerY, right, footerY); doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(green); doc.text('Thank you for shopping!', left, footerY + 9); doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor('#9AA3AA'); doc.text(`Contact: ${BRAND_PHONE_DISPLAY} | Email: ${BRAND_EMAIL}`, left, footerY + 16); doc.text(`WhatsApp: ${BRAND_WHATSAPP_LINK}`, left, footerY + 22); doc.setTextColor(muted); doc.text('Authorised Signature', right - 28, footerY + 16, { align: 'center' }); doc.line(right - 44, footerY + 18, right - 12, footerY + 18); doc.setFont('helvetica', 'bold'); doc.text(BRAND_EN, right - 28, footerY + 24, { align: 'center' })
+  const footerY = pageHeight - 29; doc.setDrawColor(lightLine); doc.setLineWidth(0.2); doc.line(left, footerY, right, footerY); doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(green); doc.text('Thank you for shopping!', left, footerY + 9)
   return doc.output('blob')
 }
 

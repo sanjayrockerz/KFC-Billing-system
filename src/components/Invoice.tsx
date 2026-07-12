@@ -229,8 +229,8 @@ export const Invoice: React.FC<InvoiceProps> = ({
       {/* ── FOOTER ───────────────────────────────────────────────── */}
       <div
         style={{
-          marginTop: 40, paddingTop: 20, borderTop: '1px dashed #d0d0d0',
-          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
+          display: 'none', marginTop: 40, paddingTop: 20, borderTop: '1px dashed #d0d0d0',
+          justifyContent: 'space-between', alignItems: 'flex-end',
         }}
       >
         <div>
@@ -245,6 +245,9 @@ export const Invoice: React.FC<InvoiceProps> = ({
           <div style={{ width: 120, borderTop: '1px solid #333' }} />
           <div style={{ fontSize: 10, color: '#666', marginTop: 4, fontWeight: 700 }}>{BRAND_EN}</div>
         </div>
+      </div>
+      <div style={{ marginTop: 40, paddingTop: 20, borderTop: '1px dashed #d0d0d0', textAlign: 'center', fontSize: 13, fontWeight: 800, color: '#D4A800' }}>
+        Thank you for shopping!
       </div>
     </div>
   )
