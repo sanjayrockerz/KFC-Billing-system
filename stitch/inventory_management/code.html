@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Inventory Management - Sri Siddha Herbal Store</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600&amp;family=Noto+Sans+Tamil:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#dbdcc3",
+              "inverse-primary": "#a4d1b6",
+              "inverse-on-surface": "#f2f2d9",
+              "surface-bright": "#fbfbe2",
+              "error": "#ba1a1a",
+              "on-error": "#ffffff",
+              "secondary-container": "#d1e6c3",
+              "tertiary-fixed": "#e9e2d2",
+              "on-background": "#1b1d0e",
+              "surface-container-highest": "#e4e4cc",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#bfedd1",
+              "on-tertiary-container": "#524e42",
+              "outline": "#74786f",
+              "primary-fixed-dim": "#a4d1b6",
+              "secondary-fixed-dim": "#b8cdab",
+              "secondary-fixed": "#d4e9c5",
+              "error-container": "#ffdad6",
+              "surface-tint": "#3d6751",
+              "on-surface": "#1b1d0e",
+              "surface": "#fbfbe2",
+              "secondary": "#516448",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#f5f5dc",
+              "outline-variant": "#c4c8bd",
+              "on-error-container": "#93000a",
+              "inverse-surface": "#303221",
+              "tertiary": "#625e52",
+              "surface-variant": "#e4e4cc",
+              "primary": "#3d6751",
+              "on-secondary-fixed": "#0f1f09",
+              "on-secondary": "#ffffff",
+              "on-secondary-container": "#55684c",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed-variant": "#4a473b",
+              "tertiary-fixed-dim": "#ccc6b7",
+              "primary-container": "#9ecbb0",
+              "on-surface-variant": "#444840",
+              "on-tertiary-fixed": "#1e1c12",
+              "on-secondary-fixed-variant": "#3a4c31",
+              "on-primary-fixed": "#002113",
+              "surface-container": "#efefd7",
+              "on-primary-fixed-variant": "#254f3a",
+              "on-primary-container": "#2d5742",
+              "surface-container-high": "#eaead1",
+              "tertiary-container": "#c6c0b1",
+              "background": "#fbfbe2"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        background-color: #f5f5dc; /* Design system surface-container-low override as requested */
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body text-on-surface">
+<!-- TopAppBar -->
+<header class="bg-[#fbfbe2]/85 backdrop-blur-md fixed top-0 w-full z-50 border-b border-[#c4c8bd]/15 shadow-sm">
+<div class="flex justify-between items-center px-5 h-16 w-full max-w-screen-xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform duration-200 text-[#3d6751]">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-xl font-bold tracking-tight text-[#3d6751] font-['Plus_Jakarta_Sans']">Sri Siddha Herbal Store</h1>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[#3d6751] font-semibold font-['Plus_Jakarta_Sans'] text-sm">EN | தமிழ்</span>
+</div>
+</div>
+</header>
+<main class="pt-24 pb-32 px-5 max-w-screen-xl mx-auto">
+<!-- Search and Filter Bar -->
+<div class="mb-10 flex flex-col md:flex-row gap-4">
+<div class="relative flex-grow">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-[#eaead1] border-none rounded-full py-4 pl-12 pr-6 text-on-surface placeholder:text-on-surface-variant focus:ring-2 focus:ring-primary focus:bg-surface-container-lowest transition-all" placeholder="Search the botanical archive..." type="text"/>
+</div>
+<button class="flex items-center justify-center gap-2 bg-surface-container text-on-surface font-semibold px-6 py-4 rounded-full border border-outline-variant/10 active:scale-95 transition-all">
+<span class="material-symbols-outlined">tune</span>
+<span>Filters</span>
+</button>
+</div>
+<!-- Inventory Hero / Stats -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
+<div>
+<h2 class="text-3xl font-bold font-headline text-primary tracking-tight">Stock Inventory</h2>
+<p class="text-on-surface-variant mt-1 font-medium">Digital Apothecary Logbook</p>
+</div>
+<button class="bg-[#3d6751] text-white px-8 py-4 rounded-xl font-bold flex items-center gap-2 active:scale-95 transition-all shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+<span>Add Product</span>
+</button>
+</div>
+<!-- Inventory List / Table Alternative -->
+<div class="grid grid-cols-1 gap-4">
+<!-- Table Header (Hidden on Mobile) -->
+<div class="hidden md:grid grid-cols-12 px-6 py-4 bg-surface-container text-on-surface-variant font-bold text-xs uppercase tracking-widest rounded-t-2xl">
+<div class="col-span-5">Product Name</div>
+<div class="col-span-3 text-center">Stock Quantity</div>
+<div class="col-span-2 text-right">Price</div>
+<div class="col-span-2 text-right">Actions</div>
+</div>
+<!-- Row 1: Sukku Powder -->
+<div class="bg-[#FFF8E7] rounded-2xl md:rounded-none md:bg-surface-container-lowest p-6 md:px-6 md:py-4 md:grid md:grid-cols-12 items-center border border-outline-variant/5 hover:bg-surface-container transition-colors duration-200">
+<div class="col-span-5 flex items-center gap-4">
+<div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-low shrink-0">
+<img class="w-full h-full object-cover" data-alt="Close-up of finely ground dried ginger powder in a rustic wooden bowl surrounded by raw ginger roots on a beige linen texture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXzTq9ltGxYz6vO_POZRrGxXhJnD-MkfU9wKef2x7ouHf7ctzYoXRLaq7pykh0qTZ9iHuRpJcKsev00v6z7VBBnYMaYYvHfk-n5mD4lTLUk7HKeB6kmkJ4qlzGKlS0IE1oc8x-8VrRMHkGmhJG43-LM4X5LtJX0zsTQV3OsEzKN0Vb2qT9L_Fs39evUZFVGFm0C3bvzTPOyPqNzx_jkF2TJG8VatoO5hFip5StMur4SkNd8MZfzFoLh1rsCPjqFkEmDD7J_vzE17c"/>
+</div>
+<div>
+<p class="font-headline font-bold text-lg text-on-surface">Sukku Powder</p>
+<p class="text-sm font-medium text-secondary italic">சுக்கு பொடி</p>
+</div>
+</div>
+<div class="col-span-3 flex justify-between md:justify-center items-center mt-4 md:mt-0">
+<span class="md:hidden text-on-surface-variant text-sm">Stock:</span>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-error animate-pulse"></span>
+<span class="font-bold text-error">12 Units</span>
+</div>
+</div>
+<div class="col-span-2 flex justify-between md:justify-end items-center mt-2 md:mt-0">
+<span class="md:hidden text-on-surface-variant text-sm">Price:</span>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed font-bold px-3 py-1 rounded-full text-sm">₹80.00</span>
+</div>
+<div class="col-span-2 flex justify-end gap-3 mt-6 md:mt-0">
+<button class="p-2 rounded-lg bg-inverse-primary/30 text-on-primary-container active:scale-90 transition-transform">
+<span class="material-symbols-outlined">edit_note</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container-high text-on-surface-variant active:scale-90 transition-transform">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+<!-- Row 2: Ashwagandha -->
+<div class="bg-[#FFF8E7] rounded-2xl md:rounded-none md:bg-surface-container-lowest p-6 md:px-6 md:py-4 md:grid md:grid-cols-12 items-center border border-outline-variant/5 hover:bg-surface-container transition-colors duration-200">
+<div class="col-span-5 flex items-center gap-4">
+<div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-low shrink-0">
+<img class="w-full h-full object-cover" data-alt="Dry ashwagandha roots and powder on a smooth light stone surface with green leaves and soft morning sunlight shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUZDWglbbx9Rks7BhBfJdhxHqvxx-vLhee1E3lgUG8HfPbHAFFOrRo4uk36KLfrNXBXt4mRA4GggSU3auyr-qpyf7cKw6x_Sj2KfcxEeWV7iuF4FW3b0vkeU_5yeFaBy5jIunNzM795eXr0zs5mJRAhGer4tTxoeXnlLQhZH9mmdv7_vtnxtYZw8vw4vsDYUaxtXr_bq9klvFSWLSrsonAkwi4IDn-geVN4iJng1tDZm4G3ZIPXMgTO7WAhWYM-H5FPz_GQUWU9Us"/>
+</div>
+<div>
+<p class="font-headline font-bold text-lg text-on-surface">Ashwagandha</p>
+<p class="text-sm font-medium text-secondary italic">அமுக்கரா</p>
+</div>
+</div>
+<div class="col-span-3 flex justify-between md:justify-center items-center mt-4 md:mt-0">
+<span class="md:hidden text-on-surface-variant text-sm">Stock:</span>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-bold text-on-surface">45 Units</span>
+</div>
+</div>
+<div class="col-span-2 flex justify-between md:justify-end items-center mt-2 md:mt-0">
+<span class="md:hidden text-on-surface-variant text-sm">Price:</span>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed font-bold px-3 py-1 rounded-full text-sm">₹240.00</span>
+</div>
+<div class="col-span-2 flex justify-end gap-3 mt-6 md:mt-0">
+<button class="p-2 rounded-lg bg-inverse-primary/30 text-on-primary-container active:scale-90 transition-transform">
+<span class="material-symbols-outlined">edit_note</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container-high text-on-surface-variant active:scale-90 transition-transform">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+<!-- Row 3: Neem Extract -->
+<div class="bg-[#FFF8E7] rounded-2xl md:rounded-none md:bg-surface-container-lowest p-6 md:px-6 md:py-4 md:grid md:grid-cols-12 items-center border border-outline-variant/5 hover:bg-surface-container transition-colors duration-200">
+<div class="col-span-5 flex items-center gap-4">
+<div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-low shrink-0">
+<img class="w-full h-full object-cover" data-alt="Fresh green neem leaves and organic dark green herbal oil in a glass dropper bottle on a light beige background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsKLNdbmWqtSNf9RmrDc8V8V7XlyS5JcDQO57xYShr1TccblDR1B_Rc4tGpzC_2myfY0E15LY-ZNxAImI1m5ED6X7Tz1qZ2aJVTmUNphU67JhIZYHw1cHqatXIXzAdNG3RTXBaLRqXnkhT_SdbczOh9yAYtSgxVPX2-baqlnwUs_u3QygROgyHUwdvN2vJfVi1YgPRjKh-xRzKuvKf8XPOce57sj9v5at2YgYI9dr1Jt-wnYBNDUKIg40JS32shcTgzjhPiN5rdpI"/>
+</div>
+<div>
+<p class="font-headline font-bold text-lg text-on-surface">Neem Extract</p>
+<p class="text-sm font-medium text-secondary italic">வேம்பு சாறு</p>
+</div>
+</div>
+<div class="col-span-3 flex justify-between md:justify-center items-center mt-4 md:mt-0">
+<span class="md:hidden text-on-surface-variant text-sm">Stock:</span>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-bold text-on-surface">8 Units</span>
+</div>
+</div>
+<div class="col-span-2 flex justify-between md:justify-end items-center mt-2 md:mt-0">
+<span class="md:hidden text-on-surface-variant text-sm">Price:</span>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed font-bold px-3 py-1 rounded-full text-sm">₹120.00</span>
+</div>
+<div class="col-span-2 flex justify-end gap-3 mt-6 md:mt-0">
+<button class="p-2 rounded-lg bg-inverse-primary/30 text-on-primary-container active:scale-90 transition-transform">
+<span class="material-symbols-outlined">edit_note</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container-high text-on-surface-variant active:scale-90 transition-transform">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+<!-- Row 4: Tulsi Honey -->
+<div class="bg-[#FFF8E7] rounded-2xl md:rounded-b-2xl md:rounded-t-none md:bg-surface-container-lowest p-6 md:px-6 md:py-4 md:grid md:grid-cols-12 items-center border border-outline-variant/5 hover:bg-surface-container transition-colors duration-200">
+<div class="col-span-5 flex items-center gap-4">
+<div class="w-16 h-16 rounded-xl overflow-hidden bg-surface-container-low shrink-0">
+<img class="w-full h-full object-cover" data-alt="A jar of amber-colored honey with fresh holy basil leaves and a wooden honey dipper on a sunlit wooden table" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBj0qa_Slyt8JROj7KY4HV2oxFtMW4VdgjrAfyKFF7zGNvu2PROeZsSemKRcgKt69moIx48Dbiw4hPR-PIbRaIWmBEw-cEC4EPoABzHOd20V638MPPL-jDHd_Nqr60eY40zzZwZqqju-JRndnriacXdJb_dqHV5f5sCAv_c7zjEJbulMB3xO0XBXPYGPzfSq2gry9X5I_1MpTH4u3pmC8ugLNE3-ZjnYd5NnJ1wSGKBtdaWD4lNQSQxG10kYSTff1bOCcYyaJiRNXA"/>
+</div>
+<div>
+<p class="font-headline font-bold text-lg text-on-surface">Tulsi Honey</p>
+<p class="text-sm font-medium text-secondary italic">துளசி தேன்</p>
+</div>
+</div>
+<div class="col-span-3 flex justify-between md:justify-center items-center mt-4 md:mt-0">
+<span class="md:hidden text-on-surface-variant text-sm">Stock:</span>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span class="font-bold text-on-surface">32 Units</span>
+</div>
+</div>
+<div class="col-span-2 flex justify-between md:justify-end items-center mt-2 md:mt-0">
+<span class="md:hidden text-on-surface-variant text-sm">Price:</span>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed font-bold px-3 py-1 rounded-full text-sm">₹350.00</span>
+</div>
+<div class="col-span-2 flex justify-end gap-3 mt-6 md:mt-0">
+<button class="p-2 rounded-lg bg-inverse-primary/30 text-on-primary-container active:scale-90 transition-transform">
+<span class="material-symbols-outlined">edit_note</span>
+</button>
+<button class="p-2 rounded-lg bg-surface-container-high text-on-surface-variant active:scale-90 transition-transform">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Inventory Insights Bento -->
+<div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-primary p-6 rounded-[2rem] text-white flex flex-col justify-between">
+<span class="material-symbols-outlined text-4xl mb-4">inventory_2</span>
+<div>
+<p class="text-white/70 font-medium">Total Varieties</p>
+<p class="text-4xl font-bold font-headline">128</p>
+</div>
+</div>
+<div class="bg-surface-container p-6 rounded-[2rem] flex flex-col justify-between">
+<span class="material-symbols-outlined text-4xl mb-4 text-primary">warning</span>
+<div>
+<p class="text-on-surface-variant font-medium">Low Stock Alerts</p>
+<p class="text-4xl font-bold font-headline text-on-surface">07</p>
+</div>
+</div>
+<div class="bg-secondary-container p-6 rounded-[2rem] flex flex-col justify-between">
+<span class="material-symbols-outlined text-4xl mb-4 text-on-secondary-container">trending_up</span>
+<div>
+<p class="text-on-secondary-container/80 font-medium">Inventory Value</p>
+<p class="text-4xl font-bold font-headline text-on-secondary-container">₹42.8k</p>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-2 pb-6 bg-[#ffffff]/85 backdrop-blur-lg z-50 rounded-t-[1.5rem] border-t border-[#c4c8bd]/15 shadow-[0_-4px_20px_rgba(27,29,14,0.05)]">
+<a class="flex flex-col items-center justify-center text-[#444840] px-5 py-1 hover:bg-[#f5f5dc] transition-all scale-98 active:scale-90" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444840] px-5 py-1 hover:bg-[#f5f5dc] transition-all scale-98 active:scale-90" href="#">
+<span class="material-symbols-outlined">potted_plant</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Shop</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444840] px-5 py-1 hover:bg-[#f5f5dc] transition-all scale-98 active:scale-90" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Billing</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#a4d1b6] text-[#1b1d0e] rounded-2xl px-5 py-1 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Admin</span>
+</a>
+</nav>
+</body></html>

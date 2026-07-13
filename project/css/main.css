@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-bgMain text-textMain font-body antialiased;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
+  }
+}
+
+@layer components {
+  /* Layout structures */
+  .container-main {
+    @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-cardBg rounded-xl shadow-soft transition-all duration-300 hover:shadow-lg hover:-translate-y-1 overflow-hidden;
+  }
+  
+  .card-p {
+    @apply p-6;
+  }
+
+  /* Buttons */
+  .btn-primary {
+    @apply bg-accentPrimary text-textMain font-semibold py-3 px-6 rounded-xl transition-all duration-300 hover:bg-btnHover active:scale-95 flex items-center justify-center gap-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-accentSand text-textMain font-semibold py-3 px-6 rounded-xl transition-all duration-300 hover:bg-accentOlive active:scale-95;
+  }
+
+  /* Forms */
+  .input-field {
+    @apply w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accentPrimary focus:border-transparent transition-all;
+  }
+
+  /* Navbar */
+  .glass-nav {
+    @apply fixed top-0 w-full z-50 bg-bgMain/90 backdrop-blur-md border-b border-gray-200 shadow-sm transition-all;
+  }
+}
+
+/* Custom Scrollbar for a more premium feel */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-accentPrimary rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-btnHover;
+}

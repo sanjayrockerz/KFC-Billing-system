@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Products | Sri Siddha</title>
+    <link rel="stylesheet" href="../css/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300,0;400,0;500,0;600,0&display=swap" rel="stylesheet" />
+</head>
+<body class="bg-[#faf9f6] text-textMain font-body">
+
+    <!-- Header -->
+    <header class="bg-white sticky top-0 z-40 border-b border-gray-100 shadow-sm" id="main-header">
+        <div class="container-main py-4 flex items-center justify-between gap-4">
+            <a href="index.html" class="flex flex-col items-center flex-shrink-0 group">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-accentPrimary text-3xl">spa</span>
+                    <h1 class="text-xl font-bold font-headline text-[#be1e2d]">SRI SIDDHA</h1>
+                </div>
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-6 font-semibold text-sm">
+                <a href="index.html" class="hover:text-accentPrimary transition-colors">Home</a>
+                <a href="products.html" class="text-accentPrimary border-b-2 border-accentPrimary pb-1">Shop</a>
+                <a href="billing.html" class="hover:text-accentPrimary transition-colors">Billing</a>
+                <a href="dashboard.html" class="hover:text-accentPrimary transition-colors">Dashboard</a>
+            </nav>
+
+            <a href="cart.html" class="relative flex p-2 hover:bg-bgMain rounded-full text-textMuted hover:text-accentPrimary transition-all">
+                <span class="material-symbols-outlined text-2xl">shopping_bag</span>
+                <span id="cart-count" class="absolute top-0 right-0 bg-accentPrimary text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">0</span>
+            </a>
+        </div>
+    </header>
+
+    <main class="container-main py-8 md:py-12 flex flex-col lg:flex-row gap-8">
+        
+        <!-- Sidebar Filters -->
+        <aside class="w-full lg:w-1/4 shrink-0 font-medium">
+            <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm sticky top-28">
+                <div class="flex items-center justify-between mb-4 border-b pb-4">
+                    <h2 class="text-xl font-bold font-headline">Filters</h2>
+                    <button class="text-accentPrimary text-sm hover:underline">Clear All</button>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="font-bold mb-3 text-textMain">Categories</h3>
+                    <div class="flex flex-col gap-2 text-sm text-textMuted">
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-accentPrimary"><input type="checkbox" class="rounded text-accentPrimary focus:ring-accentPrimary" checked> Ayurvedic Medicine</label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-accentPrimary"><input type="checkbox" class="rounded text-accentPrimary focus:ring-accentPrimary"> Natural Foods</label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-accentPrimary"><input type="checkbox" class="rounded text-accentPrimary focus:ring-accentPrimary"> Personal Care</label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-accentPrimary"><input type="checkbox" class="rounded text-accentPrimary focus:ring-accentPrimary"> Herbal Oils</label>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="font-bold mb-3 text-textMain">Price Range</h3>
+                    <input type="range" class="w-full accent-accentPrimary" min="0" max="2000" value="1000">
+                    <div class="flex justify-between text-xs text-textMuted mt-2">
+                        <span>₹0</span>
+                        <span>₹2000+</span>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="font-bold mb-3 text-textMain">Rating</h3>
+                    <div class="flex flex-col gap-2 text-sm text-textMuted">
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-accentPrimary"><input type="checkbox" class="rounded text-accentPrimary focus:ring-accentPrimary"> 4★ & Above</label>
+                        <label class="flex items-center gap-2 cursor-pointer hover:text-accentPrimary"><input type="checkbox" class="rounded text-accentPrimary focus:ring-accentPrimary"> 3★ & Above</label>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Product Grid -->
+        <div class="flex-grow">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold font-headline">All Products <span class="text-sm font-normal text-textMuted ml-2">(Showing 12 results)</span></h2>
+                <select class="p-2 bg-white border border-gray-200 rounded-lg text-sm outline-none focus:border-accentPrimary">
+                    <option>Sort by: Relevance</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                    <option>Highest Rated</option>
+                </select>
+            </div>
+
+            <!-- Products Container -->
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- Javascript will populate this -->
+            </div>
+            
+            <div class="mt-12 flex justify-center">
+                <div class="flex gap-2">
+                    <button class="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 text-gray-500"><span class="material-symbols-outlined">chevron_left</span></button>
+                    <button class="w-10 h-10 rounded-lg bg-accentPrimary text-white font-bold flex items-center justify-center">1</button>
+                    <button class="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 font-bold text-gray-700">2</button>
+                    <button class="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 font-bold text-gray-700">3</button>
+                    <button class="w-10 h-10 rounded-lg border border-gray-200 flex items-center justify-center hover:bg-gray-50 text-gray-500"><span class="material-symbols-outlined">chevron_right</span></button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/cart.js"></script>
+    <script>
+        // Generate mock products
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('product-grid');
+            const products = [
+                { id: 1, name: "Pure Amla Extact Powder", size: "250g", price: 150, oldPrice: 180, image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400&q=80", tag: "Sale" },
+                { id: 2, name: "Premium Athimathuram Root", size: "500g", price: 300, oldPrice: null, image: "https://images.unsplash.com/photo-1611078817293-61b474136e65?w=400&q=80", tag: null },
+                { id: 3, name: "Ashwagandha Builder Blend", size: "200g", price: 889, oldPrice: 950, image: "https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?w=400&q=80", tag: "New" },
+                { id: 4, name: "Ghee From A2 Milk", size: "1L", price: 1200, oldPrice: 1500, image: "https://images.unsplash.com/photo-1618160702438-9b02ab6515c9?w=400&q=80", tag: "Best Seller" },
+                { id: 5, name: "Cold Pressed Neem Oil", size: "100ml", price: 120, oldPrice: null, image: "https://images.unsplash.com/photo-1608500218861-010f3a4bba8b?w=400&q=80", tag: null },
+                { id: 6, name: "Natural Honey Fresh", size: "500g", price: 450, oldPrice: 500, image: "https://images.unsplash.com/photo-1587049352847-81a56d773c1c?w=400&q=80", tag: "Organic" },
+            ];
+
+            grid.innerHTML = products.map(p => `
+                <div class="bg-white rounded-2xl p-5 border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 group flex flex-col relative w-full">
+                    <button class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-[#be1e2d] hover:bg-red-50 transition-colors z-10"><span class="material-symbols-outlined text-lg">favorite_border</span></button>
+                    ${p.tag ? `<span class="absolute top-4 left-4 bg-[#be1e2d] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded shadow-sm z-10">${p.tag}</span>` : ''}
+                    
+                    <div class="w-full pt-[100%] relative mb-4">
+                        <img src="${p.image}" alt="${p.name}" class="absolute inset-0 w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    
+                    <h4 class="font-bold text-textMain text-base font-headline mb-1 line-clamp-2 min-h-[48px]">${p.name}</h4>
+                    <p class="text-sm text-textMuted mb-3">${p.size}</p>
+                    
+                    <div class="flex items-end justify-between mb-4 mt-auto">
+                        <div class="flex flex-col">
+                            ${p.oldPrice ? `<span class="text-sm text-gray-400 line-through">₹ ${p.oldPrice}</span>` : '<span class="text-sm opacity-0">0</span>'}
+                            <span class="text-xl font-bold text-textMain">₹ ${p.price}</span>
+                        </div>
+                        <div class="flex items-center text-yellow-400">
+                            <span class="material-symbols-outlined text-[16px] fill-current">star</span>
+                            <span class="text-xs font-bold text-gray-500 ml-1">4.5</span>
+                        </div>
+                    </div>
+
+                    <button onclick="window.cartSys.add(${p.id}, '${p.name.replace(/'/g, "\\'")}', ${p.price}, '${p.image}')" class="w-full mt-auto py-3 rounded-xl bg-[#00a651] text-white font-bold text-sm tracking-wide hover:bg-[#008c44] active:scale-95 transition-all outline-none">
+                        Add to Cart
+                    </button>
+                </div>
+            `).join('');
+        });
+    </script>
+</body>
+</html>

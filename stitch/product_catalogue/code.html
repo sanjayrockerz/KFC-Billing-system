@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Botanical Archive | Product Catalogue</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Manrope:wght@400;500;600&amp;family=Noto+Sans+Tamil:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#dbdcc3",
+              "inverse-primary": "#a4d1b6",
+              "inverse-on-surface": "#f2f2d9",
+              "surface-bright": "#fbfbe2",
+              "error": "#ba1a1a",
+              "on-error": "#ffffff",
+              "secondary-container": "#d1e6c3",
+              "tertiary-fixed": "#e9e2d2",
+              "on-background": "#1b1d0e",
+              "surface-container-highest": "#e4e4cc",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#bfedd1",
+              "on-tertiary-container": "#524e42",
+              "outline": "#74786f",
+              "primary-fixed-dim": "#a4d1b6",
+              "secondary-fixed-dim": "#b8cdab",
+              "secondary-fixed": "#d4e9c5",
+              "error-container": "#ffdad6",
+              "surface-tint": "#3d6751",
+              "on-surface": "#1b1d0e",
+              "surface": "#fbfbe2",
+              "secondary": "#516448",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#f5f5dc",
+              "outline-variant": "#c4c8bd",
+              "on-error-container": "#93000a",
+              "inverse-surface": "#303221",
+              "tertiary": "#625e52",
+              "surface-variant": "#e4e4cc",
+              "primary": "#3d6751",
+              "on-secondary-fixed": "#0f1f09",
+              "on-secondary": "#ffffff",
+              "on-secondary-container": "#55684c",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed-variant": "#4a473b",
+              "tertiary-fixed-dim": "#ccc6b7",
+              "primary-container": "#9ecbb0",
+              "on-surface-variant": "#444840",
+              "on-tertiary-fixed": "#1e1c12",
+              "on-secondary-fixed-variant": "#3a4c31",
+              "on-primary-fixed": "#002113",
+              "surface-container": "#efefd7",
+              "on-primary-fixed-variant": "#254f3a",
+              "on-primary-container": "#2d5742",
+              "surface-container-high": "#eaead1",
+              "tertiary-container": "#c6c0b1",
+              "background": "#fbfbe2"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Manrope"],
+              "label": ["Manrope"],
+              "tamil": ["Noto Sans Tamil"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            background-color: #f5f5dc; /* surface-container-low as per prompt */
+        }
+        .product-card-hover {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .product-card-hover:hover {
+            transform: translateY(-8px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-body text-on-surface selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<nav class="fixed top-0 w-full z-50 bg-[#fbfbe2]/85 dark:bg-[#1b1d0e]/85 backdrop-blur-md border-b border-[#c4c8bd]/15 shadow-sm">
+<div class="flex justify-between items-center px-5 h-16 w-full max-width-screen-xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="p-2 text-[#3d6751] hover:bg-[#efefd7]/50 transition-colors rounded-full active:scale-95">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-xl font-bold tracking-tight text-[#3d6751] font-['Plus_Jakarta_Sans']">Sri Siddha Herbal Store</h1>
+</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-[#3d6751] font-bold font-['Plus_Jakarta_Sans']" href="#">Home</a>
+<a class="text-[#444840] hover:text-[#3d6751] transition-colors font-['Plus_Jakarta_Sans']" href="#">Products</a>
+<a class="text-[#444840] hover:text-[#3d6751] transition-colors font-['Plus_Jakarta_Sans']" href="#">Billing</a>
+</div>
+<div class="flex items-center gap-3">
+<button class="bg-surface-bright/80 backdrop-blur-sm px-4 py-1.5 rounded-full border border-outline-variant/15 text-[#3d6751] font-semibold text-sm active:scale-95 transition-transform">
+                    EN | தமிழ்
+                </button>
+<button class="p-2 text-[#3d6751] relative">
+<span class="material-symbols-outlined">shopping_cart</span>
+<span class="absolute top-1 right-1 bg-primary text-on-primary text-[10px] w-4 h-4 rounded-full flex items-center justify-center">3</span>
+</button>
+</div>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="pt-24 pb-32 px-5 max-w-[1280px] mx-auto min-h-screen">
+<!-- Header Section -->
+<header class="mb-12">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div>
+<span class="text-primary font-bold tracking-widest text-xs uppercase mb-2 block">Ethical Botanicals</span>
+<h2 class="text-4xl md:text-5xl font-headline font-extrabold text-on-surface tracking-tight leading-tight">
+                        Our Healing <br/><span class="text-primary">Collection</span>
+</h2>
+</div>
+<div class="w-full md:w-96">
+<div class="relative group">
+<input class="w-full bg-surface-container-high border-none rounded-full py-4 pl-12 pr-6 text-on-surface-variant focus:ring-2 focus:ring-primary/20 transition-all placeholder:text-on-surface-variant/50" placeholder="Search traditional medicines..." type="text"/>
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant/60">search</span>
+</div>
+</div>
+</div>
+<!-- Category Chips -->
+<div class="flex gap-3 mt-8 overflow-x-auto pb-2 no-scrollbar">
+<button class="px-6 py-2 rounded-full bg-primary text-on-primary text-sm font-semibold whitespace-nowrap">All Herbs</button>
+<button class="px-6 py-2 rounded-full bg-surface-container text-on-surface-variant text-sm font-medium hover:bg-surface-container-highest transition-colors whitespace-nowrap">Digestion</button>
+<button class="px-6 py-2 rounded-full bg-surface-container text-on-surface-variant text-sm font-medium hover:bg-surface-container-highest transition-colors whitespace-nowrap">Immunity</button>
+<button class="px-6 py-2 rounded-full bg-surface-container text-on-surface-variant text-sm font-medium hover:bg-surface-container-highest transition-colors whitespace-nowrap">Skin Care</button>
+<button class="px-6 py-2 rounded-full bg-surface-container text-on-surface-variant text-sm font-medium hover:bg-surface-container-highest transition-colors whitespace-nowrap">Joint Health</button>
+</div>
+</header>
+<!-- Product Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+<!-- Product Card 1 -->
+<div class="product-card-hover bg-[#FFF8E7] rounded-2xl overflow-hidden group shadow-[0_12px_40px_rgba(27,29,14,0.03)] border border-outline-variant/10">
+<div class="relative h-72 overflow-hidden bg-surface-container-low">
+<img alt="Dried ginger powder" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Close up of fine textured yellow-brown ginger powder in an artisanal clay bowl with a rustic wooden background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCoJePC3U4Bk4Q_QxtB08fLwex8SK0WSTvgqlqOCVxOJtbVLRt1OoXr37wHvhsXcbrGtDpz-6ts-h-QBJTswoOH4UNuOxJ4DKKL22MHaUQaoius9g1A0Vk9KzZjCwH3YkuY9ESlCHR-4WVuXpRM3yMzgCz-_x3vn1uwYIU4dmJhNcn80w0p7oRoHA0Zbr6A0bQLlpHAziBx0Zlhgg1UD7wd2YeI1tTBeZEEoPMYm7JQz7zCPc5a9vSCIHL0iieQJrFuUVN3atiKIxU"/>
+<span class="absolute top-4 right-4 bg-tertiary-fixed text-on-tertiary-fixed-variant px-3 py-1 rounded-full text-sm font-bold shadow-sm">
+                        ₹80
+                    </span>
+</div>
+<div class="p-6">
+<div class="mb-4">
+<h3 class="font-headline text-xl font-bold text-on-surface group-hover:text-primary transition-colors">Sukku Powder</h3>
+<p class="font-tamil text-sm text-on-surface-variant mt-1">சுக்கு பொடி (Dry Ginger)</p>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-6 line-clamp-2">Excellent for digestion and soothing seasonal respiratory issues. Authentically processed dry ginger.</p>
+<button class="w-full bg-[#A8D5BA] hover:bg-primary hover:text-white text-on-secondary-container font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95">
+<span class="material-symbols-outlined text-xl">shopping_basket</span>
+                        Add to Cart
+                    </button>
+</div>
+</div>
+<!-- Product Card 2 -->
+<div class="product-card-hover bg-[#FFF8E7] rounded-2xl overflow-hidden group shadow-[0_12px_40px_rgba(27,29,14,0.03)] border border-outline-variant/10">
+<div class="relative h-72 overflow-hidden bg-surface-container-low">
+<img alt="Triphala powder" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Mound of dark herbal powder surrounded by dried indian gooseberry and herbs on a natural linen cloth background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDD0Z8tQ1JB3PE1-Cr8RW5AMzr7jcMhCBC8IsHRGbeB3cOmAr6ZIgCdcgsQ5tfPPYxtFAddfLzgTx_dNPysUHHpNLemifGglnkgOykV8WAyXFvPlNQHmVgUnB-XAHAj2pV0JSJAMt4EZcf2B7I881vmTOxsdpWzbDWjCLQTed5CK3oJA7A-HnzT1JNox2F8TrBwITDeYJn_eXAfsjrPUt3enHDiFm99PoWA_Rl9XzOJxSpjU2-M7ZU_qHsWKOEBk02V3c8vHF5_KhI"/>
+<span class="absolute top-4 right-4 bg-tertiary-fixed text-on-tertiary-fixed-variant px-3 py-1 rounded-full text-sm font-bold shadow-sm">
+                        ₹120
+                    </span>
+</div>
+<div class="p-6">
+<div class="mb-4">
+<h3 class="font-headline text-xl font-bold text-on-surface group-hover:text-primary transition-colors">Triphala Churnam</h3>
+<p class="font-tamil text-sm text-on-surface-variant mt-1">திரிபலா சூரணம்</p>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-6 line-clamp-2">A balanced blend of three fruits for complete internal cleansing and digestive harmony.</p>
+<button class="w-full bg-[#A8D5BA] hover:bg-primary hover:text-white text-on-secondary-container font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95">
+<span class="material-symbols-outlined text-xl">shopping_basket</span>
+                        Add to Cart
+                    </button>
+</div>
+</div>
+<!-- Product Card 3 -->
+<div class="product-card-hover bg-[#FFF8E7] rounded-2xl overflow-hidden group shadow-[0_12px_40px_rgba(27,29,14,0.03)] border border-outline-variant/10">
+<div class="relative h-72 overflow-hidden bg-surface-container-low">
+<img alt="Turmeric" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Fresh vibrant orange turmeric roots and bright yellow turmeric powder spilled elegantly on a dark slate surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCd4pXK7FMJvn6FqBRjMc7BMztQC-xkuHAqGlcr2aSR9GnenGyV6tmLmELhfGUKfrx8Oq5rCGy9mU4aPkeoh18m3Zs3K67K_3yjmGiOolc2liX6MrOqmh2zdHYptrT3bf-2-2Peidcq3EHUpJi0tWOCSuWith3VanGqYXg2wfefPeasu3hZ3wIy6Xs4OI8MtJyIoW7HsGg_ML7ZTjAYU2VqAMsZ5qr8W0TPbvxYdbKI37Vj3zJt523kelmuoQDpujKJ_5MWa7m9Hhw"/>
+<span class="absolute top-4 right-4 bg-tertiary-fixed text-on-tertiary-fixed-variant px-3 py-1 rounded-full text-sm font-bold shadow-sm">
+                        ₹95
+                    </span>
+</div>
+<div class="p-6">
+<div class="mb-4">
+<h3 class="font-headline text-xl font-bold text-on-surface group-hover:text-primary transition-colors">Curcumin Extract</h3>
+<p class="font-tamil text-sm text-on-surface-variant mt-1">மஞ்சள் தூள் (Manjal)</p>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-6 line-clamp-2">Pure, farm-sourced turmeric powder with high curcumin content for immunity and skin.</p>
+<button class="w-full bg-[#A8D5BA] hover:bg-primary hover:text-white text-on-secondary-container font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95">
+<span class="material-symbols-outlined text-xl">shopping_basket</span>
+                        Add to Cart
+                    </button>
+</div>
+</div>
+<!-- Product Card 4 -->
+<div class="product-card-hover bg-[#FFF8E7] rounded-2xl overflow-hidden group shadow-[0_12px_40px_rgba(27,29,14,0.03)] border border-outline-variant/10">
+<div class="relative h-72 overflow-hidden bg-surface-container-low">
+<img alt="Ashwagandha root" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Whole ashwagandha roots tied with twine and finely ground off-white powder on a minimalist sand-colored stone surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB2n1pOr5M61LVy9l0ya-wi50-VgZ_A9RHXJTG7y-SNoDUntKEN6DSZtdUz10hWglsTprUiJBtFdHkzg_zV3K2GY0agOYUa0oUyozkWOjfpocyuwMvez9D5jqbY-wCspHVJvaxHrKUInN9edJYk5zVEYTlXTxM51wRNT3n8LaFVAIfnaw16mSCnqo2TaVkozTJSTkc742riKN_16j29e3YP1wtFloi2I53p9uLMp0QgnJs01SfVwCzF_62P8fVNm_-bk6PGunLvXoQ"/>
+<span class="absolute top-4 right-4 bg-tertiary-fixed text-on-tertiary-fixed-variant px-3 py-1 rounded-full text-sm font-bold shadow-sm">
+                        ₹250
+                    </span>
+</div>
+<div class="p-6">
+<div class="mb-4">
+<h3 class="font-headline text-xl font-bold text-on-surface group-hover:text-primary transition-colors">Ashwagandha</h3>
+<p class="font-tamil text-sm text-on-surface-variant mt-1">அமுக்கரா சூரணம்</p>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-6 line-clamp-2">The ultimate adaptogen for stress relief and vital energy restoration. Organic root powder.</p>
+<button class="w-full bg-[#A8D5BA] hover:bg-primary hover:text-white text-on-secondary-container font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95">
+<span class="material-symbols-outlined text-xl">shopping_basket</span>
+                        Add to Cart
+                    </button>
+</div>
+</div>
+<!-- Product Card 5 -->
+<div class="product-card-hover bg-[#FFF8E7] rounded-2xl overflow-hidden group shadow-[0_12px_40px_rgba(27,29,14,0.03)] border border-outline-variant/10">
+<div class="relative h-72 overflow-hidden bg-surface-container-low">
+<img alt="Neem leaves" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Fresh dark green neem leaves in a pestle and mortar with small capsules and green oil droplets on a light wood background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAcZh2NZx8u6oH9BdWlfI-sccyvUWWqna8hu7pi6AuA4vkmIJPv95asH1V5QpzyweVebZ0o2SJOs-5TFJOU7CiChQ5P7pS0WfX0DZvSehISd-znZ4wJ5nOy-sxnuHTUMV-EB2mfpFca2Yxz7Q84IekefeJte_f-CJYrg9WcVPePF7nk0d1wwaRzQMIwMKlLKLV-vgBdmG5tNJWGMFERVzHoxCnO0P4P6vKtzyftQHp9GtchczP2b54Pss_6BbsYRTht0DG1vMpopHE"/>
+<span class="absolute top-4 right-4 bg-tertiary-fixed text-on-tertiary-fixed-variant px-3 py-1 rounded-full text-sm font-bold shadow-sm">
+                        ₹110
+                    </span>
+</div>
+<div class="p-6">
+<div class="mb-4">
+<h3 class="font-headline text-xl font-bold text-on-surface group-hover:text-primary transition-colors">Neem Detox</h3>
+<p class="font-tamil text-sm text-on-surface-variant mt-1">வேப்பிலை பொடி (Vepillai)</p>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-6 line-clamp-2">Potent blood purifier and antimicrobial herb. Traditional skin and gut therapy.</p>
+<button class="w-full bg-[#A8D5BA] hover:bg-primary hover:text-white text-on-secondary-container font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95">
+<span class="material-symbols-outlined text-xl">shopping_basket</span>
+                        Add to Cart
+                    </button>
+</div>
+</div>
+<!-- Product Card 6 -->
+<div class="product-card-hover bg-[#FFF8E7] rounded-2xl overflow-hidden group shadow-[0_12px_40px_rgba(27,29,14,0.03)] border border-outline-variant/10">
+<div class="relative h-72 overflow-hidden bg-surface-container-low">
+<img alt="Moringa powder" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" data-alt="Bright green moringa leaf powder in a bamboo bowl with fresh moringa sprigs on a sunlit neutral surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJYgt1iemYz6RU5qF1Lp7ZygmOvixWMcTWc3qHF3RBLOOfNPfKR9ECgjmak8p_vnbXd6Ll4f31ZyLQDEKIddCrWpinDDlh_htFaXzm9WCBQvK-jd2FPmONPbfHCFqPZ7FcfwOkMB92RUfAaL6HxiToevJZXCsLmZAXmJAXDDwfQ-MK_xQoWX0of-b-YgNAKf6b-AxNxjRAg5Y5lloLHJC9rDlmFWPDgI8PQawcXjX7aU0AJ5HfFwSoWIpL7pBv1T0UOVGcE8xBoZ8"/>
+<span class="absolute top-4 right-4 bg-tertiary-fixed text-on-tertiary-fixed-variant px-3 py-1 rounded-full text-sm font-bold shadow-sm">
+                        ₹140
+                    </span>
+</div>
+<div class="p-6">
+<div class="mb-4">
+<h3 class="font-headline text-xl font-bold text-on-surface group-hover:text-primary transition-colors">Moringa Superfood</h3>
+<p class="font-tamil text-sm text-on-surface-variant mt-1">முருங்கை இலை பொடி</p>
+</div>
+<p class="text-sm text-on-surface-variant leading-relaxed mb-6 line-clamp-2">Dense nutritional supplement rich in iron and calcium. Naturally dried and powdered.</p>
+<button class="w-full bg-[#A8D5BA] hover:bg-primary hover:text-white text-on-secondary-container font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2 active:scale-95">
+<span class="material-symbols-outlined text-xl">shopping_basket</span>
+                        Add to Cart
+                    </button>
+</div>
+</div>
+</section>
+<!-- Pagination / Load More -->
+<div class="mt-16 flex flex-col items-center">
+<p class="text-on-surface-variant text-sm mb-6">Showing 6 of 124 authentic remedies</p>
+<button class="px-10 py-4 border-2 border-primary text-primary font-bold rounded-full hover:bg-primary hover:text-white transition-all active:scale-95">
+                Load More Discoveries
+            </button>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-2 pb-6 bg-[#ffffff]/85 dark:bg-[#1b1d0e]/85 backdrop-blur-lg border-t border-[#c4c8bd]/15 shadow-[0_-4px_20px_rgba(27,29,14,0.05)] z-50 rounded-t-[1.5rem]">
+<a class="flex flex-col items-center justify-center text-[#444840] dark:text-[#c4c8bd] px-5 py-1 hover:bg-[#f5f5dc] transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#a4d1b6] dark:bg-[#3d6751] text-[#1b1d0e] dark:text-white rounded-2xl px-5 py-1 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">potted_plant</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Shop</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444840] dark:text-[#c4c8bd] px-5 py-1 hover:bg-[#f5f5dc] transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Billing</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444840] dark:text-[#c4c8bd] px-5 py-1 hover:bg-[#f5f5dc] transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Admin</span>
+</a>
+</nav>
+<!-- Floating Filter FAB (Contextual for Catalog) -->
+<button class="fixed right-6 bottom-24 md:bottom-8 bg-primary text-on-primary p-4 rounded-2xl shadow-xl active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</body></html>

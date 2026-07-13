@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Sri Siddha</title>
+    <link rel="stylesheet" href="../css/tailwind.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@300,0;400,0;500,0;600,0&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-[#faf9f6] text-textMain font-body">
+
+    <!-- Header -->
+    <header class="bg-white sticky top-0 z-40 border-b border-gray-100 shadow-sm">
+        <div class="container-main py-4 flex items-center justify-between gap-4">
+            <a href="index.html" class="flex flex-col items-center flex-shrink-0 group">
+                <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-accentPrimary text-3xl">spa</span>
+                    <h1 class="text-xl font-bold font-headline text-[#be1e2d]">SRI SIDDHA <span class="text-textMuted text-xs ml-2 font-normal">ADMIN PLATFORM</span></h1>
+                </div>
+            </a>
+            
+            <nav class="hidden md:flex items-center gap-6 font-semibold text-sm">
+                <a href="index.html" class="hover:text-accentPrimary transition-colors">Home</a>
+                <a href="products.html" class="hover:text-accentPrimary transition-colors">Shop</a>
+                <a href="billing.html" class="hover:text-accentPrimary transition-colors">Billing</a>
+                <a href="dashboard.html" class="text-accentPrimary border-b-2 border-accentPrimary pb-1">Dashboard</a>
+            </nav>
+
+            <div class="flex items-center gap-4">
+                <div class="bg-cardBg w-8 h-8 rounded-full flex items-center justify-center font-bold text-accentPrimary">A</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container-main py-8 min-h-screen flex flex-col md:flex-row gap-8">
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 shrink-0 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 min-h-[70vh]">
+            <nav class="flex flex-col gap-2 font-medium text-sm">
+                <a href="#" class="flex items-center gap-3 px-4 py-3 bg-accentPrimary/10 text-accentPrimary rounded-xl"><span class="material-symbols-outlined text-[20px]">analytics</span> Overview</a>
+                <a href="products.html" class="flex items-center gap-3 px-4 py-3 hover:bg-bgMain text-textMuted rounded-xl transition-colors"><span class="material-symbols-outlined text-[20px]">inventory_2</span> Inventory</a>
+                <a href="billing.html" class="flex items-center gap-3 px-4 py-3 hover:bg-bgMain text-textMuted rounded-xl transition-colors"><span class="material-symbols-outlined text-[20px]">point_of_sale</span> Sales & POS</a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-bgMain text-textMuted rounded-xl transition-colors"><span class="material-symbols-outlined text-[20px]">group</span> Customers</a>
+                <a href="#" class="flex items-center gap-3 px-4 py-3 hover:bg-bgMain text-textMuted rounded-xl transition-colors mt-8"><span class="material-symbols-outlined text-[20px]">settings</span> Settings</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="flex-grow">
+            <!-- Stat Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-2">
+                    <span class="material-symbols-outlined text-emerald-500 bg-emerald-50 w-10 h-10 rounded-full flex items-center justify-center">payments</span>
+                    <p class="text-textMuted text-xs font-bold uppercase tracking-wider">Total Revenue</p>
+                    <h4 class="text-2xl font-bold font-headline">₹ 1,54,200</h4>
+                    <span class="text-xs text-emerald-500 font-bold flex items-center gap-1">+12.5% <span class="material-symbols-outlined text-[12px]">trending_up</span></span>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-2">
+                    <span class="material-symbols-outlined text-blue-500 bg-blue-50 w-10 h-10 rounded-full flex items-center justify-center">shopping_basket</span>
+                    <p class="text-textMuted text-xs font-bold uppercase tracking-wider">Orders</p>
+                    <h4 class="text-2xl font-bold font-headline">320</h4>
+                    <span class="text-xs text-blue-500 font-bold flex items-center gap-1">+5.2% <span class="material-symbols-outlined text-[12px]">trending_up</span></span>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-2">
+                    <span class="material-symbols-outlined text-purple-500 bg-purple-50 w-10 h-10 rounded-full flex items-center justify-center">group</span>
+                    <p class="text-textMuted text-xs font-bold uppercase tracking-wider">New Users</p>
+                    <h4 class="text-2xl font-bold font-headline">84</h4>
+                    <span class="text-xs text-purple-500 font-bold flex items-center gap-1">+18.0% <span class="material-symbols-outlined text-[12px]">trending_up</span></span>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex flex-col gap-2">
+                    <span class="material-symbols-outlined text-[#be1e2d] bg-red-50 w-10 h-10 rounded-full flex items-center justify-center">inventory_2</span>
+                    <p class="text-textMuted text-xs font-bold uppercase tracking-wider">Low Stock</p>
+                    <h4 class="text-2xl font-bold font-headline">12 Items</h4>
+                    <span class="text-xs text-[#be1e2d] font-bold flex items-center gap-1">Restock Needed</span>
+                </div>
+            </div>
+
+            <!-- Charts & Tables Row -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <!-- Sales Chart -->
+                <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <h3 class="font-bold font-headline mb-4 flex items-center justify-between">Monthly Revenue Revenue <span class="text-xs text-accentPrimary font-bold bg-accentPrimary/10 px-2 py-1 rounded">2026</span></h3>
+                    <div class="w-full h-64 relative">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Activity / Low Stock -->
+                <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                    <h3 class="font-bold font-headline mb-4">Stock Alerts</h3>
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-amber-500 bg-amber-50 w-8 h-8 rounded shrink-0 flex items-center justify-center text-sm">warning</span>
+                            <div>
+                                <h5 class="text-sm font-bold">Premium Athimathuram</h5>
+                                <p class="text-xs text-textMuted">Only 3 left in storage.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-[#be1e2d] bg-red-50 w-8 h-8 rounded shrink-0 flex items-center justify-center text-sm">error</span>
+                            <div>
+                                <h5 class="text-sm font-bold">Ashwagandha Builder</h5>
+                                <p class="text-xs text-[#be1e2d]">Out of stock!</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-amber-500 bg-amber-50 w-8 h-8 rounded shrink-0 flex items-center justify-center text-sm">warning</span>
+                            <div>
+                                <h5 class="text-sm font-bold">Cold Pressed Neem Oil</h5>
+                                <p class="text-xs text-textMuted">Only 10 bottles left.</p>
+                            </div>
+                        </div>
+                        <button class="mt-auto py-2 w-full border border-gray-200 rounded-lg text-sm font-bold text-gray-600 hover:bg-gray-50 transition-colors">Manage Inventory</button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/cart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Revenue (₹)',
+                        data: [42000, 58000, 51000, 78000, 92000, 154200],
+                        borderColor: '#0f4d2f',
+                        backgroundColor: '#a4d1b6',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { beginAtZero: true, grid: { borderDash: [5, 5] } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

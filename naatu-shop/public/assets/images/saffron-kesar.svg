@@ -1,0 +1,12 @@
+﻿<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600' viewBox='0 0 600 600'>
+  <defs>
+    <linearGradient id='g' x1='0' y1='0' x2='1' y2='1'>
+      <stop offset='0%' stop-color='#e8f5e2'/>
+      <stop offset='100%' stop-color='#fff8e7'/>
+    </linearGradient>
+  </defs>
+  <rect width='600' height='600' fill='url(#g)'/>
+  <circle cx='300' cy='220' r='120' fill='#b2c7a5' opacity='0.35'/>
+  <path d='M300 130 C260 220 260 320 300 420 C340 320 340 220 300 130 Z' fill='#7daa8f'/>
+  <text x='300' y='520' text-anchor='middle' font-family='Poppins, Arial, sans-serif' font-size='28' font-weight='700' fill='#2c392a'>SAFFRON KESAR</text>
+</svg>

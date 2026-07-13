@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cart — Sri Siddha Herbal Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Manrope:wght@400;500;600&amp;family=Noto+Sans+Tamil:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#dbdcc3",
+              "inverse-primary": "#a4d1b6",
+              "inverse-on-surface": "#f2f2d9",
+              "surface-bright": "#fbfbe2",
+              "error": "#ba1a1a",
+              "on-error": "#ffffff",
+              "secondary-container": "#d1e6c3",
+              "tertiary-fixed": "#e9e2d2",
+              "on-background": "#1b1d0e",
+              "surface-container-highest": "#e4e4cc",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#bfedd1",
+              "on-tertiary-container": "#524e42",
+              "outline": "#74786f",
+              "primary-fixed-dim": "#a4d1b6",
+              "secondary-fixed-dim": "#b8cdab",
+              "secondary-fixed": "#d4e9c5",
+              "error-container": "#ffdad6",
+              "surface-tint": "#3d6751",
+              "on-surface": "#1b1d0e",
+              "surface": "#fbfbe2",
+              "secondary": "#516448",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#f5f5dc",
+              "outline-variant": "#c4c8bd",
+              "on-error-container": "#93000a",
+              "inverse-surface": "#303221",
+              "tertiary": "#625e52",
+              "surface-variant": "#e4e4cc",
+              "primary": "#3d6751",
+              "on-secondary-fixed": "#0f1f09",
+              "on-secondary": "#ffffff",
+              "on-secondary-container": "#55684c",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed-variant": "#4a473b",
+              "tertiary-fixed-dim": "#ccc6b7",
+              "primary-container": "#9ecbb0",
+              "on-surface-variant": "#444840",
+              "on-tertiary-fixed": "#1e1c12",
+              "on-secondary-fixed-variant": "#3a4c31",
+              "on-primary-fixed": "#002113",
+              "surface-container": "#efefd7",
+              "on-primary-fixed-variant": "#254f3a",
+              "on-primary-container": "#2d5742",
+              "surface-container-high": "#eaead1",
+              "tertiary-container": "#c6c0b1",
+              "background": "#fbfbe2"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; -webkit-tap-highlight-color: transparent; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .headline-font { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .tamil-font { font-family: 'Noto Sans Tamil', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-low text-on-surface min-h-screen pb-40">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#fbfbe2]/85 backdrop-blur-md border-b border-[#c4c8bd]/15 shadow-sm">
+<div class="flex justify-between items-center px-5 h-16 w-full max-w-screen-xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="text-[#3d6751] active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+<h1 class="text-xl font-bold tracking-tight text-[#3d6751] headline-font">Sri Siddha Herbal Store</h1>
+</div>
+<div class="text-[#3d6751] font-semibold headline-font text-sm">
+                EN | தமிழ்
+            </div>
+</div>
+</header>
+<main class="pt-24 px-5 max-w-lg mx-auto">
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-2xl font-extrabold text-on-surface headline-font tracking-tight">Your Basket</h2>
+<span class="bg-primary-container text-on-primary-container text-xs font-bold px-3 py-1 rounded-full">2 Items</span>
+</div>
+<!-- Product List -->
+<div class="space-y-4">
+<!-- Item 1: Sukku Powder -->
+<div class="bg-surface-container-lowest rounded-3xl p-4 flex gap-4 items-center shadow-[0_12px_40px_rgba(27,29,14,0.05)] border border-[#c4c8bd]/15">
+<div class="w-20 h-20 rounded-2xl overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Close-up of fine dried ginger powder in a rustic wooden bowl on a neutral stone background with soft botanical lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEN24AAa21xcHlf3qi16pXEbpWsIl4aOFy7XAyauvzQ1GLfzZdhAXxIIdliQ889WbXBl2fOpP0_iAcSkJYKJbY6q912mh0n7m7iIyonl3GDiHQL40_-1X4JKkHM67xjNKVQFZJT8pp9sfRUbncdzJHKJp7pvelrC67A3wftcmlTK4wh9HaL2Yl9bkEWmlsHU9C7N7nIMjF-g_jYfQifIZZQ5yMEKOhyVsV69A9NKfWTfLrmVzDUPG_3t3i0vSvWudqPBQbcrRmKBY"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-bold text-on-surface headline-font">Sukku Powder</h3>
+<p class="text-xs text-on-surface-variant tamil-font">சுக்குத் தூள்</p>
+</div>
+<span class="text-sm font-bold text-primary">₹80</span>
+</div>
+<div class="flex justify-between items-center mt-3">
+<div class="flex items-center bg-surface-container-low rounded-full px-1 py-1">
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-lowest text-on-surface active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-sm" data-icon="remove">remove</span>
+</button>
+<span class="px-3 font-bold text-sm">1</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-primary text-on-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+</button>
+</div>
+<button class="text-error/70 hover:text-error transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Item 2: Athimathuram -->
+<div class="bg-surface-container-lowest rounded-3xl p-4 flex gap-4 items-center shadow-[0_12px_40px_rgba(27,29,14,0.05)] border border-[#c4c8bd]/15">
+<div class="w-20 h-20 rounded-2xl overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Dried liquorice root sticks tied with a hemp string on a textured beige surface with elegant shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBKKZ3xzDxHsSM-FyDjOC-ZMZMLFW16d2jhMDePdzXw7xbxsrHdeiYHx1nF_TwnQ4S9y6n2QxiK8Bb6V_9ZUCUuuylCCQejjN5wQMBz8BcASVgbchLlCOewZpBW9E4H41uW0b7kffIumuTISaEmVZgnoxtpuHN_hvf6SmWMenq-1sLENYeoP53L1XuIlb_SgFwgt9MZLYXKXV0xJJ3Nh7Oq3JhJ1s98ublr5x7gsqNNv2NHDC2DgQc5_e4ikcB8suLhNZgRStdAOUc"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-bold text-on-surface headline-font">Athimathuram</h3>
+<p class="text-xs text-on-surface-variant tamil-font">அதிமதுரம்</p>
+</div>
+<span class="text-sm font-bold text-primary">₹120</span>
+</div>
+<div class="flex justify-between items-center mt-3">
+<div class="flex items-center bg-surface-container-low rounded-full px-1 py-1">
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-surface-container-lowest text-on-surface active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-sm" data-icon="remove">remove</span>
+</button>
+<span class="px-3 font-bold text-sm">1</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-full bg-primary text-on-primary active:scale-90 transition-transform">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+</button>
+</div>
+<button class="text-error/70 hover:text-error transition-colors">
+<span class="material-symbols-outlined text-xl" data-icon="delete">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Summary Section -->
+<section class="mt-10 space-y-3 bg-surface-container p-6 rounded-3xl border border-outline-variant/10">
+<h4 class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4">Order Summary</h4>
+<div class="flex justify-between text-on-surface-variant text-sm">
+<span>Subtotal</span>
+<span class="font-semibold text-on-surface">₹200.00</span>
+</div>
+<div class="flex justify-between text-on-surface-variant text-sm">
+<span>Estimated Tax (5%)</span>
+<span class="font-semibold text-on-surface">₹10.00</span>
+</div>
+<div class="flex justify-between text-on-surface-variant text-sm">
+<span>Shipping</span>
+<span class="font-semibold text-primary">FREE</span>
+</div>
+<div class="pt-4 mt-2 border-t border-[#c4c8bd]/30 flex justify-between items-center">
+<span class="text-lg font-bold headline-font">Total</span>
+<span class="text-2xl font-extrabold text-primary headline-font tracking-tight">₹210.00</span>
+</div>
+</section>
+<!-- Promotion Card -->
+<div class="mt-6 bg-secondary-container/30 p-4 rounded-2xl flex items-center gap-4">
+<span class="material-symbols-outlined text-secondary" data-icon="local_offer">local_offer</span>
+<div class="flex-1">
+<p class="text-xs font-bold text-on-secondary-container">Apply Promo Code</p>
+<p class="text-[10px] text-on-secondary-container/70">Get 10% off on your first order</p>
+</div>
+<button class="text-xs font-bold text-secondary underline underline-offset-4">Apply</button>
+</div>
+</main>
+<!-- Fixed Bottom Checkout -->
+<div class="fixed bottom-0 left-0 w-full bg-[#ffffff]/85 backdrop-blur-lg border-t border-[#c4c8bd]/15 px-6 pt-4 pb-10 z-[60]">
+<div class="max-w-lg mx-auto">
+<button class="w-full bg-[#3d6751] text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-3 shadow-lg active:scale-[0.98] transition-all duration-200">
+<span class="material-symbols-outlined" data-icon="shopping_cart_checkout">shopping_cart_checkout</span>
+                Proceed to Checkout
+            </button>
+<p class="text-center text-[10px] text-on-surface-variant mt-3 px-4">
+                By tapping checkout, you agree to our Terms of Service and Privacy Policy.
+            </p>
+</div>
+</div>
+<!-- Hidden Bottom Nav (As per context suppression for checkout/focused tasks) -->
+<!-- Navigation suppressed to focus on transaction -->
+</body></html>

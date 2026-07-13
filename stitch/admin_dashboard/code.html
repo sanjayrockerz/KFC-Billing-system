@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Dashboard | Sri Siddha Herbal Store</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600&amp;family=Noto+Sans+Tamil:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#dbdcc3",
+              "inverse-primary": "#a4d1b6",
+              "inverse-on-surface": "#f2f2d9",
+              "surface-bright": "#fbfbe2",
+              "error": "#ba1a1a",
+              "on-error": "#ffffff",
+              "secondary-container": "#d1e6c3",
+              "tertiary-fixed": "#e9e2d2",
+              "on-background": "#1b1d0e",
+              "surface-container-highest": "#e4e4cc",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#bfedd1",
+              "on-tertiary-container": "#524e42",
+              "outline": "#74786f",
+              "primary-fixed-dim": "#a4d1b6",
+              "secondary-fixed-dim": "#b8cdab",
+              "secondary-fixed": "#d4e9c5",
+              "error-container": "#ffdad6",
+              "surface-tint": "#3d6751",
+              "on-surface": "#1b1d0e",
+              "surface": "#fbfbe2",
+              "secondary": "#516448",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#f5f5dc",
+              "outline-variant": "#c4c8bd",
+              "on-error-container": "#93000a",
+              "inverse-surface": "#303221",
+              "tertiary": "#625e52",
+              "surface-variant": "#e4e4cc",
+              "primary": "#3d6751",
+              "on-secondary-fixed": "#0f1f09",
+              "on-secondary": "#ffffff",
+              "on-secondary-container": "#55684c",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed-variant": "#4a473b",
+              "tertiary-fixed-dim": "#ccc6b7",
+              "primary-container": "#9ecbb0",
+              "on-surface-variant": "#444840",
+              "on-tertiary-fixed": "#1e1c12",
+              "on-secondary-fixed-variant": "#3a4c31",
+              "on-primary-fixed": "#002113",
+              "surface-container": "#efefd7",
+              "on-primary-fixed-variant": "#254f3a",
+              "on-primary-container": "#2d5742",
+              "surface-container-high": "#eaead1",
+              "tertiary-container": "#c6c0b1",
+              "background": "#fbfbe2"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-low text-on-surface min-h-screen pb-24 md:pb-0">
+<!-- TopAppBar -->
+<header class="bg-[#fbfbe2]/85 dark:bg-[#1b1d0e]/85 backdrop-blur-md fixed top-0 w-full z-50 border-b border-[#c4c8bd]/15 shadow-sm dark:shadow-none">
+<div class="flex justify-between items-center px-5 h-16 w-full max-w-screen-xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="active:scale-95 transition-transform duration-200 text-[#3d6751] dark:text-[#9ecbb0]">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-xl font-bold tracking-tight text-[#3d6751] dark:text-[#9ecbb0] font-['Plus_Jakarta_Sans']">Sri Siddha Herbal Store</h1>
+</div>
+<div class="hidden md:flex items-center gap-6">
+<nav class="flex gap-8 text-[#444840] font-['Plus_Jakarta_Sans'] font-semibold">
+<a class="hover:text-[#3d6751] transition-colors" href="#">Home</a>
+<a class="hover:text-[#3d6751] transition-colors" href="#">Products</a>
+<a class="hover:text-[#3d6751] transition-colors" href="#">Billing</a>
+<a class="text-[#3d6751] font-bold" href="#">Dashboard</a>
+</nav>
+<button class="text-[#3d6751] dark:text-[#9ecbb0] font-['Plus_Jakarta_Sans'] font-semibold px-3 py-1 rounded-full bg-surface-container hover:bg-[#efefd7]/50 transition-colors">
+                    EN | தமிழ்
+                </button>
+</div>
+<div class="md:hidden">
+<button class="text-[#3d6751] dark:text-[#9ecbb0] font-semibold">EN | தமிழ்</button>
+</div>
+</div>
+</header>
+<main class="pt-24 px-5 max-w-screen-xl mx-auto pb-12">
+<!-- Header Section -->
+<div class="mb-10">
+<h2 class="text-3xl font-extrabold text-on-surface tracking-tight mb-2">Business Insights</h2>
+<p class="text-on-surface-variant font-medium">Real-time performance metrics for The Botanical Archive.</p>
+</div>
+<!-- Bento Grid Metrics -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+<!-- Today Sales -->
+<div class="bg-surface-container-lowest p-6 rounded-[1.5rem] shadow-[0_12px_40px_rgba(27,29,14,0.05)] border border-outline-variant/15 flex flex-col justify-between h-40">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary bg-primary-container/20 p-2 rounded-xl">today</span>
+<span class="text-xs font-bold text-primary bg-primary-container/30 px-2 py-1 rounded-full">+12%</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-on-surface-variant mb-1 uppercase tracking-wider">Today Sales</p>
+<p class="text-2xl font-bold text-on-surface">₹ 12,450.00</p>
+</div>
+</div>
+<!-- Weekly Sales -->
+<div class="bg-surface-container-lowest p-6 rounded-[1.5rem] shadow-[0_12px_40px_rgba(27,29,14,0.05)] border border-outline-variant/15 flex flex-col justify-between h-40">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-secondary bg-secondary-container/30 p-2 rounded-xl">calendar_view_week</span>
+<span class="text-xs font-bold text-secondary bg-secondary-container/40 px-2 py-1 rounded-full">+8.4%</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-on-surface-variant mb-1 uppercase tracking-wider">Weekly Sales</p>
+<p class="text-2xl font-bold text-on-surface">₹ 84,200.00</p>
+</div>
+</div>
+<!-- Monthly Revenue -->
+<div class="bg-surface-container-lowest p-6 rounded-[1.5rem] shadow-[0_12px_40px_rgba(27,29,14,0.05)] border border-outline-variant/15 flex flex-col justify-between h-40">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-tertiary bg-tertiary-fixed/40 p-2 rounded-xl">payments</span>
+<span class="text-xs font-bold text-tertiary bg-tertiary-fixed/50 px-2 py-1 rounded-full">+21%</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-on-surface-variant mb-1 uppercase tracking-wider">Monthly Revenue</p>
+<p class="text-2xl font-bold text-on-surface">₹ 3,24,000.00</p>
+</div>
+</div>
+<!-- Total Orders -->
+<div class="bg-surface-container-lowest p-6 rounded-[1.5rem] shadow-[0_12px_40px_rgba(27,29,14,0.05)] border border-outline-variant/15 flex flex-col justify-between h-40">
+<div class="flex justify-between items-start">
+<span class="material-symbols-outlined text-primary bg-primary-container/20 p-2 rounded-xl">shopping_bag</span>
+<span class="text-xs font-bold text-error bg-error-container/40 px-2 py-1 rounded-full">-2%</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-on-surface-variant mb-1 uppercase tracking-wider">Total Orders</p>
+<p class="text-2xl font-bold text-on-surface">1,452</p>
+</div>
+</div>
+</div>
+<!-- Revenue Chart Visualization -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+<div class="lg:col-span-2 bg-surface-container-lowest p-8 rounded-[2rem] shadow-[0_12px_40px_rgba(27,29,14,0.05)] border border-outline-variant/15 relative overflow-hidden">
+<div class="flex justify-between items-center mb-10">
+<div>
+<h3 class="text-xl font-bold text-on-surface">Revenue Growth</h3>
+<p class="text-sm text-on-surface-variant">Past 6 months performance</p>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-1.5 text-xs font-bold bg-primary text-on-primary rounded-full">Revenue</button>
+<button class="px-4 py-1.5 text-xs font-bold bg-surface-container text-on-surface-variant rounded-full">Orders</button>
+</div>
+</div>
+<!-- Visual Chart Implementation (SVG) -->
+<div class="relative h-64 w-full">
+<svg class="w-full h-full" viewbox="0 0 800 240">
+<!-- Grid Lines -->
+<line opacity="0.2" stroke="#c4c8bd" stroke-dasharray="4" stroke-width="1" x1="0" x2="800" y1="40" y2="40"></line>
+<line opacity="0.2" stroke="#c4c8bd" stroke-dasharray="4" stroke-width="1" x1="0" x2="800" y1="90" y2="90"></line>
+<line opacity="0.2" stroke="#c4c8bd" stroke-dasharray="4" stroke-width="1" x1="0" x2="800" y1="140" y2="140"></line>
+<line opacity="0.2" stroke="#c4c8bd" stroke-dasharray="4" stroke-width="1" x1="0" x2="800" y1="190" y2="190"></line>
+<!-- Smooth Area Gradient -->
+<defs>
+<lineargradient id="chartGradient" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="#3d6751" stop-opacity="0.2"></stop>
+<stop offset="100%" stop-color="#3d6751" stop-opacity="0"></stop>
+</lineargradient>
+</defs>
+<path d="M0,200 L133,180 L266,120 L399,140 L532,80 L665,40 L800,60 L800,240 L0,240 Z" fill="url(#chartGradient)"></path>
+<!-- Path Line -->
+<path d="M0,200 L133,180 L266,120 L399,140 L532,80 L665,40 L800,60" fill="none" stroke="#3d6751" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"></path>
+<!-- Points -->
+<circle cx="133" cy="180" fill="#3d6751" r="4" stroke="#ffffff" stroke-width="2"></circle>
+<circle cx="266" cy="120" fill="#3d6751" r="4" stroke="#ffffff" stroke-width="2"></circle>
+<circle cx="399" cy="140" fill="#3d6751" r="4" stroke="#ffffff" stroke-width="2"></circle>
+<circle cx="532" cy="80" fill="#3d6751" r="4" stroke="#ffffff" stroke-width="2"></circle>
+<circle cx="665" cy="40" fill="#3d6751" r="4" stroke="#ffffff" stroke-width="2"></circle>
+</svg>
+<div class="flex justify-between mt-6 text-xs font-bold text-on-surface-variant tracking-wider uppercase">
+<span>Jan</span>
+<span>Feb</span>
+<span>Mar</span>
+<span>Apr</span>
+<span>May</span>
+<span>Jun</span>
+<span>Jul</span>
+</div>
+</div>
+</div>
+<!-- Side Inventory Alerts -->
+<div class="bg-[#FFF8E7] p-8 rounded-[2rem] border border-outline-variant/15 flex flex-col gap-6">
+<h3 class="text-xl font-bold text-on-surface">Inventory Status</h3>
+<div class="flex flex-col gap-4">
+<div class="flex items-center gap-4 bg-surface-container-lowest p-4 rounded-2xl">
+<div class="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">potted_plant</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold">Brahmi Powder</p>
+<p class="text-xs text-error font-medium">Low Stock: 12 units</p>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-lowest p-4 rounded-2xl">
+<div class="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">potted_plant</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold">Neem Capsules</p>
+<p class="text-xs text-primary font-medium">Healthy: 145 units</p>
+</div>
+</div>
+<div class="flex items-center gap-4 bg-surface-container-lowest p-4 rounded-2xl">
+<div class="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary">potted_plant</span>
+</div>
+<div class="flex-1">
+<p class="text-sm font-bold">Triphala Choornam</p>
+<p class="text-xs text-error font-medium">Low Stock: 8 units</p>
+</div>
+</div>
+</div>
+<button class="mt-auto w-full py-4 bg-primary text-on-primary font-bold rounded-xl active:scale-95 transition-all shadow-lg shadow-primary/20">
+                    Restock All
+                </button>
+</div>
+</div>
+<!-- Recent Transactions Table Style -->
+<div class="bg-surface-container-lowest p-8 rounded-[2rem] border border-outline-variant/15">
+<div class="flex justify-between items-center mb-8">
+<h3 class="text-xl font-bold text-on-surface">Recent Orders</h3>
+<button class="text-primary font-bold text-sm hover:underline">View All</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="text-on-surface-variant text-xs uppercase tracking-widest border-b border-outline-variant/10">
+<th class="pb-4 font-bold">Order ID</th>
+<th class="pb-4 font-bold">Customer</th>
+<th class="pb-4 font-bold">Items</th>
+<th class="pb-4 font-bold">Amount</th>
+<th class="pb-4 font-bold">Status</th>
+</tr>
+</thead>
+<tbody class="text-sm">
+<tr class="border-b border-outline-variant/5">
+<td class="py-4 font-bold">#SID-8901</td>
+<td class="py-4">Anjali Sharma</td>
+<td class="py-4">3 Items</td>
+<td class="py-4 font-bold">₹ 2,450</td>
+<td class="py-4"><span class="px-3 py-1 bg-secondary-container text-on-secondary-container rounded-full text-xs font-bold">Delivered</span></td>
+</tr>
+<tr class="border-b border-outline-variant/5">
+<td class="py-4 font-bold">#SID-8902</td>
+<td class="py-4">Karthik Raja</td>
+<td class="py-4">1 Item</td>
+<td class="py-4 font-bold">₹ 850</td>
+<td class="py-4"><span class="px-3 py-1 bg-primary-container text-on-primary-container rounded-full text-xs font-bold">Processing</span></td>
+</tr>
+<tr>
+<td class="py-4 font-bold">#SID-8903</td>
+<td class="py-4">Meena Kumari</td>
+<td class="py-4">5 Items</td>
+<td class="py-4 font-bold">₹ 4,120</td>
+<td class="py-4"><span class="px-3 py-1 bg-tertiary-fixed text-on-tertiary-fixed-variant rounded-full text-xs font-bold">Shipped</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-2 pb-6 bg-[#ffffff]/85 dark:bg-[#1b1d0e]/85 backdrop-blur-lg border-t border-[#c4c8bd]/15 shadow-[0_-4px_20px_rgba(27,29,14,0.05)] z-50 rounded-t-[1.5rem]">
+<a class="flex flex-col items-center justify-center text-[#444840] dark:text-[#c4c8bd] px-5 py-1 hover:bg-[#f5f5dc] dark:hover:bg-[#2a2c1a] transition-all scale-98 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444840] dark:text-[#c4c8bd] px-5 py-1 hover:bg-[#f5f5dc] dark:hover:bg-[#2a2c1a] transition-all scale-98 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="potted_plant">potted_plant</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Shop</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444840] dark:text-[#c4c8bd] px-5 py-1 hover:bg-[#f5f5dc] dark:hover:bg-[#2a2c1a] transition-all scale-98 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Billing</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#a4d1b6] dark:bg-[#3d6751] text-[#1b1d0e] dark:text-white rounded-2xl px-5 py-1 scale-98 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="analytics" style="font-variation-settings: 'FILL' 1;">analytics</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Admin</span>
+</a>
+</nav>
+</body></html>

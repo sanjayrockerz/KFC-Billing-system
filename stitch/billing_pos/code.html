@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Billing - Sri Siddha Herbal Store</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Manrope:wght@400;500;600&amp;family=Noto+Sans+Tamil:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#dbdcc3",
+              "inverse-primary": "#a4d1b6",
+              "inverse-on-surface": "#f2f2d9",
+              "surface-bright": "#fbfbe2",
+              "error": "#ba1a1a",
+              "on-error": "#ffffff",
+              "secondary-container": "#d1e6c3",
+              "tertiary-fixed": "#e9e2d2",
+              "on-background": "#1b1d0e",
+              "surface-container-highest": "#e4e4cc",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#bfedd1",
+              "on-tertiary-container": "#524e42",
+              "outline": "#74786f",
+              "primary-fixed-dim": "#a4d1b6",
+              "secondary-fixed-dim": "#b8cdab",
+              "secondary-fixed": "#d4e9c5",
+              "error-container": "#ffdad6",
+              "surface-tint": "#3d6751",
+              "on-surface": "#1b1d0e",
+              "surface": "#fbfbe2",
+              "secondary": "#516448",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#f5f5dc",
+              "outline-variant": "#c4c8bd",
+              "on-error-container": "#93000a",
+              "inverse-surface": "#303221",
+              "tertiary": "#625e52",
+              "surface-variant": "#e4e4cc",
+              "primary": "#3d6751",
+              "on-secondary-fixed": "#0f1f09",
+              "on-secondary": "#ffffff",
+              "on-secondary-container": "#55684c",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed-variant": "#4a473b",
+              "tertiary-fixed-dim": "#ccc6b7",
+              "primary-container": "#9ecbb0",
+              "on-surface-variant": "#444840",
+              "on-tertiary-fixed": "#1e1c12",
+              "on-secondary-fixed-variant": "#3a4c31",
+              "on-primary-fixed": "#002113",
+              "surface-container": "#efefd7",
+              "on-primary-fixed-variant": "#254f3a",
+              "on-primary-container": "#2d5742",
+              "surface-container-high": "#eaead1",
+              "tertiary-container": "#c6c0b1",
+              "background": "#fbfbe2"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Manrope"],
+              "label": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body { font-family: 'Manrope', sans-serif; }
+        h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .tamil-text { font-family: 'Noto Sans Tamil', sans-serif; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface-container-low text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#fbfbe2]/85 backdrop-blur-md border-b border-[#c4c8bd]/15 shadow-sm">
+<div class="flex justify-between items-center px-5 h-16 w-full max-w-screen-xl mx-auto">
+<div class="flex items-center gap-3">
+<button class="text-[#3d6751] active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-xl font-bold tracking-tight text-[#3d6751] font-['Plus_Jakarta_Sans']">Sri Siddha Herbal Store</h1>
+</div>
+<div class="text-[#3d6751] font-semibold font-['Plus_Jakarta_Sans']">
+                EN | <span class="tamil-text">தமிழ்</span>
+</div>
+</div>
+</header>
+<main class="pt-20 px-4 max-w-md mx-auto space-y-6">
+<!-- Billing Form Section -->
+<section class="space-y-4">
+<header>
+<h2 class="text-2xl font-bold text-primary">New Billing</h2>
+<p class="text-on-surface-variant text-sm">Create a quick invoice for the customer</p>
+</header>
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm space-y-4">
+<!-- Customer Details -->
+<div class="space-y-3">
+<div class="group">
+<label class="block text-xs font-bold text-primary mb-1 ml-1 uppercase tracking-wider">Customer Name</label>
+<input class="w-full bg-surface-container-high border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary text-on-surface placeholder:text-on-surface-variant/50" placeholder="Enter name" type="text"/>
+</div>
+<div class="group">
+<label class="block text-xs font-bold text-primary mb-1 ml-1 uppercase tracking-wider">Phone Number</label>
+<input class="w-full bg-surface-container-high border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary text-on-surface" placeholder="+91 00000 00000" type="tel"/>
+</div>
+</div>
+<div class="h-px bg-outline-variant/15 my-2"></div>
+<!-- Product Selection -->
+<div class="space-y-3">
+<div>
+<label class="block text-xs font-bold text-primary mb-1 ml-1 uppercase tracking-wider">Select Herbal Product</label>
+<div class="relative">
+<select class="w-full bg-surface-container-high border-none rounded-xl px-4 py-3 appearance-none focus:ring-2 focus:ring-primary text-on-surface">
+<option>Sukku Powder (சுக்கு பொடி)</option>
+<option>Thulasi Drop (துளசி துளிகள்)</option>
+<option>Amla Candy (நெல்லி மிட்டாய்)</option>
+<option>Neem Capsules (வேம்பு மாத்திரை)</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-primary">expand_more</span>
+</div>
+</div>
+<div class="flex gap-3 items-end">
+<div class="flex-1">
+<label class="block text-xs font-bold text-primary mb-1 ml-1 uppercase tracking-wider">Quantity</label>
+<div class="flex items-center bg-surface-container-high rounded-xl overflow-hidden">
+<button class="px-4 py-3 text-primary active:bg-primary-container/20 transition-colors">
+<span class="material-symbols-outlined">remove</span>
+</button>
+<input class="w-full bg-transparent border-none text-center font-bold text-lg py-3 focus:ring-0" type="number" value="1"/>
+<button class="px-4 py-3 text-primary active:bg-primary-container/20 transition-colors">
+<span class="material-symbols-outlined">add</span>
+</button>
+</div>
+</div>
+<button class="bg-primary text-on-primary h-[52px] px-6 rounded-xl font-bold flex items-center justify-center active:scale-95 transition-transform">
+<span class="material-symbols-outlined">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- Bill Preview Section -->
+<section class="space-y-3">
+<h3 class="text-sm font-bold text-on-surface-variant flex items-center gap-2 px-1">
+<span class="material-symbols-outlined text-sm">receipt_long</span>
+                BILL PREVIEW
+            </h3>
+<!-- Styled Receipt Card -->
+<div class="bg-[#FFF8E7] rounded-2xl p-6 shadow-sm border border-[#e9e2d2] relative overflow-hidden">
+<!-- Branding on Receipt -->
+<div class="text-center border-b border-dashed border-outline-variant pb-4 mb-4">
+<p class="font-bold text-primary text-lg">Sri Siddha Herbal Store</p>
+<p class="text-[10px] text-on-surface-variant uppercase tracking-[0.2em] mt-1">The Botanical Archive</p>
+</div>
+<!-- Items -->
+<div class="space-y-3 mb-6">
+<div class="flex justify-between items-start">
+<div>
+<p class="font-semibold text-on-surface">Sukku Powder</p>
+<p class="tamil-text text-xs text-on-surface-variant">சுக்கு பொடி (100g)</p>
+<p class="text-xs text-on-surface-variant mt-1">Qty: 1 × ₹80</p>
+</div>
+<p class="font-bold text-on-surface">₹80.00</p>
+</div>
+</div>
+<!-- Totals -->
+<div class="pt-4 border-t border-dashed border-outline-variant space-y-2">
+<div class="flex justify-between text-sm text-on-surface-variant">
+<span>Subtotal</span>
+<span>₹80.00</span>
+</div>
+<div class="flex justify-between text-xl font-extrabold text-primary">
+<span>Total Amount</span>
+<span>₹80.00</span>
+</div>
+</div>
+<!-- Aesthetic Receipt Jagged Edge Bottom -->
+<div class="absolute bottom-0 left-0 right-0 h-1 bg-[radial-gradient(circle,transparent_0,transparent_4px,#FFF8E7_4px,#FFF8E7_100%)] bg-[length:12px_12px] transform translate-y-1"></div>
+</div>
+</section>
+<!-- Action Buttons -->
+<section class="grid grid-cols-1 gap-3 pt-2">
+<button class="w-full bg-primary text-on-primary py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 shadow-lg shadow-primary/10 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">print</span>
+                Generate Bill
+            </button>
+<button class="w-full bg-[#A8D5BA] text-[#0f1f09] py-5 rounded-2xl font-bold text-lg flex items-center justify-center gap-3 border border-primary/10 active:scale-95 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+                Send Bill via WhatsApp
+            </button>
+</section>
+</main>
+<!-- Navigation Bar (Shared Component Logic) -->
+<nav class="fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-2 pb-6 bg-[#ffffff]/85 dark:bg-[#1b1d0e]/85 backdrop-blur-lg border-t border-[#c4c8bd]/15 shadow-[0_-4px_20px_rgba(27,29,14,0.05)] z-50 rounded-t-[1.5rem]">
+<a class="flex flex-col items-center justify-center text-[#444840] dark:text-[#c4c8bd] px-5 py-1 transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444840] dark:text-[#c4c8bd] px-5 py-1 transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined">potted_plant</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Shop</span>
+</a>
+<a class="flex flex-col items-center justify-center bg-[#a4d1b6] dark:bg-[#3d6751] text-[#1b1d0e] dark:text-white rounded-2xl px-5 py-1 transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Billing</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444840] dark:text-[#c4c8bd] px-5 py-1 transition-all active:scale-90" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Admin</span>
+</a>
+</nav>
+<!-- Side Decoration (Digital Apothecary Aesthetic) -->
+<div class="fixed top-32 -left-12 opacity-5 pointer-events-none rotate-90">
+<img alt="" class="w-64 h-64 object-cover rounded-full" data-alt="close-up detail of dried green medicinal herbs and botanical leaves on a textured parchment paper background with soft shadows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBRtEEeqzEPPIrhPfXptfTnJL_juSlB7cS0jXVetAkgDL6GXi05vQzpHXCiA6eMQyFbOPo5hrH_Ggy15GfCkYMh2olu11ItsMVOifZvkYttDItsJCthbiTyd2PfWnQkCB6uI7UMK2L53wonGrffF-55nhpP17c8EfgsoP90YYCBpzhX1z1pn-RkIgFKfN8rFona36Uvsy36n3i_rf2FM8Hv5WWTKGA5hbGeoMJ1tuQ7OWboPIt8u3ivLUcQpfi61jyYSJEn4CU1bXQ"/>
+</div>
+</body></html>

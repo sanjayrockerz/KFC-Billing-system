@@ -1,0 +1,16 @@
+{
+  "name": "naatu-marundhu-shop",
+  "version": "1.0.0",
+  "description": "Sri Siddha Herbal Store UI",
+  "main": "index.js",
+  "scripts": {
+    "dev": "tailwindcss -i ./css/main.css -o ./css/tailwind.css --watch",
+    "build": "tailwindcss -i ./css/main.css -o ./css/tailwind.css --minify"
+  },
+  "dependencies": {
+    "framer-motion": "^10.16.4"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}

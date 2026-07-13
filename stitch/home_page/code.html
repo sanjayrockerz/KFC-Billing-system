@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sri Siddha Herbal Store</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&amp;family=Manrope:wght@400;500;700&amp;family=Noto+Sans+Tamil:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#dbdcc3",
+              "inverse-primary": "#a4d1b6",
+              "inverse-on-surface": "#f2f2d9",
+              "surface-bright": "#fbfbe2",
+              "error": "#ba1a1a",
+              "on-error": "#ffffff",
+              "secondary-container": "#d1e6c3",
+              "tertiary-fixed": "#e9e2d2",
+              "on-background": "#1b1d0e",
+              "surface-container-highest": "#e4e4cc",
+              "on-tertiary": "#ffffff",
+              "primary-fixed": "#bfedd1",
+              "on-tertiary-container": "#524e42",
+              "outline": "#74786f",
+              "primary-fixed-dim": "#a4d1b6",
+              "secondary-fixed-dim": "#b8cdab",
+              "secondary-fixed": "#d4e9c5",
+              "error-container": "#ffdad6",
+              "surface-tint": "#3d6751",
+              "on-surface": "#1b1d0e",
+              "surface": "#fbfbe2",
+              "secondary": "#516448",
+              "on-primary": "#ffffff",
+              "surface-container-low": "#f5f5dc",
+              "outline-variant": "#c4c8bd",
+              "on-error-container": "#93000a",
+              "inverse-surface": "#303221",
+              "tertiary": "#625e52",
+              "surface-variant": "#e4e4cc",
+              "primary": "#3d6751",
+              "on-secondary-fixed": "#0f1f09",
+              "on-secondary": "#ffffff",
+              "on-secondary-container": "#55684c",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary-fixed-variant": "#4a473b",
+              "tertiary-fixed-dim": "#ccc6b7",
+              "primary-container": "#9ecbb0",
+              "on-surface-variant": "#444840",
+              "on-tertiary-fixed": "#1e1c12",
+              "on-secondary-fixed-variant": "#3a4c31",
+              "on-primary-fixed": "#002113",
+              "surface-container": "#efefd7",
+              "on-primary-fixed-variant": "#254f3a",
+              "on-primary-container": "#2d5742",
+              "surface-container-high": "#eaead1",
+              "tertiary-container": "#c6c0b1",
+              "background": "#fbfbe2"
+            },
+            fontFamily: {
+              "headline": ["Plus Jakarta Sans"],
+              "body": ["Manrope"],
+              "label": ["Manrope"],
+              "tamil": ["Noto Sans Tamil"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-nav {
+            background: rgba(251, 251, 226, 0.85);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface font-body text-on-surface selection:bg-primary-container">
+<!-- Top Navigation Bar -->
+<header class="fixed top-0 w-full z-50 bg-[#fbfbe2]/85 dark:bg-[#1b1d0e]/85 backdrop-blur-md border-b border-[#c4c8bd]/15 shadow-sm">
+<div class="flex justify-between items-center px-5 h-16 w-full max-w-screen-xl mx-auto">
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-[#3d6751] hover:bg-[#efefd7]/50 p-2 rounded-full active:scale-95 transition-transform duration-200 lg:hidden">menu</button>
+<h1 class="text-xl font-bold tracking-tight text-[#3d6751] dark:text-[#9ecbb0] font-headline">Sri Siddha Herbal Store</h1>
+</div>
+<!-- Desktop Navigation -->
+<nav class="hidden lg:flex items-center gap-8">
+<a class="text-[#3d6751] font-bold font-headline transition-colors" href="#">Home</a>
+<a class="text-[#444840] hover:text-[#3d6751] font-headline transition-colors" href="#">Products</a>
+<a class="text-[#444840] hover:text-[#3d6751] font-headline transition-colors" href="#">Billing</a>
+<a class="text-[#444840] hover:text-[#3d6751] font-headline transition-colors" href="#">Dashboard</a>
+</nav>
+<div class="flex items-center gap-3">
+<div class="bg-surface-bright/80 px-3 py-1.5 rounded-full text-xs font-semibold border border-outline-variant/10 text-[#3d6751]">
+                    EN | <span class="font-tamil">தமிழ்</span>
+</div>
+</div>
+</div>
+</header>
+<main class="pt-16 pb-24 lg:pb-12">
+<!-- Hero Section -->
+<section class="relative px-5 pt-10 pb-16 overflow-hidden">
+<div class="max-w-screen-xl mx-auto relative z-10">
+<div class="max-w-2xl">
+<span class="inline-block px-4 py-1 mb-4 rounded-full bg-secondary-container text-on-secondary-container text-sm font-bold tracking-wide uppercase">Traditional Healing</span>
+<h2 class="text-4xl md:text-6xl font-extrabold text-on-surface font-headline leading-[1.1] mb-4">SRI SIDDHA HERBAL STORE</h2>
+<p class="text-lg md:text-xl text-on-surface-variant max-w-lg mb-8 leading-relaxed">Traditional Herbal Medicines crafted with ancient wisdom for contemporary wellness. Discover the purity of nature.</p>
+<!-- Search Bar -->
+<div class="relative group max-w-xl">
+<div class="absolute inset-y-0 left-5 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline group-focus-within:text-primary transition-colors">search</span>
+</div>
+<input class="w-full h-14 pl-14 pr-6 rounded-full bg-surface-container-high border-none focus:ring-2 focus:ring-primary/20 text-on-surface placeholder:text-on-surface-variant/60 shadow-inner transition-all" placeholder="Find medicines, herbs or oils..." type="text"/>
+</div>
+</div>
+</div>
+<!-- Asymmetric background element -->
+<div class="absolute -top-24 -right-24 w-96 h-96 bg-primary-container/20 rounded-full blur-3xl -z-0"></div>
+<div class="absolute bottom-0 right-10 w-64 h-64 opacity-20 pointer-events-none">
+<img alt="Herbal Illustration" class="w-full h-full object-contain" data-alt="Stylized botanical illustration of a green medicinal leaf with organic soft shapes and textured edges" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCB_i3GoQO61RJtOP3gx8GdPal3Ffw3sZ0dukSMXo-MWy6vTkq0M2LUn8XbBdA048seJvd77H9vOEm4ws8-f-hi4-8Q82ZAtqpun6mGSHaXLNU3yZ6G2nf33G7KLM4fkKV6K7Z2kw7P1y8Feh_IHV3HuiInGWUwrfg-Hmwiua_O5RV3VGLV40SfUttUlQvOwjjaKXGPjDN6eT6ImdJYH2EFvp3n-ZMm99LC-zVXeyoUjPVmT-Ch_JhTjWOtfqDTqcpLfo83VFRUVK8"/>
+</div>
+</section>
+<!-- Quick Categories (Bento-style) -->
+<section class="px-5 mb-16 max-w-screen-xl mx-auto">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="bg-surface-container-low p-6 rounded-2xl flex flex-col items-start gap-4 hover:bg-surface-container transition-colors group cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">immunology</span>
+</div>
+<span class="font-bold text-on-surface leading-tight">Herbal Powders</span>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl flex flex-col items-start gap-4 hover:bg-surface-container transition-colors group cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">psychiatry</span>
+</div>
+<span class="font-bold text-on-surface leading-tight">Medicinal Roots</span>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl flex flex-col items-start gap-4 hover:bg-surface-container transition-colors group cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">sanitizer</span>
+</div>
+<span class="font-bold text-on-surface leading-tight">Herbal Oils</span>
+</div>
+<div class="bg-surface-container-low p-6 rounded-2xl flex flex-col items-start gap-4 hover:bg-surface-container transition-colors group cursor-pointer">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined">medication</span>
+</div>
+<span class="font-bold text-on-surface leading-tight">Traditional Tablets</span>
+</div>
+</div>
+</section>
+<!-- Featured Medicines -->
+<section class="px-5 max-w-screen-xl mx-auto mb-12">
+<div class="flex items-end justify-between mb-8">
+<div>
+<h3 class="text-2xl font-bold font-headline text-on-surface">Featured Essentials</h3>
+<p class="text-on-surface-variant font-tamil">சிறந்த மூலிகை தயாரிப்புகள்</p>
+</div>
+<a class="text-primary font-bold text-sm flex items-center gap-1 hover:underline" href="#">View All <span class="material-symbols-outlined text-sm">arrow_forward</span></a>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+<!-- Product Card 1 -->
+<div class="bg-[#FFF8E7] rounded-2xl p-4 flex flex-col group transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+<div class="relative w-full aspect-square mb-4 overflow-hidden rounded-xl">
+<img alt="Sukku Powder" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Fine dry ginger powder in a rustic wooden bowl on a neutral background with soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzt30YSU154yFY6tKTIvDaqyRteKQJhaziOvyj4sC4GZRpzqM53dzvBkJD4p9sKvn5IC48p8uQ9tnWR9uFUhydiwEkTk1FjJ0wUyqE9wtazQguMX1YMXNr0ToB63YxOOp6jYIDQ7RCZvGF2-2dUEbaatpKFyr__gpJeovlSzCSm05Eyh9WZwkasgTVU-FwIyduCcWhJF5o2xI5D26FsmVmSZwhD9CxXRMj1Q4y143_8RabYcuaJL0CiSOUEiRNSxfrZaKahioxf4s"/>
+<span class="absolute top-2 right-2 bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded-full text-xs font-bold">₹120</span>
+</div>
+<h4 class="font-bold text-lg font-headline text-on-surface">Sukku Powder</h4>
+<p class="text-on-surface-variant text-sm font-tamil mb-4">சுக்கு பொடி</p>
+<button class="mt-auto w-full py-3 bg-[#A8D5BA] text-[#1b1d0e] rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">shopping_cart</span>
+                        Add to Cart
+                    </button>
+</div>
+<!-- Product Card 2 -->
+<div class="bg-[#FFF8E7] rounded-2xl p-4 flex flex-col group transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+<div class="relative w-full aspect-square mb-4 overflow-hidden rounded-xl">
+<img alt="Athimathuram" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Liquorice root sticks bundle on a wooden surface with a soft focused herbal tea in the background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYo2VWORVRMIZG7hhwL1wO0xvLaiyBVPxefBY3f8-Rl0c4_BQQ-PYDYz1cFAxkQigMIcWJl9mXlwekFhM04ASvuAStUzsgM94yvnZtU5Tcl7QGymceHY_hIt2ghtfOaHiZreoq-8ijE14GzD2xun2ZASO3h8ybzo9Ev416yYOyVO_XipGD58x4b8A1ZDaNTV-T6HpfHAmRFHaw81909sKcrHrJM80QuYtBog5cKY_Zc22XyQdSUGHl2Od6vdsThQz6Fmoi1OpW-Io"/>
+<span class="absolute top-2 right-2 bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded-full text-xs font-bold">₹150</span>
+</div>
+<h4 class="font-bold text-lg font-headline text-on-surface">Athimathuram</h4>
+<p class="text-on-surface-variant text-sm font-tamil mb-4">அதிமதுரம்</p>
+<button class="mt-auto w-full py-3 bg-[#A8D5BA] text-[#1b1d0e] rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">shopping_cart</span>
+                        Add to Cart
+                    </button>
+</div>
+<!-- Product Card 3 -->
+<div class="bg-[#FFF8E7] rounded-2xl p-4 flex flex-col group transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+<div class="relative w-full aspect-square mb-4 overflow-hidden rounded-xl">
+<img alt="Medicinal Herbs" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Assorted fresh medicinal green leaves and herbs arranged on a white ceramic plate under bright diffuse light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzVlNDXYogYF5Me5_wcQ43BkU9WbSX_dobnT5iY6NbypHNd50xT8_lIXmltLi7MGbvK6x_EdciVkMbpobRYS3bV0TSoi_v8M2ux80reo-jFHtq9aoBEUlFhwzYKFBG-1cYYcBVHd1j3DSRGYp8HSuWkt8rKHPUu_Jgl8xXwAcoVouGFEfZHzqQNNPfPdJo_bA7hFwXVOB6Vs6qbVAdjjB2LEovv49XApgjKX9t4ytriNh3bW1uStaHAmQg3JrWhTIouDvK7gZCvHI"/>
+<span class="absolute top-2 right-2 bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded-full text-xs font-bold">₹85</span>
+</div>
+<h4 class="font-bold text-lg font-headline text-on-surface">Tulsi Mix</h4>
+<p class="text-on-surface-variant text-sm font-tamil mb-4">துளசி கலவை</p>
+<button class="mt-auto w-full py-3 bg-[#A8D5BA] text-[#1b1d0e] rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">shopping_cart</span>
+                        Add to Cart
+                    </button>
+</div>
+<!-- Product Card 4 -->
+<div class="bg-[#FFF8E7] rounded-2xl p-4 flex flex-col group transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+<div class="relative w-full aspect-square mb-4 overflow-hidden rounded-xl">
+<img alt="Herbal Oil" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" data-alt="Traditional dark glass bottle of herbal hair oil with yellow flowers and green leaves scattered around it" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCA6Qndg2nJFIBME4KZqVO8XeVJsI2N4wiZOi6BdD5b7E2EbYtrDm4JdGt-52tz-C4y9L-1LkVpbyFArueyYR_zcj_gwYQ3RfI0LY0ijxR61XSj3wBBL45WnlrMufbUqJiUxs2uOb13D__nnwqHn9uXPFPyBd-NVHvTHBFNoXDgZ1CMIUMTr1DX4sFybbjxGLzGZQHdF_lA2zjshrj03SS8INbTkWoGcaKZZSAVYK1Vruk4sl7EPn2aB5n0-2NNguorIA_9nLdJoHY"/>
+<span class="absolute top-2 right-2 bg-tertiary-fixed text-on-tertiary-fixed px-3 py-1 rounded-full text-xs font-bold">₹210</span>
+</div>
+<h4 class="font-bold text-lg font-headline text-on-surface">Bringraj Oil</h4>
+<p class="text-on-surface-variant text-sm font-tamil mb-4">பிரிங்கராஜ் எண்ணெய்</p>
+<button class="mt-auto w-full py-3 bg-[#A8D5BA] text-[#1b1d0e] rounded-xl font-bold text-sm flex items-center justify-center gap-2 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-sm">shopping_cart</span>
+                        Add to Cart
+                    </button>
+</div>
+</div>
+</section>
+<!-- Newsletter / Community Section -->
+<section class="px-5 mb-12">
+<div class="max-w-screen-xl mx-auto bg-primary rounded-2xl p-8 md:p-12 relative overflow-hidden">
+<div class="relative z-10 max-w-lg">
+<h3 class="text-white text-3xl font-bold font-headline mb-4">Join our Health Circle</h3>
+<p class="text-primary-container text-lg mb-6">Receive seasonal wellness tips and traditional recipes directly to your inbox.</p>
+<div class="flex flex-col sm:flex-row gap-3">
+<input class="flex-grow rounded-xl bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:ring-2 focus:ring-white/30 h-12 px-4" placeholder="Enter your email" type="email"/>
+<button class="bg-white text-primary px-8 h-12 rounded-xl font-bold hover:bg-primary-container transition-colors">Subscribe</button>
+</div>
+</div>
+<!-- Abstract leaf patterns -->
+<div class="absolute right-[-10%] bottom-[-20%] opacity-10">
+<span class="material-symbols-outlined text-[300px] text-white">eco</span>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar (Mobile only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pt-2 pb-6 bg-[#ffffff]/85 dark:bg-[#1b1d0e]/85 backdrop-blur-lg border-t border-[#c4c8bd]/15 shadow-[0_-4px_20px_rgba(27,29,14,0.05)] z-50 rounded-t-[1.5rem]">
+<a class="flex flex-col items-center justify-center bg-[#a4d1b6] dark:bg-[#3d6751] text-[#1b1d0e] dark:text-white rounded-2xl px-5 py-1 scale-98 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined">home</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444840] dark:text-[#c4c8bd] px-5 py-1 hover:bg-[#f5f5dc] scale-98 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined">potted_plant</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Shop</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444840] dark:text-[#c4c8bd] px-5 py-1 hover:bg-[#f5f5dc] scale-98 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Billing</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#444840] dark:text-[#c4c8bd] px-5 py-1 hover:bg-[#f5f5dc] scale-98 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px] font-medium font-['Plus_Jakarta_Sans']">Admin</span>
+</a>
+</nav>
+<!-- FAB for quick action -->
+<button class="fixed right-6 bottom-24 md:bottom-8 w-14 h-14 bg-primary text-on-primary rounded-2xl shadow-lg flex items-center justify-center active:scale-90 transition-transform z-40">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">shopping_bag</span>
+</button>
+</body></html>
