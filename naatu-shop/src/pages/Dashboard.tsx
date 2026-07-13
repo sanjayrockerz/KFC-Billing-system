@@ -617,6 +617,8 @@ export default function Dashboard() {
           .order('created_at', { ascending: false })
           .limit(1000),
       ])
+      if (cRes.error) throw cRes.error
+      if (oRes.error) throw oRes.error
       const mappedOrders = (oRes.data || []).map(r => toDashboardOrder(r as Record<string, unknown>))
       setCats((cRes.data || []) as Category[])
       setOrders(mappedOrders)

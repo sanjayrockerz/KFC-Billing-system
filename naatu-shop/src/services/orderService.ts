@@ -81,7 +81,11 @@ export const createOrderWithStock = async (input: CreateOrderInput): Promise<Cre
   if (error) {
     if (typeof error === 'object' && error !== null && 'message' in error) {
       const err = error as { message: unknown; details?: unknown }
-      throw new Error(String(err.message) + (err.details ? ` (${String(err.details)})` : ''))
+      const message = String(err.message)
+      if (/invalid api key|invalid value.*apikey|apikey.*invalid/i.test(message)) {
+        throw new Error('Supabase configuration is invalid. Please redeploy with the correct Supabase URL and publishable key.')
+      }
+      throw new Error(message + (err.details ? ` (${String(err.details)})` : ''))
     }
     throw new Error(String(error))
   }
