@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { X } from 'lucide-react'
 import { useProductStore } from '../store/store'
 import { supabase } from '../lib/supabase'
@@ -13,6 +13,7 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
   const { fetchProducts, products } = useProductStore()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [categoryOptions, setCategoryOptions] = useState<string[]>([])
   const [categoryMode, setCategoryMode] = useState<'select' | 'new'>('select')
   const [formData, setFormData] = useState({
     name: '',
@@ -21,7 +22,24 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     stock: '10'
   })
 
-  const existingCategories = Array.from(new Set(products.filter(p => p.category).map(p => p.category))).filter(Boolean).sort()
+  const existingCategories = categoryOptions.length > 0
+    ? categoryOptions
+    : Array.from(new Set(products.filter(p => p.category).map(p => p.category))).filter(Boolean).sort()
+
+  useEffect(() => {
+    if (!isOpen) return
+    let cancelled = false
+    const loadCategories = async () => {
+      const { data } = await supabase
+        .from('categories')
+        .select('name_en')
+        .eq('is_active', true)
+        .order('sort_order')
+      if (!cancelled) setCategoryOptions((data || []).map(row => String(row.name_en || '')).filter(Boolean))
+    }
+    void loadCategories()
+    return () => { cancelled = true }
+  }, [isOpen])
 
   if (!isOpen) return null
 
@@ -33,9 +51,30 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
     setLoading(true)
     setError('')
     try {
+      const categoryName = formData.category.trim()
+      let categoryId: string | number | null = null
+      if (categoryName) {
+        const { data: existingCategory, error: categoryLookupError } = await supabase
+          .from('categories')
+          .select('id')
+          .ilike('name_en', categoryName)
+          .maybeSingle()
+        if (categoryLookupError) throw categoryLookupError
+        categoryId = existingCategory?.id ?? null
+        if (!existingCategory) {
+          const { data: insertedCategory, error: categoryInsertError } = await supabase
+            .from('categories')
+            .insert({ name_en: categoryName, name_ta: '', is_active: true })
+            .select('id')
+            .single()
+          if (categoryInsertError) throw categoryInsertError
+          categoryId = insertedCategory?.id ?? null
+        }
+      }
       const { error: dbErr } = await supabase.from('products').insert({
         name: formData.name.trim(),
-        category: formData.category.trim(),
+        category: categoryName || 'Uncategorized',
+        category_id: categoryId,
         price: Number(formData.price),
         stock: Number(formData.stock),
         is_active: true,
@@ -48,8 +87,8 @@ export default function AddProductModal({ isOpen, onClose, onSuccess }: AddProdu
       await fetchProducts()
       onSuccess()
       onClose()
-    } catch (err: any) {
-      setError(err.message || 'Failed to add product')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to add product')
     } finally {
       setLoading(false)
     }

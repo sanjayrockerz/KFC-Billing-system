@@ -54,20 +54,33 @@ export function createInvoicePdf(data: InvoicePdfData): Blob {
   doc.text(`Payment: ${data.paymentMode || 'POS'}`, right, y + 7, { align: 'right' })
   y += 23
 
+  const customerName = String(data.customerName || 'Walk-in Customer').trim()
+  const customerPhone = String(data.phone || '—').trim()
+  const customerAddress = String(data.address || '').trim()
+  const customerNameLines = doc.splitTextToSize(customerName, 165) as string[]
+  const customerAddressLines = customerAddress
+    ? doc.splitTextToSize(`Address: ${customerAddress}`, 165) as string[]
+    : []
+  const customerBoxHeight = 19 + customerNameLines.length * 4 + customerAddressLines.length * 4
+
   doc.setFillColor('#f8f1f2')
-  doc.roundedRect(left, y, right - left, 22, 2, 2, 'F')
+  doc.roundedRect(left, y, right - left, customerBoxHeight, 2, 2, 'F')
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(7)
   doc.setTextColor(muted)
   doc.text('BILL TO', left + 5, y + 7)
   doc.setFontSize(10)
   doc.setTextColor(ink)
-  doc.text(data.customerName || 'Walk-in Customer', left + 5, y + 13)
+  doc.text(customerNameLines, left + 5, y + 13)
   doc.setFont('helvetica', 'normal')
   doc.setFontSize(8)
   doc.setTextColor(muted)
-  doc.text(`${data.phone}${data.address ? `  |  ${data.address}` : ''}`, left + 5, y + 18, { maxWidth: 165 })
-  y += 31
+  const phoneY = y + 13 + customerNameLines.length * 4 + 2
+  doc.text(`Mobile Number: ${customerPhone}`, left + 5, phoneY)
+  if (customerAddressLines.length > 0) {
+    doc.text(customerAddressLines, left + 5, phoneY + 5)
+  }
+  y += customerBoxHeight + 9
 
   doc.setFillColor(red)
   doc.rect(left, y, right - left, 9, 'F')

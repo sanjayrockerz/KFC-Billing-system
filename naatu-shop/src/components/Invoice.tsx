@@ -113,7 +113,7 @@ export const Invoice: React.FC<InvoiceProps> = ({
       </div>
 
       {/* ── META ROW ──────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: 28, gap: 24 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', marginBottom: 28, gap: 24 }}>
         <div style={{ flex: '1 1 220px', minWidth: 0 }}>
           <div style={{ fontSize: 9, fontWeight: 800, color: '#888', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Order Date</div>
           <div style={{ fontSize: 13, fontWeight: 700 }}>{dateStr}</div>
@@ -124,12 +124,14 @@ export const Invoice: React.FC<InvoiceProps> = ({
             </>
           )}
         </div>
-        <div style={{ flex: '1 1 220px', minWidth: 0, textAlign: 'right', overflowWrap: 'anywhere' }}>
+        <div style={{ minWidth: 0, padding: '12px 14px', borderRadius: 10, background: '#f8f1f2', overflowWrap: 'anywhere' }}>
           <div style={{ fontSize: 9, fontWeight: 800, color: '#888', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 }}>Customer</div>
-          <div style={{ fontSize: 14, fontWeight: 800, color: '#1a1a2e' }}>{customerName}</div>
-          <div style={{ fontSize: 12, color: '#555', marginTop: 3 }}>{phone}</div>
-          <div style={{ fontSize: 11, color: '#777', marginTop: 4, maxWidth: 220, textAlign: 'right', lineHeight: 1.5 }}>{address}</div>
-          {paymentMode && <div style={{ fontSize: 10, color: '#777', marginTop: 5 }}>Payment: {paymentMode}</div>}
+          <div style={{ fontSize: 9, fontWeight: 800, color: '#888', textTransform: 'uppercase', letterSpacing: 0.7, marginTop: 8 }}>Customer Name</div>
+          <div style={{ fontSize: 14, fontWeight: 800, color: '#1a1a2e', lineHeight: 1.35, wordBreak: 'break-word' }}>{customerName || 'Walk-in Customer'}</div>
+          <div style={{ fontSize: 9, fontWeight: 800, color: '#888', textTransform: 'uppercase', letterSpacing: 0.7, marginTop: 8 }}>Mobile Number</div>
+          <div style={{ fontSize: 12, color: '#555', lineHeight: 1.4, wordBreak: 'break-word' }}>{phone || '—'}</div>
+          {address && <div style={{ fontSize: 11, color: '#777', marginTop: 6, lineHeight: 1.5, wordBreak: 'break-word' }}>{address}</div>}
+          {paymentMode && <div style={{ fontSize: 10, color: '#777', marginTop: 6 }}>Payment: {paymentMode}</div>}
         </div>
       </div>
 

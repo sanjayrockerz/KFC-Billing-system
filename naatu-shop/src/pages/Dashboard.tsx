@@ -177,16 +177,11 @@ export default function Dashboard() {
     }
   })
 
-  // Keep category management in sync with Billing Panel, which derives its
-  // category filters from active catalog products.
-  const billingCategoryNames = useMemo(() => new Set(
-    products
-      .filter(product => product.isActive && product.category)
-      .map(product => product.category.trim().toLowerCase())
-  ), [products])
-  const billingCategories = useMemo(
-    () => cats.filter(category => billingCategoryNames.has(category.name_en.trim().toLowerCase())),
-    [cats, billingCategoryNames]
+  // Categories are a master list. Products reference this list through
+  // category_id; product text is only a legacy display fallback.
+  const activeCategories = useMemo(
+    () => cats.filter(category => category.is_active !== false),
+    [cats]
   )
 
   // Analytics global date filter
@@ -1180,14 +1175,31 @@ export default function Dashboard() {
       setCategoryNotice({ type: 'error', text: error.message || 'Could not add category.' })
       return
     }
+    const wasEditing = editingCategoryId !== null
     setNewCat({ name_en: '', name_ta: '' })
     setEditingCategoryId(null)
-    setCategoryNotice({ type: 'success', text: editingCategoryId === null ? 'Category added successfully.' : 'Category updated successfully.' })
+    setCategoryNotice({ type: 'success', text: wasEditing ? 'Category updated successfully.' : 'Category added successfully.' })
     await loadData()
   }
 
   const deleteCat = async (c: Category) => {
     if (!window.confirm(`Delete "${c.name_en}"? This cannot be undone.`)) return
+    const { error: linkedProductsError } = await supabase
+      .from('products')
+      .update({ category: 'Uncategorized', category_id: null })
+      .eq('category_id', c.id)
+    if (linkedProductsError) {
+      setCategoryNotice({ type: 'error', text: linkedProductsError.message || 'Could not unlink products from category.' })
+      return
+    }
+    const { error: legacyProductsError } = await supabase
+      .from('products')
+      .update({ category: 'Uncategorized', category_id: null })
+      .eq('category', c.name_en)
+    if (legacyProductsError) {
+      setCategoryNotice({ type: 'error', text: legacyProductsError.message || 'Could not sync products.' })
+      return
+    }
     const { error } = await supabase.from('categories').delete().eq('id', c.id)
     if (error) {
       setCategoryNotice({ type: 'error', text: error.message || 'Could not delete category.' })
@@ -2910,7 +2922,7 @@ export default function Dashboard() {
                       <div className="mt-2 rounded-xl border border-[#EAD7B7]/60 bg-white p-2 space-y-1">
                         {cats.length === 0 ? (
                           <p className="px-2 py-1 text-[11px] text-[#6B7280]">No categories available.</p>
-                        ) : billingCategories.map(c => (
+                        ) : activeCategories.map(c => (
                           <div key={c.id} className="relative flex items-center justify-between gap-2 rounded-lg px-2 py-1.5 hover:bg-red-50">
                             <span className="truncate text-[12px] font-bold text-[#2C392A]">{c.name_en}</span>
                             <button
@@ -3304,7 +3316,7 @@ export default function Dashboard() {
                 )}
               </form>
               <div className="space-y-3">
-                {billingCategories.map(c => (
+                {cats.map(c => (
                   <div key={c.id} className="flex flex-col gap-3 p-4 bg-white border border-[#F3F4F6] shadow-sm rounded-xl transition-colors hover:border-[#D1D5DB] sm:flex-row sm:items-center sm:justify-between">
                     <div className="min-w-0">
                       <p className="text-[14px] font-bold text-[#111111]">{c.name_en}</p>
