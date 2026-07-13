@@ -3,7 +3,7 @@ import {
   BarChart2, Trash2, Edit2, List, ShoppingCart, LayoutDashboard,
   Box, AlertCircle, ArrowUp, ArrowDown, Power, Download, TrendingUp,
   Package, IndianRupee, Search, RefreshCw, ShieldCheck, ShieldOff, Trophy,
-  MessageCircle, ChevronDown, Eye, EyeOff, FileText, Lock, LockOpen, Printer, MoreVertical,
+  MessageCircle, ChevronDown, Eye, EyeOff, FileText, Lock, LockOpen, Printer, MoreVertical, X,
 } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
@@ -13,6 +13,7 @@ import { useLangStore } from '../store/langStore'
 import { uploadProductImage, uploadInvoicePdf } from '../lib/storage'
 import { formatCurrency, normalizeOrderMode, normalizeUnitType, toNumber, type UnitType } from '../lib/retail'
 import { normalizeStructuredOrderItem } from '../lib/retail'
+import { Invoice } from '../components/Invoice'
 import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
 import { invoicePdfFile } from '../lib/invoicePdf'
 import { toWhatsAppUrl } from '../lib/phone'
@@ -159,6 +160,7 @@ export default function Dashboard() {
   const [showPassword, setShowPassword] = useState(false)
   const [targetTab, setTargetTab] = useState<TabKey | null>(null)
   const [passwordError, setPasswordError] = useState('')
+  const [invoicePreviewOrder, setInvoicePreviewOrder] = useState<DashboardOrder | null>(null)
 
   // WA detail expansion
   const [waExpandedId, setWaExpandedId] = useState<string | null>(null)
@@ -787,6 +789,11 @@ export default function Dashboard() {
   }
 
   const openOrderInvoice = async (order: DashboardOrder, mode: 'view' | 'download' | 'print') => {
+    if (mode === 'view') {
+      setInvoicePreviewOrder(order)
+      return
+    }
+
     if (order.invoice_pdf_url) {
       const link = document.createElement('a')
       link.href = order.invoice_pdf_url
@@ -2709,7 +2716,7 @@ export default function Dashboard() {
                         </div>
                       </div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <button onClick={() => navigate(`/invoice/${encodeURIComponent(o.invoice_no)}`)} className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#EAD7B7]/60 px-3 text-[12px] font-black text-[#2C392A] transition-colors hover:bg-white" title="View Invoice">
+                        <button onClick={() => void openOrderInvoice(o, 'view')} className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#EAD7B7]/60 px-3 text-[12px] font-black text-[#2C392A] transition-colors hover:bg-white" title="View Invoice">
                           <Eye size={14} /> View Invoice
                         </button>
                         <button onClick={() => void openOrderInvoice(o, 'print')} className="inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-xl border border-[#EAD7B7]/60 px-3 text-[12px] font-black text-[#2C392A] transition-colors hover:bg-white" title="Print Invoice">
@@ -2782,7 +2789,7 @@ export default function Dashboard() {
                           </td>
                           <td className="px-3 py-3">
                             <div className="flex items-center gap-1">
-                              <button onClick={() => navigate(`/invoice/${encodeURIComponent(o.invoice_no)}`)} className="rounded-lg p-1.5 text-[#2C392A] transition-colors hover:bg-[#F7F6F2]" title="View Invoice">
+                              <button onClick={() => void openOrderInvoice(o, 'view')} className="rounded-lg p-1.5 text-[#2C392A] transition-colors hover:bg-[#F7F6F2]" title="View Invoice">
                                 <Eye size={14} />
                               </button>
                               <button onClick={() => void openOrderInvoice(o, 'print')} className="rounded-lg p-1.5 text-[#2C392A] transition-colors hover:bg-[#F7F6F2]" title="Print Invoice">
@@ -3691,6 +3698,77 @@ export default function Dashboard() {
 
       {/* Footer */}
 
+      {invoicePreviewOrder && (() => {
+        const preview = getOrderWhatsAppPreview(invoicePreviewOrder)
+        if (!preview) return null
+
+        return (
+          <div
+            className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-3 sm:p-6"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`Invoice ${invoicePreviewOrder.invoice_no || invoicePreviewOrder.id}`}
+            onMouseDown={(event) => {
+              if (event.target === event.currentTarget) setInvoicePreviewOrder(null)
+            }}
+          >
+            <div className="flex max-h-[95vh] w-full max-w-4xl flex-col overflow-hidden rounded-2xl bg-[#F7F6F2] shadow-2xl">
+              <div className="flex shrink-0 items-center justify-between border-b border-[#EAD7B7]/60 bg-white px-4 py-3 sm:px-6">
+                <div>
+                  <h2 className="text-base font-black text-[#2C392A]">Invoice Preview</h2>
+                  <p className="text-xs font-semibold text-[#6B7280]">{invoicePreviewOrder.invoice_no || invoicePreviewOrder.id}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => void openOrderInvoice(invoicePreviewOrder, 'print')}
+                    className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-[#EAD7B7]/70 px-3 text-xs font-black text-[#2C392A] hover:bg-[#F7F6F2]"
+                  >
+                    <Printer size={15} /> Print
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => void openOrderInvoice(invoicePreviewOrder, 'download')}
+                    className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl bg-maroon-dark px-3 text-xs font-black text-white hover:bg-maroon"
+                  >
+                    <Download size={15} /> Download
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setInvoicePreviewOrder(null)}
+                    className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-[#6B7280] hover:bg-[#F7F6F2] hover:text-[#2C392A]"
+                    aria-label="Close invoice preview"
+                  >
+                    <X size={19} />
+                  </button>
+                </div>
+              </div>
+              <div className="overflow-y-auto p-2 sm:p-5">
+                <div className="mx-auto max-w-3xl overflow-hidden rounded-xl bg-white shadow-sm">
+                  <Invoice
+                    invoiceNo={invoicePreviewOrder.invoice_no || invoicePreviewOrder.id}
+                    date={invoicePreviewOrder.created_at}
+                    customerName={invoicePreviewOrder.customer_name}
+                    phone={invoicePreviewOrder.phone}
+                    address={invoicePreviewOrder.address}
+                    items={preview.items as unknown as import('../components/Invoice').InvoiceItem[]}
+                    subtotal={preview.subtotal}
+                    shipping={invoicePreviewOrder.delivery_charge}
+                    deliveryCharge={invoicePreviewOrder.delivery_charge}
+                    discountAmount={invoicePreviewOrder.discount_amount}
+                    manualDiscountAmount={invoicePreviewOrder.manual_discount_amount}
+                    gstAmount={invoicePreviewOrder.total_gst}
+                    paymentMode={invoicePreviewOrder.payment_mode}
+                    total={invoicePreviewOrder.total}
+                    status={invoicePreviewOrder.status}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        )
+      })()}
+
       {/* Password Modal for Protected Tabs */}
       {showPasswordModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
@@ -3718,8 +3796,9 @@ export default function Dashboard() {
               <button
                 type="button"
                 onClick={() => setShowPassword(value => !value)}
-                className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-lg text-[#6B7280] hover:bg-[#F7F6F2] hover:text-[#2C392A]"
+                className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-lg text-[#5F6D59] hover:bg-[#F7F6F2] hover:text-[#2C392A]"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
+                aria-pressed={showPassword}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -3744,7 +3823,7 @@ export default function Dashboard() {
               <button
                 onClick={handlePasswordSubmit}
                 disabled={!passwordInput}
-                className="flex-1 px-4 py-3 rounded-xl bg-sageDark text-white font-bold text-[14px] hover:bg-sageDeep transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex-1 px-4 py-3 rounded-xl bg-maroon-dark text-white font-bold text-[14px] hover:bg-maroon transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Unlock
               </button>
