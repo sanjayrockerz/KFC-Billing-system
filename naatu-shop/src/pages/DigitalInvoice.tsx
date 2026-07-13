@@ -25,16 +25,16 @@ export default function DigitalInvoice() {
         return
       }
       try {
-        const { data, error } = await supabase
-          .from('orders')
-          .select('*')
-          .eq('invoice_no', id)
-          .single()
+        const invoiceNumber = decodeURIComponent(id || '').trim()
+        const { data, error } = await supabase.rpc('get_public_invoice_by_number', {
+          p_invoice_no: invoiceNumber,
+        })
         
         if (error) throw error
-        if (!data) throw new Error('Invoice not found')
+        const row = Array.isArray(data) ? data[0] : data
+        if (!row) throw new Error('Invoice not found')
         
-        setInvoice(data)
+        setInvoice(row)
       } catch (err: unknown) {
         if (err instanceof Error) {
           setError(err.message)
