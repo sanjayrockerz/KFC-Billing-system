@@ -56,22 +56,31 @@ export const createOrderWithStock = async (input: CreateOrderInput): Promise<Cre
   let data: unknown = null
   let error: unknown = null
 
+  const totalGst        = Number(input.totalGst || 0)
+  const gstEnabled      = Boolean(input.gstEnabled)
+  const paymentMethod   = input.paymentMethod || 'cash'
+  const splitDetails    = input.splitDetails || {}
+
   const newRpcResult = await supabase.rpc('create_order_with_stock', {
-    p_customer_name:     customerName,
-    p_phone:             phone,
-    p_address:           address,
-    p_items:             input.items,
-    p_shipping:          shipping,
-    p_status:            status,
-    p_order_mode:        orderMode,
-    p_order_type:        orderType,
-    p_delivery_charge:   deliveryCharge,
-    p_discount_amount:   discountAmount,
+    p_customer_name:          customerName,
+    p_phone:                  phone,
+    p_address:                address,
+    p_items:                  input.items,
+    p_shipping:               shipping,
+    p_status:                 status,
+    p_order_mode:             orderMode,
+    p_order_type:             orderType,
+    p_delivery_charge:        deliveryCharge,
+    p_discount_amount:        discountAmount,
     p_manual_discount_amount: manualDiscountAmount,
-    p_manual_discount_type: manualDiscountType,
-    p_manual_discount_value: manualDiscountValue,
-    p_coupon_code:       couponCode,
-    p_coupon_percentage: couponPercentage,
+    p_manual_discount_type:   manualDiscountType,
+    p_manual_discount_value:  manualDiscountValue,
+    p_coupon_code:            couponCode,
+    p_coupon_percentage:      couponPercentage,
+    p_total_gst:              totalGst,
+    p_gst_enabled:            gstEnabled,
+    p_payment_method:         paymentMethod,
+    p_split_details:          splitDetails,
   })
   data  = newRpcResult.data
   error = newRpcResult.error
