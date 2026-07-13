@@ -12,7 +12,7 @@ interface CatalogModalProps {
 type CategoryOption = { id: string | number; name_en: string }
 
 export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalProps) {
-  const { fetchProducts, products } = useProductStore()
+  const { fetchProducts, products, loading, error } = useProductStore()
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState('All')
   const [editingProduct, setEditingProduct] = useState<Product | null>(null)
@@ -22,6 +22,11 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
   const [categoryOptions, setCategoryOptions] = useState<CategoryOption[]>([])
 
   useEffect(() => {
+    if (isOpen) void fetchProducts(true)
+  }, [isOpen, fetchProducts])
+
+  useEffect(() => {
+    if (!isOpen) return
     let cancelled = false
     const loadCategories = async () => {
       const { data } = await supabase.from('categories').select('id, name_en').eq('is_active', true).order('sort_order')
@@ -29,7 +34,7 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
     }
     void loadCategories()
     return () => { cancelled = true }
-  }, [])
+  }, [isOpen])
 
   const categories = useMemo(() => {
     const cats = Array.from(new Set(products.filter(p => p.isActive).map(p => p.category))).filter(Boolean)
@@ -66,7 +71,7 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
       (p.nameTa || '').toLowerCase().includes(q) ||
       p.category.toLowerCase().includes(q)
     )
-    return src.slice(0, 120)
+    return src
   }, [products, search, activeCategory])
 
   const startEdit = (p: Product) => {
@@ -110,7 +115,7 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-3xl w-full max-w-4xl flex flex-col shadow-2xl overflow-hidden border border-[#EAD7B7]/40 max-h-[85vh]">
+      <div className="bg-white rounded-2xl sm:rounded-3xl w-full max-w-5xl flex min-h-0 flex-col shadow-2xl overflow-hidden border border-[#EAD7B7]/40 max-h-[calc(100dvh-1rem)] sm:max-h-[85vh]">
 
         {editingProduct ? (
           <>
@@ -165,7 +170,7 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
                 <X size={20} />
               </button>
             </div>
-            <div className="p-4 border-b border-[#EAD7B7]/40 bg-white space-y-3">
+            <div className="p-3 sm:p-4 border-b border-[#EAD7B7]/40 bg-white space-y-3">
               <div className="relative">
                 <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#5F6D59]" />
                 <input type="text" value={search}
@@ -182,14 +187,24 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
                 ))}
               </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-4 bg-[#FAFAFA]">
-              {filtered.length === 0 ? (
+            <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-4 bg-[#FAFAFA]">
+              {loading ? (
+                <div className="flex min-h-48 flex-col items-center justify-center gap-3 text-[#5F6D59]/70">
+                  <span className="h-7 w-7 animate-spin rounded-full border-2 border-[#EAD7B7] border-t-[#8B2332]" />
+                  <p className="text-[13px] font-bold">Loading catalog...</p>
+                </div>
+              ) : error ? (
+                <div className="flex min-h-48 flex-col items-center justify-center gap-2 px-4 text-center text-red-500">
+                  <p className="text-[13px] font-bold">Unable to load catalog items.</p>
+                  <button type="button" onClick={() => void fetchProducts(true)} className="rounded-lg bg-[#8B2332] px-3 py-2 text-[11px] font-black text-white">Try again</button>
+                </div>
+              ) : filtered.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full text-[#5F6D59]/60 py-12">
                   <ShoppingBag size={48} className="mb-4 opacity-20" />
                   <p className="text-[14px] font-bold">No products found</p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                <div className="grid grid-cols-1 min-[360px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                   {filtered.map(product => (
                     <div key={product.id}
                       className="bg-white border border-[#EAD7B7]/60 rounded-2xl p-3 flex flex-col gap-2 hover:border-[#8B2332]/40 hover:shadow-md transition-all group relative">

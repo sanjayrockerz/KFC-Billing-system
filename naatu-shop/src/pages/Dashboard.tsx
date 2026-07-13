@@ -3,7 +3,7 @@ import {
   BarChart2, Trash2, Edit2, List, ShoppingCart, LayoutDashboard,
   Box, AlertCircle, ArrowUp, ArrowDown, Power, Download, TrendingUp,
   Package, IndianRupee, Search, RefreshCw, ShieldCheck, ShieldOff, Trophy,
-  MessageCircle, ChevronDown, Eye, FileText, Lock, LockOpen, Printer, MoreVertical,
+  MessageCircle, ChevronDown, Eye, EyeOff, FileText, Lock, LockOpen, Printer, MoreVertical,
 } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
@@ -156,6 +156,7 @@ export default function Dashboard() {
   const [unlockedTabs, setUnlockedTabs] = useState<Set<TabKey>>(new Set())
   const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [passwordInput, setPasswordInput] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [targetTab, setTargetTab] = useState<TabKey | null>(null)
   const [passwordError, setPasswordError] = useState('')
 
@@ -3280,19 +3281,19 @@ export default function Dashboard() {
 
         {/* â”€â”€ CATEGORIES TAB â”€â”€ */}
         {tab === 'categories' && (
-          <div className="max-w-lg space-y-6">
-            <div className="bg-white rounded-2xl border border-borderLight p-6 shadow-sm">
+          <div className="w-full max-w-3xl space-y-6">
+            <div className="bg-white rounded-2xl border border-borderLight p-4 sm:p-6 shadow-sm">
               <h3 className="text-[18px] font-black text-[#111111] mb-5">{l('Product Categories', 'à®ªà¯Šà®°à¯à®³à¯ à®µà®•à¯ˆà®•à®³à¯')}</h3>
               {categoryNotice && (
                 <div className={`mb-4 rounded-xl px-3 py-2.5 text-[12px] font-bold ${categoryNotice.type === 'success' ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
                   {categoryNotice.text}
                 </div>
               )}
-              <form onSubmit={onAddCat} className="flex gap-3 mb-6">
-                <input className="flex-grow px-4 py-3 bg-[#FAFAFA] border border-[#F3F4F6] focus:border-maroon-dark outline-none rounded-xl text-[13px] font-bold transition-colors shadow-sm"
+              <form onSubmit={onAddCat} className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(120px,0.45fr)_auto]">
+                <input className="min-w-0 w-full px-4 py-3 bg-[#FAFAFA] border border-[#F3F4F6] focus:border-maroon-dark outline-none rounded-xl text-[13px] font-bold transition-colors shadow-sm"
                   placeholder={l('Category name (English)', 'à®µà®•à¯ˆ à®ªà¯†à®¯à®°à¯ (English)')} value={newCat.name_en}
                   onChange={e => setNewCat(c => ({...c, name_en: e.target.value}))} />
-                <input className="w-36 px-4 py-3 bg-[#FAFAFA] border border-[#F3F4F6] focus:border-maroon-dark outline-none rounded-xl text-[13px] font-bold transition-colors shadow-sm"
+                <input className="min-w-0 w-full px-4 py-3 bg-[#FAFAFA] border border-[#F3F4F6] focus:border-maroon-dark outline-none rounded-xl text-[13px] font-bold transition-colors shadow-sm"
                   placeholder={l('Tamil', 'à®¤à®®à®¿à®´à¯')} value={newCat.name_ta}
                   onChange={e => setNewCat(c => ({...c, name_ta: e.target.value}))} />
                 <button type="submit" className="px-5 py-3 bg-[#111111] hover:bg-[#333333] transition-colors shadow-sm text-white font-black rounded-xl text-[13px]">{editingCategoryId === null ? l('Add', 'à®šà¯‡à®°à¯') : 'Save'}</button>
@@ -3302,15 +3303,15 @@ export default function Dashboard() {
               </form>
               <div className="space-y-3">
                 {billingCategories.map(c => (
-                  <div key={c.id} className="flex items-center justify-between p-4 bg-white border border-[#F3F4F6] shadow-sm rounded-xl transition-colors hover:border-[#D1D5DB]">
-                    <div>
+                  <div key={c.id} className="flex flex-col gap-3 p-4 bg-white border border-[#F3F4F6] shadow-sm rounded-xl transition-colors hover:border-[#D1D5DB] sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
                       <p className="text-[14px] font-bold text-[#111111]">{c.name_en}</p>
                       <p className="text-[12px] text-[#6B7280]">{c.name_ta}</p>
                       <span className={`text-[10px] font-black uppercase tracking-wider ${c.is_active ? 'text-green-600' : 'text-red-500'}`}>
                         {c.is_active ? 'Active' : l('Inactive', 'à®¨à®¿à®±à¯à®¤à¯à®¤à®®à¯')}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-1.5 sm:shrink-0">
                       <button onClick={() => { setEditingCategoryId(c.id); setNewCat({ name_en: c.name_en, name_ta: c.name_ta || '' }); window.scrollTo({ top: 0, behavior: 'smooth' }) }} className="p-2 text-[#6B7280] hover:text-[#111111] hover:bg-[#F3F4F6] transition-colors rounded-lg" title="Edit category"><Edit2 size={16} /></button>
                       <button onClick={() => void moveCat(c, 'up')} className="p-2 text-[#6B7280] hover:text-[#111111] hover:bg-[#F3F4F6] transition-colors rounded-lg"><ArrowUp size={16} /></button>
                       <button onClick={() => void moveCat(c, 'down')} className="p-2 text-[#6B7280] hover:text-[#111111] hover:bg-[#F3F4F6] transition-colors rounded-lg"><ArrowDown size={16} /></button>
@@ -3690,15 +3691,25 @@ export default function Dashboard() {
               </div>
             </div>
             
-            <input
-              type="password"
-              value={passwordInput}
-              onChange={(e) => setPasswordInput(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handlePasswordSubmit()}
-              placeholder="Enter password"
-              className="w-full px-4 py-3 rounded-xl border border-[#EAD7B7]/60 text-[14px] font-medium focus:outline-none focus:ring-2 focus:ring-sageDark focus:border-transparent mb-4"
-              autoFocus
-            />
+            <div className="relative mb-4">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                onKeyDown={(e) => e.key === 'Enter' && handlePasswordSubmit()}
+                placeholder="Enter password"
+                className="w-full rounded-xl border border-[#EAD7B7]/60 px-4 py-3 pr-12 text-[14px] font-medium focus:border-transparent focus:outline-none focus:ring-2 focus:ring-sageDark"
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(value => !value)}
+                className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-lg text-[#6B7280] hover:bg-[#F7F6F2] hover:text-[#2C392A]"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
             
             {passwordError && (
               <p className="text-sm text-red-600 mb-4 text-center">{passwordError}</p>

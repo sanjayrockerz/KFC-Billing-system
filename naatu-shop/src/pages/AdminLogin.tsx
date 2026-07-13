@@ -91,7 +91,7 @@ export default function AdminLogin() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-textMuted hover:text-textMain"
+                className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-lg text-textMuted hover:bg-[#F7F6F2] hover:text-textMain"
                 aria-label={showPassword ? l('Hide password', 'கடவுச்சொல்லை மறை') : l('Show password', 'கடவுச்சொல்லை காட்டு')}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
