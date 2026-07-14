@@ -2718,17 +2718,17 @@ export default function Dashboard() {
                         </div>
                         <span className={`px-2 py-1 rounded-full text-[10px] font-black uppercase ${billTypeClass}`}>{billTypeLabel}</span>
                       </div>
-                      <div className="grid grid-cols-2 gap-3 text-[13px]">
-                        <div>
-                          <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Customer</p>
-                          <p className="font-bold text-[#2C392A] break-words">{o.customer_name || '—'}</p>
+                      <div className="grid grid-cols-2 gap-2 sm:gap-3 text-[12px] sm:text-[13px]">
+                        <div className="min-w-0">
+                          <p className="text-[#9BAB9A] uppercase text-[10px] sm:text-[11px] font-black">Customer</p>
+                          <p className="font-bold text-[#2C392A] truncate">{o.customer_name || '—'}</p>
                         </div>
-                        <div>
-                          <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Phone</p>
-                          <p className="font-semibold text-[#5F6D59] break-words">{o.phone || '—'}</p>
+                        <div className="min-w-0">
+                          <p className="text-[#9BAB9A] uppercase text-[10px] sm:text-[11px] font-black">Phone</p>
+                          <p className="font-semibold text-[#5F6D59] truncate">{o.phone || '—'}</p>
                         </div>
-                        <div>
-                          <p className="text-[#9BAB9A] uppercase text-[11px] font-black">Total</p>
+                        <div className="min-w-0">
+                          <p className="text-[#9BAB9A] uppercase text-[10px] sm:text-[11px] font-black">Total</p>
                           <p className="font-black text-[#2C392A]">{formatCurrency(toNumber(o.total, 0))}</p>
                         </div>
                         <div>
@@ -2744,21 +2744,25 @@ export default function Dashboard() {
                           <p className="font-semibold text-[#2C392A]">{o.delivery_charge > 0 ? formatCurrency(o.delivery_charge) : '—'}</p>
                         </div>
                       </div>
-                      <div className="flex flex-wrap items-center gap-2">
-                        <button onClick={() => void openOrderInvoice(o, 'view')} className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#EAD7B7]/60 px-3 text-[12px] font-black text-[#2C392A] transition-colors hover:bg-white" title="View Invoice">
-                          <Eye size={14} /> View Invoice
-                        </button>
-                        <button onClick={() => window.open(`/invoice/${o.id}`, '_blank')} className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-500 px-3 text-[12px] font-black text-white transition-colors hover:bg-green-600" title="Invoice & Share">
-                          <MessageCircle size={14} /> Invoice & Share
-                        </button>
+                      <div className="flex flex-col sm:flex-row gap-2 pt-1">
+                        <div className="flex gap-2 w-full sm:flex-1">
+                          <button onClick={() => void openOrderInvoice(o, 'view')} className="inline-flex h-10 sm:min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#EAD7B7]/60 px-2 sm:px-3 text-[12px] font-black text-[#2C392A] transition-colors hover:bg-white" title="View Invoice">
+                            <Eye size={14} /> View
+                          </button>
+                          <button onClick={() => window.open(`/invoice/${o.id}`, '_blank')} className="inline-flex h-10 sm:min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-500 px-2 sm:px-3 text-[12px] font-black text-white transition-colors hover:bg-green-600" title="Invoice & Share">
+                            <MessageCircle size={14} /> Share
+                          </button>
+                        </div>
+                        <div className="flex gap-2 w-full sm:flex-1">
                         <select value={normalizeStatus(o.status)} onChange={e => void updateOrderStatus(o.id, e.target.value)}
                           className={`min-h-[44px] flex-1 cursor-pointer rounded-xl border px-3 py-2 text-[12px] font-black outline-none ${normalizeStatus(o.status) === 'completed' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-amber-200 bg-amber-50 text-amber-700'}`}>
                           <option value="pending">{l('Pending', 'à®¨à®¿à®²à¯à®µà¯ˆ')}</option>
                           <option value="completed">{l('Completed', 'à®®à¯à®Ÿà®¿à®¨à¯à®¤à®¤à¯')}</option>
                         </select>
-                        <button onClick={() => void deleteOrder(o.id, o.invoice_no)} className="h-11 w-11 rounded-xl border border-[#EAD7B7]/60 text-[#8B2332] transition-colors hover:bg-[#8B2332]/5" title="Delete Order">
+                        <button onClick={() => void deleteOrder(o.id, o.invoice_no)} className="h-10 w-10 sm:h-11 sm:w-11 shrink-0 rounded-xl border border-[#EAD7B7]/60 text-[#8B2332] transition-colors hover:bg-[#8B2332]/5" title="Delete Order">
                           <Trash2 size={14} className="mx-auto" />
                         </button>
+                        </div>
                       </div>
                     </div>
                   )
