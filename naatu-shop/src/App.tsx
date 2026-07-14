@@ -95,8 +95,8 @@ function AppShell() {
   }, [fetchProducts, fetchVariants])
 
   return (
-    <div className="flex min-h-screen flex-col w-full max-w-[100vw] overflow-x-hidden bg-bgMain print:block print:min-h-0">
-      <main className="flex-grow print:block">
+    <div className="h-screen w-full max-w-[100vw] overflow-hidden bg-bgMain print:block print:h-auto print:overflow-visible">
+      <main className="h-full print:block">
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route
@@ -152,9 +152,6 @@ function AppShell() {
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </main>
-      <footer className="pointer-events-none border-t border-[#EAD7B7]/40 bg-white/90 px-3 py-1.5 text-center text-[10px] font-semibold tracking-wide text-[#8A877E] print:hidden">
-        © 2026 Powered by Cenexa Systems. All rights reserved.
-      </footer>
     </div>
   )
 }

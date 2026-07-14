@@ -339,8 +339,8 @@ export default function Pos(props: PosProps = {}) {
     searchRef.current?.focus()
   }
 
-  const applyCoupon = async () => {
-    const code = couponInput.trim().toUpperCase()
+  const applyCoupon = async (overrideCode?: string) => {
+    const code = (typeof overrideCode === 'string' ? overrideCode : couponInput).trim().toUpperCase()
     if (!code) { setCouponError('Enter a coupon code'); return }
 
     setCouponLoading(true)
@@ -1029,7 +1029,13 @@ export default function Pos(props: PosProps = {}) {
                   <input 
                     type="text" 
                     value={couponInput}
-                    onChange={e => setCouponInput(e.target.value.toUpperCase())}
+                    onChange={e => {
+                      const val = e.target.value.toUpperCase()
+                      setCouponInput(val)
+                      if (availableCoupons.some(c => c.code.toUpperCase() === val)) {
+                        void applyCoupon(val)
+                      }
+                    }}
                     placeholder="Enter code"
                     disabled={appliedCoupon !== null}
                     list="pos-coupons"
@@ -1049,7 +1055,7 @@ export default function Pos(props: PosProps = {}) {
                     </button>
                   ) : (
                     <button 
-                      onClick={applyCoupon}
+                      onClick={() => void applyCoupon()}
                       disabled={couponLoading || !couponInput.trim()}
                       className="h-9 px-3 bg-[#5F6D59] text-white hover:bg-[#2C392A] rounded-xl text-[11px] font-black transition-colors disabled:opacity-50 shrink-0"
                     >
