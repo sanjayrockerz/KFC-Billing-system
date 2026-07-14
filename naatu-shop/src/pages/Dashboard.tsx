@@ -14,6 +14,7 @@ import { uploadProductImage, uploadInvoicePdf } from '../lib/storage'
 import { formatCurrency, normalizeOrderMode, normalizeUnitType, toNumber, type UnitType } from '../lib/retail'
 import { normalizeStructuredOrderItem } from '../lib/retail'
 import { Invoice } from '../components/Invoice'
+import { printThermalReceipt } from '../lib/thermalPrint'
 import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
 import { invoicePdfFile } from '../lib/invoicePdf'
 import { toWhatsAppUrl } from '../lib/phone'
@@ -789,6 +790,31 @@ export default function Dashboard() {
     link.click()
     setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000)
     window.open(`${toWhatsAppUrl(order.phone)}?text=${encodeURIComponent(whatsappMessage)}`, '_blank', 'noopener,noreferrer')
+  }
+
+  const handlePrintReceipt = (order: DashboardOrder) => {
+    const preview = getOrderWhatsAppPreview(order)
+    if (!preview) { alert('This order has no invoice details available.'); return }
+    const subtotal = order.total - (order.delivery_charge || 0) + (order.discount_amount || 0)
+    
+    printThermalReceipt({
+      invoiceNo: order.invoice_no || order.id,
+      date: order.created_at,
+      customerName: order.customer_name,
+      phone: order.phone,
+      items: (preview.items as any[]).map((item) => ({
+        name: item.name || item.product_name,
+        qty: item.qty || item.quantity,
+        unit: item.unit,
+        price: item.price || item.base_price || 0,
+        line_total: item.line_total
+      })),
+      subtotal,
+      shipping: order.delivery_charge || 0,
+      couponDiscount: order.discount_amount || 0,
+      totalGst: order.total_gst || 0,
+      total: order.total
+    })
   }
 
   const openOrderInvoice = async (order: DashboardOrder, mode: 'view' | 'download' | 'print') => {
@@ -3712,7 +3738,7 @@ export default function Dashboard() {
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => void openOrderInvoice(invoicePreviewOrder, 'print')}
+                    onClick={() => handlePrintReceipt(invoicePreviewOrder)}
                     className="inline-flex min-h-[40px] items-center gap-1.5 rounded-xl border border-[#EAD7B7]/70 px-3 text-xs font-black text-[#2C392A] hover:bg-[#F7F6F2]"
                   >
                     <Printer size={15} /> Print
