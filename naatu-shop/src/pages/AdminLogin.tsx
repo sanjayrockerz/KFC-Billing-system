@@ -39,7 +39,7 @@ export default function AdminLogin() {
       <div className="relative grid w-full max-w-5xl overflow-hidden rounded-[32px] border border-[#E7D9BF] bg-white shadow-[0_24px_80px_rgba(44,57,42,0.14)] lg:grid-cols-[0.9fr_1.1fr]">
         <div className="hidden flex-col justify-between bg-[#2C392A] p-10 text-white lg:flex">
           <div>
-            <div className="mb-8 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-lg"><img src="/logo.png" alt={`${BRAND_EN} logo`} className="h-full w-full object-contain p-1" /></div>
+            <div className="mb-8"><img src="/logo.png" alt={`${BRAND_EN} logo`} className="h-16 w-16 rounded-full object-contain drop-shadow-lg" /></div>
             <p className="text-[11px] font-black uppercase tracking-[0.28em] text-[#B9D5C1]">{BRAND_SUBTITLE}</p>
             <h2 className="mt-4 max-w-xs text-4xl font-black leading-tight tracking-tight">Everything you need to run billing clearly.</h2>
             <p className="mt-5 max-w-sm text-sm leading-7 text-white/70">Manage products, bills, orders, invoices, and WhatsApp customer communication from one secure portal.</p>

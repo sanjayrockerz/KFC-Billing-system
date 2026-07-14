@@ -1,6 +1,6 @@
 export const BRAND_EN = 'Zera Admin Billing'
 export const BRAND_TA = 'Zera Admin Billing'
-export const BRAND_SUBTITLE = 'Admin Billing Template'
+export const BRAND_SUBTITLE = 'Admin Billing'
 
 export const BRAND_PRIMARY_PHONE_DISPLAY = '+91 9342489391'
 export const BRAND_PRIMARY_PHONE_E164 = '919342489391'
