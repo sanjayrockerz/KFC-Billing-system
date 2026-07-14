@@ -87,11 +87,13 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
     if (!editForm.price) { setEditError('Price is required'); return }
     setEditLoading(true)
     setEditError('')
-    const selectedCategory = allCategoryOptions.find(c => c.name_en === editForm.category)
+    const selectedCategory = allCategoryOptions.find(c => c.name_en.trim().toLowerCase() === editForm.category.trim().toLowerCase())
+    if (!selectedCategory) { setEditError('Select a valid category'); setEditLoading(false); return }
+    const categoryName = selectedCategory.name_en.trim()
     const { error } = await supabase.from('products').update({
       name: editForm.name.trim(),
-      category: editForm.category.trim(),
-      category_id: selectedCategory?.id || null,
+      category: categoryName,
+      category_id: selectedCategory.id,
       price: Number(editForm.price),
     }).eq('id', editingProduct.id)
     if (error) { setEditError(error.message); setEditLoading(false); return }

@@ -193,6 +193,8 @@ const asRecord = (value: unknown): Record<string, unknown> => {
 
 const readString = (value: unknown, fallback = '') => (typeof value === 'string' ? value : fallback)
 
+const LEGACY_CATEGORY_NAMES = new Set(['herbal product', 'herbal powder', 'herbal oil', 'herbal root', 'herbal leaf', 'herbal spice'])
+
 const toAuthUser = (profile: unknown, fallback?: SessionFallback): AuthUser => {
   const profileRow = asRecord(profile)
   const fallbackMeta = asRecord(fallback?.user_metadata)
@@ -219,10 +221,13 @@ const mapDbProduct = (input: unknown, categoriesById: Record<string, string> = {
 
   return {
     id: String(p.id || ''),
-    name: readString(p.name, 'Herbal Product'),
+    name: readString(p.name, 'Product'),
     nameTa: readString(p.name_ta) || readString(p.tamil_name),
     tamilName: readString(p.tamil_name) || readString(p.name_ta),
-    category: readString(p.category) || categoriesById[String(categoryId)] || 'Herbal Product',
+    category: categoriesById[String(categoryId)] || (() => {
+      const legacyCategory = readString(p.category).trim()
+      return LEGACY_CATEGORY_NAMES.has(legacyCategory.toLowerCase()) ? '' : legacyCategory
+    })(),
     categoryId,
     remedy,
     price: toNumber(p.price, 0),
