@@ -1294,9 +1294,7 @@ export default function Dashboard() {
             <span className={`hidden lg:block truncate text-left transition-all duration-200 ${sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'opacity-100 flex-1'}`}>Logout</span>
           </button>
         </nav>
-        <div className={`hidden lg:block shrink-0 border-t border-white/10 px-4 py-4 text-center transition-all duration-300 ${sidebarCollapsed ? 'lg:px-2' : ''}`}>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">Powered by Cenexa</p>
-        </div>
+
       </aside>
 
       {/* Main */}
