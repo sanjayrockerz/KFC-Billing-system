@@ -2722,7 +2722,7 @@ export default function Dashboard() {
                         <button onClick={() => void openOrderInvoice(o, 'view')} className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl border border-[#EAD7B7]/60 px-3 text-[12px] font-black text-[#2C392A] transition-colors hover:bg-white" title="View Invoice">
                           <Eye size={14} /> View Invoice
                         </button>
-                        <button onClick={() => navigate(`/invoice/${o.id}`)} className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-500 px-3 text-[12px] font-black text-white transition-colors hover:bg-green-600" title="Invoice & Share">
+                        <button onClick={() => window.open(`/invoice/${o.id}`, '_blank')} className="inline-flex min-h-[44px] flex-1 items-center justify-center gap-1.5 rounded-xl bg-green-500 px-3 text-[12px] font-black text-white transition-colors hover:bg-green-600" title="Invoice & Share">
                           <MessageCircle size={14} /> Invoice & Share
                         </button>
                         <select value={normalizeStatus(o.status)} onChange={e => void updateOrderStatus(o.id, e.target.value)}
@@ -2789,7 +2789,7 @@ export default function Dashboard() {
                               <button onClick={() => void openOrderInvoice(o, 'view')} className="rounded-lg p-1.5 text-[#2C392A] transition-colors hover:bg-[#F7F6F2]" title="View Invoice">
                                 <Eye size={14} />
                               </button>
-                              <button onClick={() => navigate(`/invoice/${o.id}`)} className="rounded-lg p-1.5 text-green-600 transition-colors hover:bg-green-50" title="Invoice & Share">
+                              <button onClick={() => window.open(`/invoice/${o.id}`, '_blank')} className="rounded-lg p-1.5 text-green-600 transition-colors hover:bg-green-50" title="Invoice & Share">
                                 <MessageCircle size={14} />
                               </button>
                             </div>
