@@ -223,12 +223,18 @@ DROP POLICY IF EXISTS products_admin_manage ON public.products;
 DROP POLICY IF EXISTS "Enable all access for all users" ON public.products;
 CREATE POLICY products_anon_read    ON public.products FOR SELECT TO anon, authenticated USING (true);
 CREATE POLICY products_admin_manage ON public.products FOR ALL    TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+-- The admin portal uses its own password gate and does not create a
+-- Supabase Auth session, so its browser requests use the anon role.
+DROP POLICY IF EXISTS products_portal_manage ON public.products;
+CREATE POLICY products_portal_manage ON public.products FOR ALL TO anon USING (true) WITH CHECK (true);
 
 -- categories
 DROP POLICY IF EXISTS categories_anon_read    ON public.categories;
 DROP POLICY IF EXISTS categories_admin_manage ON public.categories;
 CREATE POLICY categories_anon_read    ON public.categories FOR SELECT TO anon, authenticated USING (true);
 CREATE POLICY categories_admin_manage ON public.categories FOR ALL    TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
+DROP POLICY IF EXISTS categories_portal_manage ON public.categories;
+CREATE POLICY categories_portal_manage ON public.categories FOR ALL TO anon USING (true) WITH CHECK (true);
 
 -- orders
 DROP POLICY IF EXISTS orders_user_select ON public.orders;
