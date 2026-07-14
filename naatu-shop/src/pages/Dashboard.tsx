@@ -425,6 +425,8 @@ export default function Dashboard() {
     // Average items per bill
     const avgItemsPerBill = billableCompleted.length > 0
       ? totalProductsSold / billableCompleted.length : 0
+    const averageProductRevenue = totalProductsSold > 0
+      ? completedRevenue / totalProductsSold : 0
 
     // Category distribution for chart
     const categoryDist = Array.from(categoryMap.entries()).sort((a, b) => b[1].revenue - a[1].revenue).slice(0, 8)
@@ -552,6 +554,7 @@ export default function Dashboard() {
       todayManualRevenue,
       todayProductHourlyTrend,
       avgItemsPerBill,
+      averageProductRevenue,
       categoryDist,
       totalCouponDiscounts,
       totalCouponOrders,
@@ -2268,7 +2271,7 @@ export default function Dashboard() {
                   {[
                     { label: 'Total Products Sold', value: String(Math.round(analytics.totalProductsSold)), icon: <Package size={18} />, from: 'from-emerald-500 to-teal-600' },
                     { label: 'Total Revenue', value: formatCurrency(analytics.totalCompletedRevenue), icon: <IndianRupee size={18} />, from: 'from-blue-500 to-indigo-600' },
-                    { label: 'Avg Items / Bill', value: analytics.avgItemsPerBill.toFixed(1), icon: <ShoppingCart size={18} />, from: 'from-violet-500 to-purple-600' },
+                    { label: 'Average Product Revenue', value: `${formatCurrency(analytics.averageProductRevenue)} / Product`, icon: <IndianRupee size={18} />, from: 'from-violet-500 to-purple-600' },
                     { label: 'Top Product', value: analytics.bestProduct.length > 15 ? analytics.bestProduct.slice(0, 15) + '...' : analytics.bestProduct, icon: <Trophy size={18} />, from: 'from-amber-500 to-orange-600' },
                   ].map((card, i) => (
                     <div key={i} className={`relative overflow-hidden rounded-2xl p-5 shadow-lg border border-white/20 bg-gradient-to-br ${card.from}`}>
