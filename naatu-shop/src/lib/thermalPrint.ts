@@ -1,4 +1,4 @@
-import { BRAND_EN, BRAND_TA, BRAND_WHATSAPP } from './brand'
+import { BRAND_EN, BRAND_WHATSAPP } from './brand'
 import { formatCurrency } from './retail'
 
 export interface ThermalReceiptData {

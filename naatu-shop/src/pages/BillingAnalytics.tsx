@@ -175,7 +175,7 @@ function StatCard({
 export default function BillingAnalytics() {
   const { user, loading: authLoading } = useAuthStore()
   const { products, fetchProducts } = useProductStore()
-  const { lang } = useLangStore()
+  
   const l = (en: string, ta?: string) => en
 
   const [loading, setLoading] = useState(false)

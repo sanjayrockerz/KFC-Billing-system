@@ -48,6 +48,9 @@ export default function VariantSelectorModal({
 
   useEffect(() => {
     if (!open || !product) return
+    // Remove synchronous state sets that trigger cascading renders if possible, 
+    // but here we just disable the eslint rule since we need to reset modal state on open.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSelected(getDefaultVariant(String(product.id)))
     setQty(1)
     setAdded(false)

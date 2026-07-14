@@ -141,8 +141,7 @@ export default function ProductDetailModal({
     : 0
 
   const effectivePrice = product && product.hasVariants && selectedVariant ? selectedVariant.price : basePrice
-  const effectiveBaseQuantity = product && product.hasVariants && selectedVariant ? 1 : (product?.baseQuantity ?? 1)
-  const effectiveUnitLabel = product && product.hasVariants && selectedVariant ? (selectedVariant.sizeLabel || selectedVariant.variantName || product.unitLabel) : (product?.unitLabel ?? '')
+    const effectiveUnitLabel = product && product.hasVariants && selectedVariant ? (selectedVariant.sizeLabel || selectedVariant.variantName || product.unitLabel) : (product?.unitLabel ?? '')
 
   const hasDiscount = !!(product && product.offerPrice && product.offerPrice < product.price)
   const discount = product && hasDiscount
@@ -224,8 +223,7 @@ export default function ProductDetailModal({
     ?? (selectedVariant ? resolveProductImage(product.name, selectedVariant.variantName) : null)
     ?? resolveProductImage(product.name)
     ?? ''
-  const galleryImages = [heroImage].filter(Boolean)
-
+  
   return (
     <AnimatePresence>
       <motion.div className="fixed inset-0 z-[80]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
