@@ -680,10 +680,10 @@ export default function Pos(props: PosProps = {}) {
       </div>
 
       {/* Main Content Split */}
-      <div className="flex flex-col lg:flex-row gap-5 md:gap-6 px-4 md:px-6 pb-24 md:pb-6">
+      <div className="flex flex-col lg:flex-row gap-5 md:gap-6 px-4 md:px-6 pb-6 lg:h-[calc(100vh-120px)] lg:overflow-hidden">
         
         {/* LEFT COLUMN (approx 68%) */}
-        <div className="flex-[2.1] flex flex-col gap-6">
+        <div className="flex-[2.1] flex flex-col gap-6 lg:overflow-y-auto lg:pb-4">
           
           {/* Customer Details Card */}
           <div className="bg-white rounded-2xl border border-[#EAD7B7]/40 shadow-sm p-4 md:p-5">
@@ -933,7 +933,7 @@ export default function Pos(props: PosProps = {}) {
         </div>
 
         {/* RIGHT COLUMN (approx 32%) */}
-        <div className="flex-[1] flex min-h-0 flex-col gap-6 lg:sticky lg:top-4 lg:h-[calc(100vh-100px)] lg:max-h-[calc(100vh-100px)]">
+        <div className="flex-[1] flex min-h-0 flex-col gap-6 sticky top-4 h-[calc(100vh-140px)] max-h-[calc(100vh-140px)]">
           <div className="flex min-h-0 h-full max-h-full flex-col overflow-hidden rounded-2xl border border-[#EAD7B7]/60 bg-[#FAF9F6] shadow-sm">
             
             {/* Header */}
