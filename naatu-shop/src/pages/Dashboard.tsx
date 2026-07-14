@@ -1,9 +1,9 @@
-﻿import React, { useCallback, useEffect, useState, useMemo, useRef, type FormEvent } from 'react'
+import React, { useCallback, useEffect, useState, useMemo, useRef, type FormEvent } from 'react'
 import {
   BarChart2, Trash2, Edit2, List, ShoppingCart, LayoutDashboard,
   Box, AlertCircle, ArrowUp, ArrowDown, Power, Download, TrendingUp,
   Package, IndianRupee, Search, RefreshCw, ShieldCheck, ShieldOff, Trophy,
-  MessageCircle, ChevronDown, Eye, EyeOff, FileText, Lock, LockOpen, Printer, MoreVertical, X,
+  MessageCircle, ChevronDown, Eye, EyeOff, Lock, LockOpen, Printer, MoreVertical, X,
 } from 'lucide-react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
@@ -1303,7 +1303,7 @@ export default function Dashboard() {
         </div>
         {/* Nav */}
         <nav
-          className={`grid grid-cols-2 sm:grid-cols-3 lg:flex lg:flex-col overflow-visible gap-2 px-3 py-3 lg:py-2 lg:flex-grow transition-all duration-300 ${sidebarCollapsed ? 'lg:px-2' : 'lg:px-4'}`}
+          className={`flex overflow-x-auto overflow-y-hidden lg:flex-col lg:overflow-visible gap-2 px-3 py-3 lg:py-2 lg:flex-grow transition-all duration-300 hide-scrollbar ${sidebarCollapsed ? 'lg:px-2' : 'lg:px-4'}`}
         >
           {navItems.map(item => (
             <button
@@ -1313,8 +1313,8 @@ export default function Dashboard() {
               className={[
                 'shrink-0 flex flex-col lg:flex-row items-center justify-center lg:justify-start',
                 'gap-1 lg:gap-3',
-                'w-full h-[56px] lg:h-[48px]',
-                sidebarCollapsed ? 'lg:w-[48px] lg:justify-center mx-auto' : 'lg:w-full lg:px-4',
+                'h-[56px] w-[64px] lg:w-full lg:h-[48px]',
+                sidebarCollapsed ? 'lg:w-[48px] lg:justify-center mx-auto' : 'lg:px-4',
                 'px-0 py-1 lg:py-0',
                 'rounded-xl font-medium text-[11px] lg:text-[14px] transition-all overflow-hidden',
                 tab === item.id ? 'bg-white text-maroon-dark shadow-sm' : 'text-white/70 hover:bg-white/10 hover:text-white',
@@ -1339,8 +1339,8 @@ export default function Dashboard() {
             className={[
               'shrink-0 flex flex-col lg:flex-row items-center justify-center lg:justify-start',
               'gap-1 lg:gap-3',
-              'w-full h-[56px] lg:h-[48px]',
-              sidebarCollapsed ? 'lg:w-[48px] lg:justify-center mx-auto' : 'lg:w-full lg:px-4',
+              'h-[56px] w-[64px] lg:w-full lg:h-[48px]',
+              sidebarCollapsed ? 'lg:w-[48px] lg:justify-center mx-auto' : 'lg:px-4',
               'px-0 py-1 lg:py-0',
               'rounded-xl font-medium text-[11px] lg:text-[14px] transition-all text-white/70 hover:bg-white/10 hover:text-white lg:mt-auto mb-1 lg:mb-4 overflow-hidden',
             ].join(' ')}
