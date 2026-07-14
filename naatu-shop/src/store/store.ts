@@ -572,21 +572,51 @@ export const useSettingsStore = create<SettingsState>()((set) => ({
 
 // --- Admin Auth Store ---
 const ADMIN_PORTAL_PASSWORD = '9342489391'
+const STAFF_PORTAL_PASSWORD = 'staff123'
+
+export type AdminRole = 'admin' | 'staff' | null
 
 interface AdminAuthState {
   isLoggedIn: boolean
-  login: (password: string) => Promise<boolean>
+  role: AdminRole
+  login: (password: string) => Promise<AdminRole | false>
   logout: () => void
 }
 
-export const useAdminAuthStore = create<AdminAuthState>()((set) => ({
-  isLoggedIn: false,
-  login: async (password: string) => {
-    if (password === ADMIN_PORTAL_PASSWORD) {
-      set({ isLoggedIn: true })
-      return true
+export const useAdminAuthStore = create<AdminAuthState>()(
+  persist(
+    (set) => ({
+      isLoggedIn: false,
+      role: null,
+      login: async (password: string) => {
+        if (password === ADMIN_PORTAL_PASSWORD) {
+          set({ isLoggedIn: true, role: 'admin' })
+          return 'admin'
+        }
+        if (password === STAFF_PORTAL_PASSWORD) {
+          set({ isLoggedIn: true, role: 'staff' })
+          return 'staff'
+        }
+        return false
+      },
+      logout: () => set({ isLoggedIn: false, role: null }),
+    }),
+    { 
+      name: 'zera-admin-session',
+      // Using sessionStorage so the session is cleared when the tab is closed
+      storage: {
+        getItem: (name) => {
+          const str = sessionStorage.getItem(name)
+          if (!str) return null
+          return JSON.parse(str)
+        },
+        setItem: (name, value) => {
+          sessionStorage.setItem(name, JSON.stringify(value))
+        },
+        removeItem: (name) => {
+          sessionStorage.removeItem(name)
+        }
+      }
     }
-    return false
-  },
-  logout: () => set({ isLoggedIn: false }),
-}))
+  )
+)

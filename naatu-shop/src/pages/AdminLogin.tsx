@@ -23,10 +23,12 @@ export default function AdminLogin() {
     e.preventDefault()
     setError('')
     setLoading(true)
-    const ok = await login(password)
+    const role = await login(password)
     setLoading(false)
-    if (ok) {
+    if (role === 'admin') {
       navigate(from, { replace: true })
+    } else if (role === 'staff') {
+      navigate('/pos', { replace: true })
     } else {
       setError(l('Invalid Password', 'தவறான கடவுச்சொல்'))
     }

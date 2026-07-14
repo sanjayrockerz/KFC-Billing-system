@@ -29,7 +29,16 @@ function PublicOnlyRoute({ children }: { children: React.ReactNode }) {
 }
 
 function AdminGuard({ children }: { children: React.ReactNode }) {
-  const isLoggedIn = useAdminAuthStore((state) => state.isLoggedIn)
+  const { isLoggedIn, role } = useAdminAuthStore()
+  const location = useLocation()
+  if (!isLoggedIn || role !== 'admin') {
+    return <Navigate to="/admin-login" state={{ from: location }} replace />
+  }
+  return <>{children}</>
+}
+
+function PosGuard({ children }: { children: React.ReactNode }) {
+  const { isLoggedIn } = useAdminAuthStore()
   const location = useLocation()
   if (!isLoggedIn) {
     return <Navigate to="/admin-login" state={{ from: location }} replace />
@@ -125,9 +134,11 @@ function AppShell() {
           <Route
             path="/pos"
             element={
-              <Suspense fallback={<LoadingSpinner />}>
-                <Pos />
-              </Suspense>
+              <PosGuard>
+                <Suspense fallback={<LoadingSpinner />}>
+                  <Pos />
+                </Suspense>
+              </PosGuard>
             }
           />
           <Route

@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   Search, Trash2, Plus, Receipt, Printer,
   RefreshCw, ShoppingBag, MessageCircle,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  Wifi, WifiOff, Layers, X, ChevronDown,
+  Wifi, WifiOff, Layers, X, ChevronDown, Power
 } from 'lucide-react'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
-import { useProductStore, useVariantStore, type Product } from '../store/store'
+import { useProductStore, useVariantStore, useAdminAuthStore, type Product } from '../store/store'
 import { Invoice } from '../components/Invoice'
 import CatalogModal from '../components/CatalogModal'
 import AddProductModal from '../components/AddProductModal'
@@ -101,6 +101,8 @@ export default function Pos(props: PosProps = {}) {
   const { getVariants, fetchVariants } = useVariantStore()
   const { lang } = useLangStore()
   const l = (en: string, ta: string) => lang === 'ta' ? ta : en
+  const navigate = useNavigate()
+  const logout = useAdminAuthStore(state => state.logout)
   const embeddedMode = Boolean(props.isEmbedded)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [billingAdjOpen, setBillingAdjOpen] = useState(false)
@@ -662,20 +664,31 @@ export default function Pos(props: PosProps = {}) {
           <p className="text-[13px] md:text-[12px] text-gray-500 font-medium ml-3.5 mt-1 pr-2">Quick Invoice generator & database synced checkout</p>
         </div>
         
-        {/* Online/Offline Toggle */}
-        <div className="grid grid-cols-2 bg-white rounded-xl border border-[#EAD7B7]/60 p-1 shadow-sm w-full min-[480px]:w-auto">
-          <button 
-            onClick={() => setOrderMode('offline')}
-            className={`min-h-[44px] px-4 py-2 rounded-lg text-[12px] md:text-[11px] font-black tracking-wider uppercase transition-colors ${orderMode === 'offline' ? 'bg-[#8B2332] text-white' : 'text-[#5F6D59] hover:bg-[#F7F6F2]'}`}
-          >
-            Offline
-          </button>
-          <button 
-            onClick={() => setOrderMode('online')}
-            className={`min-h-[44px] px-4 py-2 rounded-lg text-[12px] md:text-[11px] font-black tracking-wider uppercase transition-colors ${orderMode === 'online' ? 'bg-[#8B2332] text-white' : 'text-[#5F6D59] hover:bg-[#F7F6F2]'}`}
-          >
-            Online
-          </button>
+        {/* Online/Offline Toggle & Logout */}
+        <div className="flex gap-2 w-full min-[480px]:w-auto">
+          <div className="grid grid-cols-2 bg-white rounded-xl border border-[#EAD7B7]/60 p-1 shadow-sm flex-1 min-[480px]:flex-none">
+            <button 
+              onClick={() => setOrderMode('offline')}
+              className={`min-h-[44px] px-4 py-2 rounded-lg text-[12px] md:text-[11px] font-black tracking-wider uppercase transition-colors ${orderMode === 'offline' ? 'bg-[#8B2332] text-white' : 'text-[#5F6D59] hover:bg-[#F7F6F2]'}`}
+            >
+              Offline
+            </button>
+            <button 
+              onClick={() => setOrderMode('online')}
+              className={`min-h-[44px] px-4 py-2 rounded-lg text-[12px] md:text-[11px] font-black tracking-wider uppercase transition-colors ${orderMode === 'online' ? 'bg-[#8B2332] text-white' : 'text-[#5F6D59] hover:bg-[#F7F6F2]'}`}
+            >
+              Online
+            </button>
+          </div>
+          {!embeddedMode && (
+            <button 
+              onClick={() => { logout(); navigate('/admin-login', { replace: true }) }}
+              title="Logout"
+              className="flex items-center justify-center min-h-[44px] px-4 rounded-xl border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+            >
+              <Power size={18} />
+            </button>
+          )}
         </div>
       </div>
 
