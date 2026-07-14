@@ -341,10 +341,26 @@ GRANT EXECUTE ON FUNCTION public.get_next_invoice_no() TO authenticated, anon;
 -- ─────────────────────────────────────────────────────────
 -- 7. create_order_with_stock — FULL ZERA POS version
 -- ─────────────────────────────────────────────────────────
--- Remove both historical 19-argument overloads before creating the
+-- Remove every historical overload before creating the
 -- canonical signature below. The old migrations used two different orders
 -- for the final GST/payment parameters, making named Supabase RPC calls
 -- ambiguous.
+DO $$
+DECLARE
+  fn RECORD;
+BEGIN
+  FOR fn IN
+    SELECT oid::regprocedure AS signature
+    FROM pg_proc
+    WHERE pronamespace = 'public'::regnamespace
+      AND proname = 'create_order_with_stock'
+      AND prokind = 'f'
+  LOOP
+    EXECUTE 'DROP FUNCTION IF EXISTS ' || fn.signature;
+  END LOOP;
+END;
+$$;
+
 DROP FUNCTION IF EXISTS public.create_order_with_stock(
   TEXT, TEXT, TEXT, JSONB, NUMERIC, TEXT, TEXT, TEXT,
   NUMERIC, NUMERIC, NUMERIC, TEXT, NUMERIC, TEXT, NUMERIC,

@@ -11,8 +11,13 @@ const PRODUCT_COLUMNS = [
   'predefined_options', 'is_active', 'sort_order', 'unit', 'rating',
   'description', 'description_ta', 'benefits', 'benefits_ta',
   'image_url', 'image', 'has_variants',
-  'categories(name_en)',
 ].join(', ')
+
+export function fetchAllCategories() {
+  return supabase
+    .from('categories')
+    .select('id, name_en')
+}
 
 export function fetchAllProducts() {
   return supabase

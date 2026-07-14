@@ -5,6 +5,25 @@
 -- different order for p_gst_enabled / p_payment_method / p_split_details.
 -- Named RPC calls therefore fail with "could not choose the best candidate".
 
+-- Do not rely on a hand-written signature here. The database may contain
+-- older 6/15/19-argument versions, and the two 19-argument versions differ
+-- only by parameter order. Remove every overload by name first.
+DO $$
+DECLARE
+  fn RECORD;
+BEGIN
+  FOR fn IN
+    SELECT oid::regprocedure AS signature
+    FROM pg_proc
+    WHERE pronamespace = 'public'::regnamespace
+      AND proname = 'create_order_with_stock'
+      AND prokind = 'f'
+  LOOP
+    EXECUTE 'DROP FUNCTION IF EXISTS ' || fn.signature;
+  END LOOP;
+END;
+$$;
+
 DROP FUNCTION IF EXISTS public.create_order_with_stock(
   TEXT, TEXT, TEXT, JSONB, NUMERIC, TEXT, TEXT, TEXT,
   NUMERIC, NUMERIC, NUMERIC, TEXT, NUMERIC, TEXT, NUMERIC,

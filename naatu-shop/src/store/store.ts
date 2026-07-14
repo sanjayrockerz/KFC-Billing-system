@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { isSupabaseConfigured } from '../lib/supabase'
 import { supabase } from '../lib/supabase'
-import { fetchAllProducts } from '../services/productService'
+import { fetchAllCategories, fetchAllProducts } from '../services/productService'
 import { fetchAllVariants, type ProductVariant } from '../services/variantService'
 import {
   calculateLineTotal,
@@ -209,9 +209,9 @@ const toAuthUser = (profile: unknown, fallback?: SessionFallback): AuthUser => {
   }
 }
 
-const mapDbProduct = (input: unknown): Product => {
+const mapDbProduct = (input: unknown, categoriesById: Record<string, string> = {}): Product => {
   const p = asRecord(input)
-  const categoryRecord = asRecord(p.categories)
+  const categoryId = typeof p.category_id === 'string' || typeof p.category_id === 'number' ? p.category_id : null
   const image = readString(p.image_url) || readString(p.image) || '/assets/images/default-herb.jpg'
   const remedy = Array.isArray(p.remedy)
     ? p.remedy.filter((entry): entry is string => typeof entry === 'string')
@@ -222,8 +222,8 @@ const mapDbProduct = (input: unknown): Product => {
     name: readString(p.name, 'Herbal Product'),
     nameTa: readString(p.name_ta) || readString(p.tamil_name),
     tamilName: readString(p.tamil_name) || readString(p.name_ta),
-    category: readString(p.category) || readString(categoryRecord.name_en, 'Herbal Product'),
-    categoryId: typeof p.category_id === 'string' || typeof p.category_id === 'number' ? p.category_id : null,
+    category: readString(p.category) || categoriesById[String(categoryId)] || 'Herbal Product',
+    categoryId,
     remedy,
     price: toNumber(p.price, 0),
     offerPrice: p.offer_price != null ? toNumber(p.offer_price, 0) : null,
@@ -361,11 +361,17 @@ export const useProductStore = create<ProductState>((set, get) => ({
 
     set({ loading: true, error: null })
     try {
-      const { data, error } = await fetchAllProducts()
+      const [{ data, error }, { data: categoryData }] = await Promise.all([
+        fetchAllProducts(),
+        fetchAllCategories(),
+      ])
 
       if (error) throw error
 
-      const normalized = (data || []).map(mapDbProduct)
+      const categoriesById = Object.fromEntries(
+        (categoryData || []).map(category => [String(category.id), String(category.name_en || '').trim()]),
+      )
+      const normalized = (data || []).map(product => mapDbProduct(product, categoriesById))
 
       set({ products: normalized, loading: false, lastFetch: Date.now() })
     } catch (err) {

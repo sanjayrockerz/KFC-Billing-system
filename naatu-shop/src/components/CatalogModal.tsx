@@ -29,7 +29,7 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
     if (!isOpen) return
     let cancelled = false
     const loadCategories = async () => {
-      const { data } = await supabase.from('categories').select('id, name_en').eq('is_active', true).order('sort_order')
+      const { data } = await supabase.from('categories').select('id, name_en')
       if (!cancelled) setCategoryOptions((data || []) as CategoryOption[])
     }
     void loadCategories()
