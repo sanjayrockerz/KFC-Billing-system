@@ -9,28 +9,23 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { debounce } from '../lib/debounce'
 import { useAuthStore, useProductStore, useAdminAuthStore, type Product } from '../store/store'
-import { useLangStore } from '../store/langStore'
-import { uploadProductImage, uploadInvoicePdf } from '../lib/storage'
+import { uploadProductImage } from '../lib/storage'
 import { formatCurrency, normalizeOrderMode, normalizeUnitType, toNumber, type UnitType } from '../lib/retail'
 import { normalizeStructuredOrderItem } from '../lib/retail'
 import { Invoice } from '../components/Invoice'
 import { printThermalReceipt } from '../lib/thermalPrint'
 import { buildProfessionalWhatsAppMessage } from '../lib/whatsappMessage'
 import { invoicePdfFile } from '../lib/invoicePdf'
-import { toWhatsAppUrl } from '../lib/phone'
+// toWhatsAppUrl removed - using direct link building in handlers
 import { createVariant, updateVariant, deleteVariant, setDefaultVariant, type ProductVariant } from '../services/variantService'
 import { useVariantStore } from '../store/store'
 import Pos from './Pos'
 import {
   ResponsiveContainer,
-  LineChart,
-  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  PieChart,
-  Pie,
   Cell,
   BarChart,
   Bar,
@@ -203,9 +198,7 @@ export default function Dashboard() {
   const [roleUpdating, setRoleUpdating] = useState<string | null>(null)
 
   const isAdmin = true // bypassed for local demo
-  const { lang } = useLangStore()
-  // l(en, ta) — inline bilingual label helper; short Tamil strings prevent layout overflow
-  const l = (en: string, ta?: string) => en
+  const l = (en: string, _ta?: string) => en
 
   const toErr = (err: unknown, fb: string) =>
     err instanceof Error ? err.message
@@ -325,7 +318,6 @@ export default function Dashboard() {
     })
     const todayHourlyTrend = Array.from({ length: 24 }, (_, i) => {
       const h = String(i).padStart(2, '0')
-      const hourLabel = `${h}:00`
       // Use 12-hour format
       const ampm = i < 12 ? 'AM' : 'PM'
       const h12 = i === 0 ? 12 : i > 12 ? i - 12 : i
@@ -743,54 +735,6 @@ export default function Dashboard() {
     return { items, subtotal, message, fileName: `Invoice-${order.invoice_no || order.id}.pdf` }
   }
 
-  const sendOrderWhatsApp = async (order: DashboardOrder) => {
-    const preview = getOrderWhatsAppPreview(order)
-    if (!preview) {
-      alert('This order has no item details to send.')
-      return
-    }
-    const { items, subtotal, message } = preview
-    const file = invoicePdfFile({
-      invoiceNo: order.invoice_no || order.id,
-      date: order.created_at,
-      customerName: order.customer_name,
-      phone: order.phone,
-      address: order.address,
-      items: items as unknown as Array<Record<string, unknown>>,
-      subtotal,
-      shipping: order.delivery_charge,
-      total: order.total,
-      discountAmount: order.discount_amount,
-      couponCode: order.coupon_code || undefined,
-    })
-
-    let downloadLink = ''
-    try {
-      downloadLink = await uploadInvoicePdf(file, order.invoice_no || order.id)
-      await supabase.from('orders').update({ invoice_pdf_url: downloadLink }).eq('id', order.id)
-    } catch (err) {
-      console.warn('Failed to upload invoice PDF, falling back to local download:', err)
-    }
-
-    const whatsappMessage = downloadLink
-      ? `${message}\n\n📄 Download Invoice: ${downloadLink}`
-      : `${message}\n\nThe PDF was downloaded. Please attach it in this chat before sending.`
-
-    if (navigator.share && navigator.canShare?.({ files: [file] })) {
-      try {
-        await navigator.share({ files: [file], title: `Invoice ${order.invoice_no}`, text: whatsappMessage })
-        return
-      } catch { /* fall through when sharing is cancelled or unsupported */ }
-    }
-
-    const downloadUrl = URL.createObjectURL(file)
-    const link = document.createElement('a')
-    link.href = downloadUrl
-    link.download = file.name
-    link.click()
-    setTimeout(() => URL.revokeObjectURL(downloadUrl), 1000)
-    window.open(`${toWhatsAppUrl(order.phone)}?text=${encodeURIComponent(whatsappMessage)}`, '_blank', 'noopener,noreferrer')
-  }
 
   const handlePrintReceipt = (order: DashboardOrder) => {
     const preview = getOrderWhatsAppPreview(order)
@@ -802,12 +746,21 @@ export default function Dashboard() {
       date: order.created_at,
       customerName: order.customer_name,
       phone: order.phone,
-      items: (preview.items as any[]).map((item) => ({
-        name: item.name || item.product_name,
-        qty: item.qty || item.quantity,
-        unit: item.unit,
+      items: (preview.items as Array<{
+        name?: string
+        product_name?: string
+        qty?: number
+        quantity?: number
+        unit?: string
+        price?: number
+        base_price?: number
+        line_total?: number
+      }>).map((item) => ({
+        name: item.name || item.product_name || '',
+        qty: item.qty || item.quantity || 0,
+        unit: item.unit || '',
         price: item.price || item.base_price || 0,
-        line_total: item.line_total
+        line_total: item.line_total || 0
       })),
       subtotal,
       shipping: order.delivery_charge || 0,
@@ -1791,8 +1744,9 @@ export default function Dashboard() {
                                     {/* Customer info bar */}
                                     <div className="flex flex-wrap gap-4 text-[12px] bg-white rounded-xl p-3 border border-blue-100">
                                       <div><span className="font-black text-[#5F6D59]">{l('Name', 'à®ªà¯†à®¯à®°à¯')}: </span><span className="font-bold text-[#2C392A]">{order.customer_name || '-'}</span></div>
-                                      <div><span className="font-black text-[#5F6D59]">{l('Phone', 'à®¤à¯Šà®²à¯ˆà®ªà¯‡à®šà®¿')}: </span><span className="font-bold text-[#2C392A]">{order.phone || '-'}</span></div>
-                                      <div className="flex-1"><span className="font-black text-[#5F6D59]">{l('Address', 'à®®à¯à®•à®µà®°à®¿')}: </span><span className="text-[#2C392A]">{order.address || '-'}</span></div>
+                                      <div><span className="font-black text-[#5F6D59]">{l('Name', 'பெயர்')}: </span><span className="font-bold text-[#2C392A]">{order.customer_name || '-'}</span></div>
+                                      <div><span className="font-black text-[#5F6D59]">{l('Phone', 'தொலைபேசி')}: </span><span className="font-bold text-[#2C392A]">{order.phone || '-'}</span></div>
+                                      <div className="flex-1"><span className="font-black text-[#5F6D59]">{l('Address', 'முகவரி')}: </span><span className="text-[#2C392A]">{order.address || '-'}</span></div>
                                     </div>
 
                                     {/* Items table */}
@@ -1801,12 +1755,12 @@ export default function Dashboard() {
                                         <table className="w-full text-[12px] min-w-[540px] bg-white rounded-xl overflow-hidden border border-blue-100">
                                           <thead className="bg-[#F7F6F2]">
                                             <tr className="text-left text-[#5F6D59] font-black text-[10px] uppercase tracking-wider">
-                                              <th className="px-4 py-2.5">{l('Product', 'à®ªà¯Šà®°à¯à®³à¯')}</th>
-                                              <th className="px-4 py-2.5">{l('Variant', 'à®µà®•à¯ˆà®ªà¯à®ªà®Ÿà®¿')}</th>
-                                              <th className="px-4 py-2.5">{l('Size / Weight', 'à®…à®³à®µà¯ / à®Žà®Ÿà¯ˆ')}</th>
-                                              <th className="px-4 py-2.5 text-center">{l('Qty', 'à®…à®³à®µà¯')}</th>
-                                              <th className="px-4 py-2.5">{l('Unit Price', 'à®’à®°à¯ à®µà®¿à®²à¯ˆ')}</th>
-                                              <th className="px-4 py-2.5 text-right">{l('Line Total', 'à®µà®°à®¿ à®®à¯Šà®¤à¯à®¤à®®à¯')}</th>
+                                              <th className="px-4 py-2.5">{l('Product', 'பொருள்')}</th>
+                                              <th className="px-4 py-2.5">{l('Variant', 'வகைப்படி')}</th>
+                                              <th className="px-4 py-2.5">{l('Size / Weight', 'அளவு / எடை')}</th>
+                                              <th className="px-4 py-2.5 text-center">{l('Qty', 'அளவு')}</th>
+                                              <th className="px-4 py-2.5">{l('Unit Price', 'ஒரு விலை')}</th>
+                                              <th className="px-4 py-2.5 text-right">{l('Line Total', 'வரி மொத்தம்')}</th>
                                             </tr>
                                           </thead>
                                           <tbody className="divide-y divide-[#EAD7B7]/20">
@@ -1817,7 +1771,6 @@ export default function Dashboard() {
                                               const prodName  = dashIdx > 0 ? fullName.slice(0, dashIdx) : fullName
                                               const variant   = dashIdx > 0 ? fullName.slice(dashIdx + 3) : '-'
                                               const qty       = toNumber(item.quantity ?? item.qty, 0)
-                                              const baseQty   = toNumber(item.base_quantity ?? item.baseQuantity, 1)
                                               const basePrice = toNumber(item.base_price ?? item.basePrice ?? item.price, 0)
                                               const lineTotal = toNumber(item.line_total ?? item.lineTotal, 0)
                                               const unit      = String(item.unit || 'pc')
@@ -1842,7 +1795,7 @@ export default function Dashboard() {
                                           </tbody>
                                           <tfoot className="bg-[#F7F6F2] border-t border-[#EAD7B7]/30">
                                             <tr>
-                                              <td colSpan={5} className="px-4 py-2.5 text-right font-black text-[#5F6D59] text-[11px] uppercase tracking-wider">{l('Grand Total', 'à®®à¯Šà®¤à¯à®¤ à®¤à¯Šà®•à¯ˆ')}</td>
+                                              <td colSpan={5} className="px-4 py-2.5 text-right font-black text-[#5F6D59] text-[11px] uppercase tracking-wider">{l('Grand Total', 'மொத்த தொகை')}</td>
                                               <td className="px-4 py-2.5 text-right font-black text-[18px] text-[#2C392A]">{formatCurrency(toNumber(order.total, 0))}</td>
                                             </tr>
                                           </tfoot>
@@ -1853,12 +1806,12 @@ export default function Dashboard() {
                                     {/* WhatsApp message */}
                                     <div className="bg-white rounded-xl border border-blue-100 p-4">
                                       <div className="flex items-center justify-between mb-2">
-                                        <span className="text-[11px] font-black text-[#5F6D59] uppercase tracking-wider">{l('WhatsApp Message', 'à®µà®¾à®Ÿà¯à®¸à¯ à®…à®ªà¯ à®šà¯†à®¯à¯à®¤à®¿')}</span>
+                                        <span className="text-[11px] font-black text-[#5F6D59] uppercase tracking-wider">{l('WhatsApp Message', 'வாட்ஸ் அப் செய்தி')}</span>
                                         <button
                                           type="button"
                                           onClick={() => void navigator.clipboard.writeText(waMsg)}
                                           className="px-3 py-1 rounded-lg bg-[#25D366] text-white text-[11px] font-black hover:bg-[#1da851] transition-colors">
-                                          {l('Copy Message', 'à®¨à®•à®²à¯ à®Žà®Ÿà¯')}
+                                          {l('Copy Message', 'நகல் எடு')}
                                         </button>
                                       </div>
                                       <pre className="text-[12px] text-[#2C392A] bg-[#F7F6F2] rounded-xl p-3 whitespace-pre-wrap font-sans leading-relaxed select-all">{waMsg}</pre>
@@ -1876,16 +1829,16 @@ export default function Dashboard() {
               ) : (
                 <div className="px-5 py-12 text-center">
                   <MessageCircle size={40} className="mx-auto text-blue-200 mb-3" />
-                  <p className="text-[14px] font-bold text-[#5F6D59]">{l('No WhatsApp requests in selected period', 'à®¤à¯‡à®°à¯à®¨à¯à®¤ à®•à®¾à®²à®¤à¯à®¤à®¿à®²à¯ WA à®•à¯‹à®°à®¿à®•à¯à®•à¯ˆ à®‡à®²à¯à®²à¯ˆ')}</p>
+                  <p className="text-[14px] font-bold text-[#5F6D59]">{l('No WhatsApp requests in selected period', 'தேர்ந்த காலத்தில் WA கோரிக்கை இல்லை')}</p>
                 </div>
               )}
             </div>
 
-            {/* â”€â”€ ANALYTICS - secondary, compact, bottom â”€â”€ */}
+            {/* ——— ANALYTICS - secondary, compact, bottom ——— */}
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {/* Top Requested Products */}
               <div className="bg-white rounded-2xl border border-[#EAD7B7]/30 p-4 shadow-sm">
-                <h3 className="text-[13px] font-black text-[#2C392A] mb-3">{l('Top Requested Products', 'à®…à®¤à®¿à®• à®¤à¯‡à®µà¯ˆ')}</h3>
+                <h3 className="text-[13px] font-black text-[#2C392A] mb-3">{l('Top Requested Products', 'அதிக தேவை')}</h3>
                 {analytics.topWAProducts.length > 0 ? (
                   <div className="space-y-1.5">
                     {analytics.topWAProducts.slice(0, 6).map((item, i) => (
@@ -1897,13 +1850,13 @@ export default function Dashboard() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-[12px] text-[#9BAB9A] text-center py-3">{l('No data', 'à®¤à®°à®µà¯ à®‡à®²à¯à®²à¯ˆ')}</p>
+                  <p className="text-[12px] text-[#9BAB9A] text-center py-3">{l('No data', 'தரவு இல்லை')}</p>
                 )}
               </div>
 
               {/* Top Requested Categories */}
               <div className="bg-white rounded-2xl border border-[#EAD7B7]/30 p-4 shadow-sm">
-                <h3 className="text-[13px] font-black text-[#2C392A] mb-3">{l('Top Categories', 'à®µà®•à¯ˆà®•à®³à¯')}</h3>
+                <h3 className="text-[13px] font-black text-[#2C392A] mb-3">{l('Top Categories', 'வகைகள்')}</h3>
                 {analytics.topWACategories.length > 0 ? (
                   <div className="space-y-1.5">
                     {analytics.topWACategories.slice(0, 6).map((cat, i) => (
@@ -1915,13 +1868,13 @@ export default function Dashboard() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-[12px] text-[#9BAB9A] text-center py-3">{l('No data', 'à®¤à®°à®µà¯ à®‡à®²à¯à®²à¯ˆ')}</p>
+                  <p className="text-[12px] text-[#9BAB9A] text-center py-3">{l('No data', 'தரவு இல்லை')}</p>
                 )}
               </div>
 
               {/* Status Distribution - compact bar */}
               <div className="bg-white rounded-2xl border border-[#EAD7B7]/30 p-4 shadow-sm">
-                <h3 className="text-[13px] font-black text-[#2C392A] mb-3">{l('Status Distribution', 'à®¨à®¿à®²à¯ˆ à®µà®¿à®³à®•à¯à®•à®®à¯')}</h3>
+                <h3 className="text-[13px] font-black text-[#2C392A] mb-3">{l('Status Distribution', 'நிலை விளக்கம்')}</h3>
                 <div className="h-36">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={analytics.statusDistribution} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
@@ -1942,7 +1895,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* â”€â”€ POS ANALYTICS â”€â”€ */}
+        {/* ——— POS ANALYTICS ——— */}
         {tab === 'pos_analytics' && (
           <div className="space-y-6">
             <div>
@@ -2342,7 +2295,7 @@ export default function Dashboard() {
                   <div className="bg-white rounded-2xl border border-[#EAD7B7]/30 p-5 shadow-sm">
                     <h3 className="text-[15px] font-bold text-[#2C392A] mb-4">Top Categories</h3>
                     <div className="space-y-3">
-                      {analytics.topCategories.slice(0, 6).map((c, i) => (
+                      {analytics.topCategories.slice(0, 6).map((c) => (
                         <div key={c.name} className="flex items-center justify-between bg-[#F7F6F2] p-3 rounded-xl">
                           <div className="min-w-0 flex-1">
                             <p className="text-[13px] font-bold text-[#2C392A] truncate">{c.name}</p>

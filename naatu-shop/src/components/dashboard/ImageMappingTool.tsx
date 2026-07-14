@@ -18,7 +18,6 @@ import {
 import { supabase } from '../../lib/supabase'
 import { uploadProductImage } from '../../lib/storage'
 import { useProductStore, useVariantStore } from '../../store/store'
-import type { Product } from '../../store/store'
 import type { ProductVariant } from '../../services/variantService'
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -100,7 +100,7 @@ export const PRODUCT_OVERRIDES: Record<string, string> = {
 // ─────────────────────────────────────────────────────────────────────────────
 type KwEntry = { kw: string[]; img: string }
 
-const KEYWORD_MAP: KwEntry[] = [
+export const KEYWORD_MAP: KwEntry[] = [
 
   // ── Pooja / Ritual items ────────────────────────────────────────────────
   {

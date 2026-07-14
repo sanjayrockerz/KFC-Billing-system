@@ -13,7 +13,6 @@ import {
 import CompactAnalytics from '../components/dashboard/CompactAnalytics'
 import { isSupabaseConfigured, supabase } from '../lib/supabase'
 import { useAuthStore, useProductStore, type Product } from '../store/store'
-import { useLangStore } from '../store/langStore'
 import { formatCurrency, normalizeOrderMode, toNumber } from '../lib/retail'
 
 type BillingOrder = {
@@ -175,8 +174,7 @@ function StatCard({
 export default function BillingAnalytics() {
   const { user, loading: authLoading } = useAuthStore()
   const { products, fetchProducts } = useProductStore()
-  
-  const l = (en: string, ta?: string) => en
+  const l = (en: string, _ta?: string) => en
 
   const [loading, setLoading] = useState(false)
   const [orders, setOrders] = useState<BillingOrder[]>([])

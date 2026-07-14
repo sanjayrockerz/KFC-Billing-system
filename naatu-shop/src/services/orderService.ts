@@ -46,7 +46,7 @@ export const createOrderWithStock = async (input: CreateOrderInput): Promise<Cre
   const manualDiscountValue = Number(input.manualDiscountValue || 0)
   const couponCode     = input.couponCode?.trim() || null
   const couponPercentage = Number(input.couponPercentage || 0)
-  const effectiveDiscount = discountAmount + manualDiscountAmount
+  const _effectiveDiscount = discountAmount + manualDiscountAmount // kept for reference
 
   if (!isSupabaseConfigured) {
     throw new Error('Supabase is required to create orders')

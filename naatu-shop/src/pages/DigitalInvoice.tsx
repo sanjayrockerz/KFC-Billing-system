@@ -184,7 +184,7 @@ const invoiceItems = (Array.isArray(invoice.items) ? invoice.items : [])
       date: invoice.created_at,
       customerName: invoice.customer_name,
       phone: invoice.phone,
-      items: (invoice.items || []).map((item: any) => ({
+      items: (invoice.items || []).map((item: Record<string, unknown>) => ({
         name: item.name || item.product_name,
         qty: item.qty || item.quantity,
         unit: item.unit,

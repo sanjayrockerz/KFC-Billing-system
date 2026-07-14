@@ -13,15 +13,6 @@ import {
 } from '../lib/retail'
 import { onImgError, resolveProductImage } from '../lib/productImages'
 
-const getUnitOptions = (product: Product) => {
-  if (product.unitType === 'weight') {
-    return product.unitLabel === 'kg' ? ['kg', 'g'] : ['g', 'kg']
-  }
-  if (product.unitType === 'volume') {
-    return product.unitLabel === 'l' ? ['l', 'ml'] : ['ml', 'l']
-  }
-  return [product.unitLabel]
-}
 
 const buildUsageNote = (product: Product) => {
   if (product.unitType === 'weight' || product.unitType === 'volume') {

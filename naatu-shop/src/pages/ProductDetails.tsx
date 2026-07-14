@@ -6,7 +6,6 @@ import { useCartStore, useFavStore, useProductStore, type Product } from '../sto
 import { useLangStore } from '../store/langStore'
 import {
   calculateLineTotal,
-  formatCompactQuantity,
   formatCurrency,
 } from '../lib/retail'
 import { getProductImage, onImgError } from '../lib/productImages'
@@ -29,15 +28,7 @@ const getCompactPackOptions = (product: Product) => {
   return []
 }
 
-const getUnitOptions = (product: Product) => {
-  if (product.unitType === 'weight') {
-    return product.unitLabel === 'kg' ? ['kg', 'g'] : ['g', 'kg']
-  }
-  if (product.unitType === 'volume') {
-    return product.unitLabel === 'l' ? ['l', 'ml'] : ['ml', 'l']
-  }
-  return [product.unitLabel]
-}
+
 
 const buildUsageNote = (product: Product) => {
   if (product.unitType === 'weight' || product.unitType === 'volume') {

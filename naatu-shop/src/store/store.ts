@@ -6,7 +6,6 @@ import { fetchAllCategories, fetchAllProducts } from '../services/productService
 import { fetchAllVariants, type ProductVariant } from '../services/variantService'
 import {
   calculateLineTotal,
-  getDefaultQuantityForProduct,
   normalizeSelectedQuantity,
   normalizeUnitType,
   toNumber,
