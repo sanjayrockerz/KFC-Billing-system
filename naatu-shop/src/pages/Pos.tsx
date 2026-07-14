@@ -102,7 +102,7 @@ export default function Pos(props: PosProps = {}) {
   const { lang } = useLangStore()
   const l = (en: string, ta: string) => lang === 'ta' ? ta : en
   const navigate = useNavigate()
-  const logout = useAdminAuthStore(state => state.logout)
+  const { logout, role } = useAdminAuthStore()
   const embeddedMode = Boolean(props.isEmbedded)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [billingAdjOpen, setBillingAdjOpen] = useState(false)
@@ -681,9 +681,18 @@ export default function Pos(props: PosProps = {}) {
             </button>
           </div>
           {!embeddedMode && (
-            <button 
-              onClick={() => { logout(); navigate('/admin-login', { replace: true }) }}
-              title="Logout"
+            <>
+              {role === 'admin' && (
+                <button 
+                  onClick={() => navigate('/dashboard')}
+                  className="flex items-center justify-center min-h-[44px] px-4 rounded-xl bg-[#2C392A] text-white hover:bg-[#3d4f3a] transition-colors text-[12px] font-black tracking-wider uppercase"
+                >
+                  Dashboard
+                </button>
+              )}
+              <button 
+                onClick={() => { logout(); navigate('/admin-login', { replace: true }) }}
+                title="Logout"
               className="flex items-center justify-center min-h-[44px] px-4 rounded-xl border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
             >
               <Power size={18} />

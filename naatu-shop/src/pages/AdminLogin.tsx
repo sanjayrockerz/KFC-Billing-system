@@ -26,7 +26,8 @@ export default function AdminLogin() {
     const role = await login(password)
     setLoading(false)
     if (role === 'admin') {
-      navigate(from, { replace: true })
+      const destination = from === '/pos' ? '/dashboard' : from
+      navigate(destination, { replace: true })
     } else if (role === 'staff') {
       navigate('/pos', { replace: true })
     } else {
