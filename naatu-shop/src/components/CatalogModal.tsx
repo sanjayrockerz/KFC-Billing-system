@@ -37,9 +37,12 @@ export default function CatalogModal({ isOpen, onClose, onAdd }: CatalogModalPro
   }, [isOpen])
 
   const categories = useMemo(() => {
-    const cats = Array.from(new Set(products.filter(p => p.isActive).map(p => p.category))).filter(Boolean)
+    const cats = Array.from(new Set([
+      ...categoryOptions.map(category => category.name_en.trim()),
+      ...products.filter(p => p.isActive).map(p => p.category.trim()),
+    ])).filter(Boolean).sort((a, b) => a.localeCompare(b))
     return ['All', ...cats]
-  }, [products])
+  }, [categoryOptions, products])
 
   const allCategoryOptions = useMemo(() => {
     const merged = new Map<string, CategoryOption>()

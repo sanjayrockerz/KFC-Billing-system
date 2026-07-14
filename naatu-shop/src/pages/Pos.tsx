@@ -12,7 +12,6 @@ import { useProductStore, useVariantStore, type Product } from '../store/store'
 import { Invoice } from '../components/Invoice'
 import CatalogModal from '../components/CatalogModal'
 import AddProductModal from '../components/AddProductModal'
-import { printThermalReceipt } from '../lib/thermalPrint'
 import { invoicePdfFile } from '../lib/invoicePdf'
 import { uploadInvoicePdf } from '../lib/storage'
 import { createOrderWithStock } from '../services/orderService'
@@ -533,20 +532,10 @@ export default function Pos(props: PosProps = {}) {
   }
 
   const printReceipt = (inv: InvoiceSnap) => {
-    printThermalReceipt({
-      invoiceNo: inv.invoiceNo,
-      date: inv.date,
-      customerName: inv.customerName,
-      phone: inv.phone,
-      items: inv.items.map(item => ({ name: item.name, qty: item.qty, unit: item.selectedUnit, price: item.basePrice, line_total: item.lineTotal })),
-      subtotal: inv.subtotal,
-      shipping: inv.shipping,
-      couponDiscount: inv.couponDiscount,
-      manualDiscount: inv.manualDiscountAmount,
-      totalGst: inv.gstAmount,
-      total: inv.total,
-    })
-    window.setTimeout(() => window.print(), 250)
+    // Use the same public invoice route shared with the customer on WhatsApp.
+    // That page has the downloadable PDF action and works for both POS and
+    // customer-facing invoices.
+    window.location.assign(`${window.location.origin}/invoice/${encodeURIComponent(inv.invoiceNo)}`)
   }
 
   // ══ INVOICE SCREEN ════════════════════════════════════════════════════

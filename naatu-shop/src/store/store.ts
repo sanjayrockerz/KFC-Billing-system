@@ -211,6 +211,7 @@ const toAuthUser = (profile: unknown, fallback?: SessionFallback): AuthUser => {
 
 const mapDbProduct = (input: unknown): Product => {
   const p = asRecord(input)
+  const categoryRecord = asRecord(p.categories)
   const image = readString(p.image_url) || readString(p.image) || '/assets/images/default-herb.jpg'
   const remedy = Array.isArray(p.remedy)
     ? p.remedy.filter((entry): entry is string => typeof entry === 'string')
@@ -221,7 +222,7 @@ const mapDbProduct = (input: unknown): Product => {
     name: readString(p.name, 'Herbal Product'),
     nameTa: readString(p.name_ta) || readString(p.tamil_name),
     tamilName: readString(p.tamil_name) || readString(p.name_ta),
-    category: readString(p.category, 'Herbal Product'),
+    category: readString(p.category) || readString(categoryRecord.name_en, 'Herbal Product'),
     categoryId: typeof p.category_id === 'string' || typeof p.category_id === 'number' ? p.category_id : null,
     remedy,
     price: toNumber(p.price, 0),

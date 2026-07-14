@@ -341,6 +341,21 @@ GRANT EXECUTE ON FUNCTION public.get_next_invoice_no() TO authenticated, anon;
 -- ─────────────────────────────────────────────────────────
 -- 7. create_order_with_stock — FULL ZERA POS version
 -- ─────────────────────────────────────────────────────────
+-- Remove both historical 19-argument overloads before creating the
+-- canonical signature below. The old migrations used two different orders
+-- for the final GST/payment parameters, making named Supabase RPC calls
+-- ambiguous.
+DROP FUNCTION IF EXISTS public.create_order_with_stock(
+  TEXT, TEXT, TEXT, JSONB, NUMERIC, TEXT, TEXT, TEXT,
+  NUMERIC, NUMERIC, NUMERIC, TEXT, NUMERIC, TEXT, NUMERIC,
+  TEXT, JSONB, BOOLEAN
+);
+DROP FUNCTION IF EXISTS public.create_order_with_stock(
+  TEXT, TEXT, TEXT, JSONB, NUMERIC, TEXT, TEXT, TEXT,
+  NUMERIC, NUMERIC, NUMERIC, TEXT, NUMERIC, TEXT, NUMERIC,
+  BOOLEAN, TEXT, JSONB
+);
+
 CREATE OR REPLACE FUNCTION public.create_order_with_stock(
   p_customer_name          TEXT,
   p_phone                  TEXT,
