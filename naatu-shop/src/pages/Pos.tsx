@@ -176,17 +176,24 @@ export default function Pos(props: PosProps = {}) {
 
   const subtotal = items.reduce((s, i) => s + i.lineTotal, 0)
   const isValidCoupon = appliedCoupon && subtotal >= (appliedCoupon.minOrderValue || 0)
-  const couponDiscount = isValidCoupon ? Math.round((subtotal * (appliedCoupon.percentage || 0) / 100) * 100) / 100 : 0
+  const couponDiscount = isValidCoupon 
+    ? ((appliedCoupon.percentage || 0) > 0 
+        ? Math.round((subtotal * (appliedCoupon.percentage || 0) / 100) * 100) / 100 
+        : (appliedCoupon.discount || 0))
+    : 0
   const manualDiscountNumeric = Math.max(0, Number(manualDiscountValue) || 0)
   const manualDiscountAmount = manualDiscountType === 'percent'
     ? Math.max(0, Math.round((subtotal * manualDiscountNumeric / 100) * 100) / 100)
     : manualDiscountNumeric
+    
+  const discountedSubtotal = Math.max(0, subtotal - couponDiscount - manualDiscountAmount)
+  
   const totalGst = billGstEnabled
     ? (gstType === 'percent'
-      ? Math.max(0, Math.round((subtotal * (Math.max(0, Number(gstInput) || 0) / 100)) * 100) / 100)
+      ? Math.max(0, Math.round((discountedSubtotal * (Math.max(0, Number(gstInput) || 0) / 100)) * 100) / 100)
       : Math.max(0, Number(gstInput) || 0))
     : 0
-  const total = Math.max(0, subtotal - couponDiscount - manualDiscountAmount + (Number(shipping || 0) || 0) + totalGst)
+  const total = Math.max(0, discountedSubtotal + (Number(shipping || 0) || 0) + totalGst)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const itemQtyMap = useMemo(() => {
