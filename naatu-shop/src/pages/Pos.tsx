@@ -118,6 +118,7 @@ export default function Pos(props: PosProps = {}) {
   const [couponInput, setCouponInput] = useState('')
   const [couponLoading, setCouponLoading] = useState(false)
   const [couponError, setCouponError] = useState('')
+  const [availableCoupons, setAvailableCoupons] = useState<{code: string}[]>([])
   const [appliedCoupon, setAppliedCoupon] = useState<{ code: string; percentage: number; minOrderValue: number; discount?: number } | null>(null)
   const [manualDiscountType, setManualDiscountType] = useState<'flat' | 'percent'>('flat')
   const [manualDiscountValue, setManualDiscountValue] = useState('')
@@ -140,10 +141,17 @@ export default function Pos(props: PosProps = {}) {
     void fetchProducts()
     void fetchVariants()
     if (!isSupabaseConfigured) return
-    const ch = supabase.channel('pos-live')
+
+    supabase.from('coupons').select('code').eq('is_active', true).order('created_at', { ascending: false }).limit(20)
+      .then(({ data, error }) => {
+        if (error) console.error('Failed to fetch coupons', error)
+        else if (data) setAvailableCoupons(data)
+      })
+
+    const productChannel = supabase.channel('pos-live')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, () => void fetchProducts())
       .subscribe()
-    return () => { void supabase.removeChannel(ch) }
+    return () => { void supabase.removeChannel(productChannel) }
   }, [fetchProducts, fetchVariants])
 
   // ── Derived data ──────────────────────────────────────────────────────
@@ -1024,8 +1032,14 @@ export default function Pos(props: PosProps = {}) {
                     onChange={e => setCouponInput(e.target.value.toUpperCase())}
                     placeholder="Enter code"
                     disabled={appliedCoupon !== null}
+                    list="pos-coupons"
                     className="w-full h-9 px-3 bg-white border border-[#EAD7B7]/60 rounded-xl text-[12px] font-bold text-[#2C392A] focus:outline-none focus:border-[#8B2332] uppercase disabled:bg-gray-100"
                   />
+                  <datalist id="pos-coupons">
+                    {availableCoupons.map(c => (
+                      <option key={c.code} value={c.code} />
+                    ))}
+                  </datalist>
                   {appliedCoupon ? (
                     <button 
                       onClick={removeCoupon}
