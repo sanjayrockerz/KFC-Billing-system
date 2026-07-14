@@ -1212,7 +1212,7 @@ export default function Dashboard() {
   ]
 
   return (
-    <div className="admin-shell min-h-screen bg-bgMain flex flex-col lg:flex-row">
+    <div className="admin-shell h-full bg-bgMain flex flex-col lg:flex-row">
       {/* Sidebar */}
       <aside
         className={[
@@ -1298,7 +1298,7 @@ export default function Dashboard() {
       </aside>
 
       {/* Main */}
-      <main className="flex-grow p-4 sm:p-6 lg:p-8 overflow-x-hidden">
+      <main className="flex-grow p-4 sm:p-6 lg:p-8 overflow-x-hidden overflow-y-auto">
 
         {/* Î“Ã¶Ã‡Î“Ã¶Ã‡ ANALYTICS TAB Î“Ã¶Ã‡Î“Ã¶Ã‡ */}
 
