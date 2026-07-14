@@ -2628,7 +2628,7 @@ export default function Dashboard() {
 
         {/* â”€â”€ ORDER MANAGEMENT â”€â”€ */}
         {tab === 'history' && (
-          <div className="space-y-6 rounded-[28px] border border-[#EAD7B7]/60 bg-[#FBFAF6] p-5 sm:p-6 lg:p-7 shadow-sm">
+          <div className="space-y-4 sm:space-y-6 rounded-[20px] sm:rounded-[28px] border border-[#EAD7B7]/60 bg-[#FBFAF6] p-3 sm:p-6 lg:p-7 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-[11px] font-black uppercase tracking-[0.24em] text-[#7DAA8F]">{l('Billing history', 'பில் வரலாறு')}</p>
@@ -2640,7 +2640,7 @@ export default function Dashboard() {
                 </Link>
               </div>
             </div>
-            <div className="rounded-2xl border border-[#EAD7B7]/60 bg-white p-5 sm:p-6 shadow-sm">
+            <div className="rounded-2xl border border-[#EAD7B7]/60 bg-white p-3 sm:p-6 shadow-sm">
               {/* Bill type filter */}
               <div className="flex flex-wrap gap-2 mb-4">
                 {([
@@ -2710,7 +2710,7 @@ export default function Dashboard() {
                   const billTypeLabel = normalizeOrderType(o.order_type) === 'manual_sale' ? 'MANUAL' : normalizeOrderMode(o.order_mode) === 'online' ? 'ONLINE' : 'OFFLINE'
                   const billTypeClass = normalizeOrderType(o.order_type) === 'manual_sale' ? 'bg-purple-50 text-purple-700' : normalizeOrderMode(o.order_mode) === 'online' ? 'bg-blue-50 text-blue-700' : 'bg-orange-50 text-orange-700'
                   return (
-                    <div key={o.id} className="rounded-2xl border border-[#EAD7B7]/60 bg-[#FBFAF6] p-4 space-y-3">
+                    <div key={o.id} className="rounded-2xl border border-[#EAD7B7]/60 bg-[#FBFAF6] p-3 sm:p-4 space-y-3">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <p className="text-[13px] font-black text-[#2C392A] break-words">{o.invoice_no || '—'}</p>
