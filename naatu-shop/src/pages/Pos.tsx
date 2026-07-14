@@ -568,16 +568,16 @@ export default function Pos(props: PosProps = {}) {
               <p className="text-sm text-textMuted">{invoice.invoiceNo}</p>
             </div>
             <button onClick={clearAll}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-sageDark text-white font-bold text-sm">
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#2C392A] hover:bg-[#3d4f3a] text-white font-bold text-sm">
               <Plus size={15} /> New Sale
             </button>
           </div>
 
           {/* Payment receipt */}
-          <div className="surface-panel p-5">
+          <div className="surface-panel p-5 rounded-xl border border-gray-100 bg-white shadow-sm mb-4">
             <p className="text-xs font-black uppercase tracking-widest text-textMuted mb-3">{l('Payment Receipt', 'பண ரசீது')}</p>
             <div className="space-y-2.5">
-              <div className="flex justify-between items-center pb-2.5 border-b border-sand">
+              <div className="flex justify-between items-center pb-2.5 border-b border-gray-100">
                 <p className="text-sm font-bold text-textMuted">{l('Grand Total', 'மொத்த தொகை')}</p>
                 <p className="text-2xl font-black text-textMain">{formatCurrency(invoice.total)}</p>
               </div>
@@ -601,21 +601,21 @@ export default function Pos(props: PosProps = {}) {
           {/* Actions */}
           <div className="grid grid-cols-3 gap-3">
             <button onClick={() => printReceipt(invoice)}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl border-2 border-sand hover:border-sageDark text-textMain font-bold text-sm transition-colors">
-              <Printer size={16} /> {l('Print Receipt', 'ரசீது அச்சிடு')}
+              className="flex flex-col md:flex-row items-center justify-center gap-2 py-3 px-2 rounded-xl border-2 border-gray-200 hover:border-[#2C392A] text-textMain font-bold text-[12px] md:text-sm transition-colors text-center leading-tight">
+              <Printer size={16} className="shrink-0" /> {l('Print Receipt', 'ரசீது அச்சிடு')}
             </button>
             <button onClick={() => sendPosWhatsApp(invoice)}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold text-sm transition-colors">
-              <MessageCircle size={16} /> WhatsApp Invoice
+              className="flex flex-col md:flex-row items-center justify-center gap-2 py-3 px-2 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold text-[12px] md:text-sm transition-colors text-center leading-tight">
+              <MessageCircle size={16} className="shrink-0" /> WhatsApp Invoice
             </button>
             <button onClick={clearAll}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl bg-sageDark hover:bg-sageDeep text-white font-bold text-sm transition-colors">
-              <RefreshCw size={16} /> New Sale
+              className="flex flex-col md:flex-row items-center justify-center gap-2 py-3 px-2 rounded-xl bg-[#2C392A] hover:bg-[#3d4f3a] text-white font-bold text-[12px] md:text-sm transition-colors text-center leading-tight">
+              <RefreshCw size={16} className="shrink-0" /> New Sale
             </button>
           </div>
 
           {/* Items summary */}
-          <div className="surface-panel p-4">
+          <div className="surface-panel p-4 rounded-xl border border-gray-100 bg-white shadow-sm mt-4">
             <p className="text-xs font-bold text-textMuted uppercase tracking-wide mb-3">{l('Items Sold', 'விற்ற பொருட்கள்')}</p>
             <div className="space-y-1.5">
               {invoice.items.map(item => (
