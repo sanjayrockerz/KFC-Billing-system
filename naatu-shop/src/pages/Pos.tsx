@@ -937,7 +937,7 @@ export default function Pos(props: PosProps = {}) {
           <div className="flex min-h-0 h-full max-h-full flex-col overflow-hidden rounded-2xl border border-[#EAD7B7]/60 bg-[#FAF9F6] shadow-sm">
             
             {/* Header */}
-            <div className="flex items-center justify-between p-4 md:p-5 border-b border-[#EAD7B7]/60 bg-white shrink-0">
+            <div className="flex items-center justify-between p-3 border-b border-[#EAD7B7]/60 bg-white shrink-0">
               <h3 className="text-[18px] md:text-[14px] font-black text-[#2C392A] flex items-center gap-2">
                 <Receipt size={16} className="text-[#8B2332]" />
                 Current Order
@@ -949,38 +949,40 @@ export default function Pos(props: PosProps = {}) {
             </div>
 
             {/* Content body */}
-            <div className="min-h-0 flex-1 overflow-y-auto bg-white p-4 pb-8">
+            <div className="min-h-0 flex-1 overflow-y-auto bg-white p-3 space-y-2">
               
               {/* Info Table */}
               <div className="border border-[#EAD7B7]/40 rounded-xl overflow-hidden text-[11px] font-bold">
-                <div className="flex justify-between p-3 border-b border-[#EAD7B7]/40 bg-[#FAFAFA]">
+                <div className="flex justify-between px-3 py-2 border-b border-[#EAD7B7]/40 bg-[#FAFAFA]">
                   <span className="text-[#5F6D59] uppercase">Source</span>
                   <span className="text-[#8B2332] border border-[#8B2332]/30 bg-[#8B2332]/5 px-1.5 rounded uppercase">{orderMode.toUpperCase()}</span>
                 </div>
-                <div className="p-3 border-b border-[#EAD7B7]/40">
-                  <span className="text-[13px] md:text-[11px] text-[#5F6D59] uppercase block mb-1">Customer Name</span>
-                  <input
-                    type="text"
-                    value={customer.name}
-                    onChange={e => setCustomer({...customer, name: e.target.value})}
-                    placeholder="Enter name (optional)"
-                    className="w-full h-12 px-3 bg-white border border-[#EAD7B7]/60 rounded-lg text-[16px] md:text-[12px] font-bold text-[#2C392A] focus:outline-none focus:border-[#8B2332]"
-                  />
-                </div>
-                <div className="p-3 border-b border-[#EAD7B7]/40">
-                  <span className="text-[13px] md:text-[11px] text-[#5F6D59] uppercase block mb-1">Phone Number</span>
-                  <input
-                    type="text"
-                    value={customer.phone}
-                    onChange={e => setCustomer({...customer, phone: e.target.value})}
-                    placeholder="9876543210 or +91 9876543210"
-                    className={`w-full h-12 px-3 bg-white border rounded-lg text-[16px] md:text-[12px] font-bold text-[#2C392A] focus:outline-none ${customer.phone && !normalizeIndianPhone(customer.phone) ? 'border-red-400 bg-red-50' : 'border-[#EAD7B7]/60 focus:border-[#8B2332]'}`}
-                  />
+                <div className="grid grid-cols-2 gap-0 border-b border-[#EAD7B7]/40">
+                  <div className="p-2 border-r border-[#EAD7B7]/40">
+                    <span className="text-[10px] text-[#5F6D59] uppercase block mb-0.5">Customer Name</span>
+                    <input
+                      type="text"
+                      value={customer.name}
+                      onChange={e => setCustomer({...customer, name: e.target.value})}
+                      placeholder="Enter name"
+                      className="w-full h-8 px-2 bg-white border border-[#EAD7B7]/60 rounded-lg text-[12px] font-bold text-[#2C392A] focus:outline-none focus:border-[#8B2332]"
+                    />
+                  </div>
+                  <div className="p-2">
+                    <span className="text-[10px] text-[#5F6D59] uppercase block mb-0.5">Phone Number</span>
+                    <input
+                      type="text"
+                      value={customer.phone}
+                      onChange={e => setCustomer({...customer, phone: e.target.value})}
+                      placeholder="9876543210"
+                      className={`w-full h-8 px-2 bg-white border rounded-lg text-[12px] font-bold text-[#2C392A] focus:outline-none ${customer.phone && !normalizeIndianPhone(customer.phone) ? 'border-red-400 bg-red-50' : 'border-[#EAD7B7]/60 focus:border-[#8B2332]'}`}
+                    />
+                  </div>
                 </div>
 {items.length > 0 && (
-                  <div className="p-3 bg-[#FAFAFA] space-y-1.5 border-b border-[#EAD7B7]/40 max-h-[120px] overflow-y-auto">
+                  <div className="px-3 py-2 bg-[#FAFAFA] space-y-1 border-b border-[#EAD7B7]/40 max-h-[80px] overflow-y-auto">
                     {items.map(item => (
-                <div key={item.id} className="flex justify-between text-[#2C392A]">
+                <div key={item.id} className="flex justify-between text-[#2C392A] text-[11px]">
                         <span className="truncate pr-2">{item.qty}x {item.name}</span>
                         <span>{formatCurrency(item.lineTotal)}</span>
                       </div>
@@ -991,20 +993,20 @@ export default function Pos(props: PosProps = {}) {
 
               {/* Coupon Code */}
               <div>
-                <label className="block text-[13px] md:text-[10px] font-black text-[#5F6D59] tracking-wider uppercase mb-1.5">Coupon Code</label>
-                <div className="flex flex-col min-[360px]:flex-row gap-2">
+                <label className="block text-[10px] font-black text-[#5F6D59] tracking-wider uppercase mb-1">Coupon Code</label>
+                <div className="flex gap-2">
                   <input 
                     type="text" 
                     value={couponInput}
                     onChange={e => setCouponInput(e.target.value.toUpperCase())}
                     placeholder="Enter code"
                     disabled={appliedCoupon !== null}
-                    className="w-full h-12 px-3 bg-white border border-[#EAD7B7]/60 rounded-xl text-[16px] md:text-[12px] font-bold text-[#2C392A] focus:outline-none focus:border-[#8B2332] uppercase disabled:bg-gray-100"
+                    className="w-full h-9 px-3 bg-white border border-[#EAD7B7]/60 rounded-xl text-[12px] font-bold text-[#2C392A] focus:outline-none focus:border-[#8B2332] uppercase disabled:bg-gray-100"
                   />
                   {appliedCoupon ? (
                     <button 
                       onClick={removeCoupon}
-                      className="min-h-[44px] px-4 py-2.5 bg-red-100 text-red-600 hover:bg-red-200 rounded-xl text-[13px] md:text-[12px] font-black transition-colors"
+                      className="h-9 px-3 bg-red-100 text-red-600 hover:bg-red-200 rounded-xl text-[11px] font-black transition-colors shrink-0"
                     >
                       Remove
                     </button>
@@ -1012,146 +1014,145 @@ export default function Pos(props: PosProps = {}) {
                     <button 
                       onClick={applyCoupon}
                       disabled={couponLoading || !couponInput.trim()}
-                      className="min-h-[44px] px-4 py-2.5 bg-[#5F6D59] text-white hover:bg-[#2C392A] rounded-xl text-[13px] md:text-[12px] font-black transition-colors disabled:opacity-50"
+                      className="h-9 px-3 bg-[#5F6D59] text-white hover:bg-[#2C392A] rounded-xl text-[11px] font-black transition-colors disabled:opacity-50 shrink-0"
                     >
                       Apply
                     </button>
                   )}
                 </div>
-                {couponError && <p className="text-[10px] font-bold text-red-500 mt-1">{couponError}</p>}
+                {couponError && <p className="text-[10px] font-bold text-red-500 mt-0.5">{couponError}</p>}
                 {appliedCoupon && (
-                  <p className="text-[10px] font-bold text-green-600 mt-1">Applied: -{formatCurrency(couponDiscount)}</p>
+                  <p className="text-[10px] font-bold text-green-600 mt-0.5">Applied: -{formatCurrency(couponDiscount)}</p>
                 )}
               </div>
 
               {/* Discount */}
               <div>
-                <label className="block text-[13px] md:text-[10px] font-black text-[#5F6D59] tracking-wider uppercase mb-1.5">Manual Discount</label>
+                <label className="block text-[10px] font-black text-[#5F6D59] tracking-wider uppercase mb-1">Manual Discount</label>
                 <div className="flex gap-2">
                   <div className="relative shrink-0">
                     <select 
                       value={manualDiscountType}
                       onChange={e => setManualDiscountType(e.target.value as 'flat'|'percent')}
-                      className="appearance-none h-12 bg-white border border-[#EAD7B7]/60 rounded-xl pl-3 pr-8 text-[16px] md:text-[12px] font-black text-[#2C392A] focus:outline-none focus:border-[#8B2332]"
+                      className="appearance-none h-9 bg-white border border-[#EAD7B7]/60 rounded-xl pl-2 pr-7 text-[12px] font-black text-[#2C392A] focus:outline-none focus:border-[#8B2332]"
                     >
                       <option value="flat">₹</option>
                       <option value="percent">%</option>
                     </select>
-                    <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#5F6D59] pointer-events-none" />
+                    <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#5F6D59] pointer-events-none" />
                   </div>
                   <input 
                     type="number" 
                     value={manualDiscountValue}
                     onChange={e => setManualDiscountValue(e.target.value)}
                     placeholder="0"
-                    className="w-full h-12 px-3 bg-white border border-[#EAD7B7]/60 rounded-xl text-[16px] md:text-[12px] font-black text-[#2C392A] text-right focus:outline-none focus:border-[#8B2332]"
+                    className="w-full h-9 px-3 bg-white border border-[#EAD7B7]/60 rounded-xl text-[12px] font-black text-[#2C392A] text-right focus:outline-none focus:border-[#8B2332]"
                   />
                 </div>
               </div>
 
               {/* GST Toggle */}
-              <div className="flex items-center justify-between py-2 border-b border-[#EAD7B7]/40">
-                <span className="text-[12px] font-black text-[#5F6D59]">Enable GST on Bill</span>
+              <div className="flex items-center justify-between py-1 border-b border-[#EAD7B7]/40">
+                <span className="text-[11px] font-black text-[#5F6D59]">Enable GST on Bill</span>
                 <button 
                   type="button"
                   onClick={() => setBillGstEnabled(!billGstEnabled)}
-                  className={`w-10 h-6 rounded-full p-1 transition-colors ${billGstEnabled ? 'bg-[#8B2332]' : 'bg-[#EAD7B7]/60'}`}
+                  className={`w-9 h-5 rounded-full p-0.5 transition-colors ${billGstEnabled ? 'bg-[#8B2332]' : 'bg-[#EAD7B7]/60'}`}
                 >
                   <div className={`w-4 h-4 rounded-full bg-white transition-transform ${billGstEnabled ? 'translate-x-4' : 'translate-x-0'}`}></div>
                 </button>
               </div>
 
               {billGstEnabled && (
-                <div className="flex gap-2 mb-2">
+                <div className="flex gap-2">
                   <div className="relative shrink-0">
                     <select 
                       value={gstType}
                       onChange={e => setGstType(e.target.value as 'flat'|'percent')}
-                      className="appearance-none h-12 bg-white border border-[#EAD7B7]/60 rounded-xl pl-3 pr-8 text-[16px] md:text-[12px] font-black text-[#2C392A] focus:outline-none focus:border-[#8B2332]"
+                      className="appearance-none h-9 bg-white border border-[#EAD7B7]/60 rounded-xl pl-2 pr-7 text-[12px] font-black text-[#2C392A] focus:outline-none focus:border-[#8B2332]"
                     >
                       <option value="percent">%</option>
                       <option value="flat">₹</option>
                     </select>
-                    <ChevronDown size={14} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#5F6D59] pointer-events-none" />
+                    <ChevronDown size={12} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#5F6D59] pointer-events-none" />
                   </div>
                   <input 
                     type="number" 
                     value={gstInput}
                     onChange={e => setGstInput(e.target.value)}
                     placeholder={gstType === 'percent' ? "e.g. 18" : "0"}
-                    className="w-full h-12 px-3 bg-white border border-[#EAD7B7]/60 rounded-xl text-[16px] md:text-[12px] font-black text-[#2C392A] text-right focus:outline-none focus:border-[#8B2332]"
+                    className="w-full h-9 px-3 bg-white border border-[#EAD7B7]/60 rounded-xl text-[12px] font-black text-[#2C392A] text-right focus:outline-none focus:border-[#8B2332]"
                   />
                 </div>
               )}
 
               {/* Summary calculations */}
-              <div className="space-y-2 mt-2">
+              <div className="bg-[#FAFAF8] rounded-xl border border-[#EAD7B7]/40 p-2.5 space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <span className="text-[12px] font-black text-[#5F6D59]">Subtotal ({items.length} items)</span>
-                  <span className="text-[13px] font-black text-[#2C392A]">{formatCurrency(subtotal)}</span>
+                  <span className="text-[11px] font-black text-[#5F6D59]">Subtotal ({items.length} items)</span>
+                  <span className="text-[12px] font-black text-[#2C392A]">{formatCurrency(subtotal)}</span>
                 </div>
                 
                 {billGstEnabled && totalGst > 0 && (
                   <div className="flex items-center justify-between">
-                    <span className="text-[12px] font-black text-[#5F6D59]">GST Amount</span>
-                    <span className="text-[13px] font-black text-[#2C392A]">{formatCurrency(totalGst)}</span>
+                    <span className="text-[11px] font-black text-[#5F6D59]">GST Amount</span>
+                    <span className="text-[12px] font-black text-[#2C392A]">{formatCurrency(totalGst)}</span>
                   </div>
                 )}
                 
                 <div className="flex items-center justify-between">
-                  <span className="text-[12px] font-black text-[#5F6D59]">Delivery</span>
+                  <span className="text-[11px] font-black text-[#5F6D59]">Delivery</span>
                   <input 
                     type="number"
                     value={shipping}
                     onChange={e => setShipping(e.target.value)}
-                    className="w-24 h-11 px-2 bg-white border border-[#EAD7B7]/60 rounded-lg text-[16px] md:text-[12px] font-black text-[#2C392A] text-right focus:outline-none focus:border-[#8B2332]"
+                    className="w-20 h-8 px-2 bg-white border border-[#EAD7B7]/60 rounded-lg text-[12px] font-black text-[#2C392A] text-right focus:outline-none focus:border-[#8B2332]"
                   />
+                </div>
+
+                <div className="h-px bg-[#EAD7B7]/60"></div>
+
+                {/* Grand Total */}
+                <div className="flex items-center justify-between pt-0.5">
+                  <span className="text-[12px] font-black text-[#2C392A] uppercase tracking-wider">Grand Total</span>
+                  <span className="text-[20px] font-black text-[#8B2332] tracking-tight">{formatCurrency(total)}</span>
                 </div>
               </div>
 
-              <div className="h-px bg-[#EAD7B7]/60 my-2"></div>
-
-              {/* Grand Total */}
-              <div className="flex items-center justify-between">
-                <span className="text-[14px] font-black text-[#2C392A] uppercase tracking-wider">Grand Total</span>
-                <span className="text-[24px] font-black text-[#8B2332] tracking-tight">{formatCurrency(total)}</span>
-              </div>
-
               {/* Cash Payment */}
-              <div className="mt-2">
-                <div className="border border-[#EAD7B7]/60 rounded-xl p-4 bg-white relative">
-                  <label className="block text-[10px] font-black text-[#5F6D59] tracking-wider uppercase mb-1.5">Cash Payment</label>
-                  <label className="block text-[10px] font-bold text-[#5F6D59] mb-1.5">Amount Received (₹)</label>
+              <div>
+                <div className="border border-[#EAD7B7]/60 rounded-xl p-2.5 bg-white">
+                  <label className="block text-[10px] font-black text-[#5F6D59] tracking-wider uppercase mb-0.5">Cash Payment — Amount Received (₹)</label>
                   <input 
                     type="number"
                     value={cashReceived}
                     onChange={e => setCashReceived(e.target.value)}
                     placeholder="0.00"
-                    className="w-full h-12 px-3 bg-[#FAFAFA] border border-[#EAD7B7]/40 rounded-xl text-[16px] md:text-[14px] font-black text-[#2C392A] focus:outline-none focus:border-[#8B2332]"
+                    className="w-full h-9 px-3 bg-[#FAFAFA] border border-[#EAD7B7]/40 rounded-xl text-[13px] font-black text-[#2C392A] focus:outline-none focus:border-[#8B2332]"
                   />
                   {cashReceivedNum > 0 && (
-                    <div className="mt-3 flex justify-between items-center bg-[#F7F6F2] px-3 py-2 rounded-lg border border-[#EAD7B7]/40">
-                      <span className="text-[11px] font-bold text-[#5F6D59]">Return Balance:</span>
-                      <span className="text-[13px] font-black text-[#2C392A]">{formatCurrency(balanceToReturn)}</span>
+                    <div className="mt-2 flex justify-between items-center bg-[#F7F6F2] px-3 py-1.5 rounded-lg border border-[#EAD7B7]/40">
+                      <span className="text-[10px] font-bold text-[#5F6D59]">Return Balance:</span>
+                      <span className="text-[12px] font-black text-[#2C392A]">{formatCurrency(balanceToReturn)}</span>
                     </div>
                   )}
                 </div>
               </div>
 
               {error && (
-                <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] font-bold mt-2">
+                <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-600 text-[11px] font-bold">
                   {error}
                 </div>
               )}
             </div>
             
             {/* Action Buttons Fixed Footer */}
-            <div className="sticky bottom-0 z-10 shrink-0 border-t border-[#EAD7B7]/60 bg-white p-4 shadow-[0_-8px_20px_rgba(44,57,42,0.06)] md:p-5">
+            <div className="shrink-0 border-t border-[#EAD7B7]/60 bg-white p-3 shadow-[0_-8px_20px_rgba(44,57,42,0.06)]">
               <button 
                 type="button"
                 onClick={generateBill}
                 disabled={saving}
-                className="w-full min-h-[48px] py-3.5 bg-[#4CAF50] hover:bg-[#45a049] text-white rounded-xl text-[13px] font-black uppercase tracking-wider transition-colors disabled:opacity-50"
+                className="w-full min-h-[44px] py-3 bg-[#4CAF50] hover:bg-[#45a049] text-white rounded-xl text-[13px] font-black uppercase tracking-wider transition-colors disabled:opacity-50"
               >
                 {saving ? 'Processing...' : 'Complete Sale'}
               </button>
