@@ -1275,24 +1275,31 @@ export default function Dashboard() {
               </span>
             </button>
           ))}
-          
-          <button
-            onClick={() => {
-              useAdminAuthStore.getState().logout()
-              navigate('/admin-login', { replace: true })
-            }}
-            className={[
-              'shrink-0 flex flex-col lg:flex-row items-center justify-center lg:justify-start',
-              'gap-1 lg:gap-3',
-              'h-[56px] w-[64px] lg:w-full lg:h-[48px]',
-              sidebarCollapsed ? 'lg:w-[48px] lg:justify-center mx-auto' : 'lg:px-4',
-              'px-0 py-1 lg:py-0',
-              'rounded-xl font-medium text-[11px] lg:text-[14px] transition-all text-white/70 hover:bg-white/10 hover:text-white lg:mt-auto mb-1 lg:mb-4 overflow-hidden',
-            ].join(' ')}
-          >
-            <span className="shrink-0"><Power size={20} /></span>
-            <span className={`hidden lg:block truncate text-left transition-all duration-200 ${sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'opacity-100 flex-1'}`}>Logout</span>
-          </button>
+          {/* Logout + Branding row */}
+          <div className={`lg:mt-auto shrink-0 flex items-center ${sidebarCollapsed ? 'lg:flex-col lg:gap-2 lg:pb-4' : 'lg:flex-row lg:gap-2 lg:px-3 lg:pb-3'}`}>
+            <button
+              onClick={() => {
+                useAdminAuthStore.getState().logout()
+                navigate('/admin-login', { replace: true })
+              }}
+              className={[
+                'shrink-0 flex flex-col lg:flex-row items-center justify-center lg:justify-start',
+                'gap-1 lg:gap-3',
+                'h-[56px] w-[64px] lg:h-[44px]',
+                sidebarCollapsed ? 'lg:w-[44px] lg:justify-center' : 'lg:px-3 lg:flex-1',
+                'px-0 py-1 lg:py-0',
+                'rounded-xl font-medium text-[11px] lg:text-[14px] transition-all text-white/70 hover:bg-white/10 hover:text-white overflow-hidden mb-1 lg:mb-0',
+              ].join(' ')}
+            >
+              <span className="shrink-0"><Power size={20} /></span>
+              <span className={`hidden lg:block truncate text-left transition-all duration-200 ${sidebarCollapsed ? 'w-0 opacity-0 overflow-hidden' : 'opacity-100 flex-1'}`}>Logout</span>
+            </button>
+            {!sidebarCollapsed && (
+              <span className="hidden lg:block text-[9px] font-semibold uppercase tracking-[0.12em] text-white/30 whitespace-nowrap leading-tight pr-1">
+                © Cenexa Systems
+              </span>
+            )}
+          </div>
         </nav>
 
       </aside>
