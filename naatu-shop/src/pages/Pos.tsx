@@ -693,10 +693,11 @@ export default function Pos(props: PosProps = {}) {
               <button 
                 onClick={() => { logout(); navigate('/admin-login', { replace: true }) }}
                 title="Logout"
-              className="flex items-center justify-center min-h-[44px] px-4 rounded-xl border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
-            >
-              <Power size={18} />
-            </button>
+                className="flex items-center justify-center min-h-[44px] px-4 rounded-xl border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+              >
+                <Power size={18} />
+              </button>
+            </>
           )}
         </div>
       </div>
