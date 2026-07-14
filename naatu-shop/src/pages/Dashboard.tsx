@@ -1298,7 +1298,8 @@ export default function Dashboard() {
       </aside>
 
       {/* Main */}
-      <main className="flex-grow p-4 sm:p-6 lg:p-8 overflow-x-hidden overflow-y-auto">
+      <main className="flex-grow flex flex-col overflow-hidden">
+        <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-x-hidden overflow-y-auto">
 
         {/* Î“Ã¶Ã‡Î“Ã¶Ã‡ ANALYTICS TAB Î“Ã¶Ã‡Î“Ã¶Ã‡ */}
 
@@ -3632,9 +3633,13 @@ export default function Dashboard() {
             </p>
           </div>
         )}
+        </div>
+        {/* Footer */}
+        <div className="shrink-0 border-t border-gray-100 bg-white/80 py-2 text-center text-[12px] font-semibold text-[#7A8A78] tracking-wide print:hidden">
+          Powered by Cenexa Systems © 2026
+        </div>
       </main>
 
-      {/* Footer */}
 
       {invoicePreviewOrder && (() => {
         const preview = getOrderWhatsAppPreview(invoicePreviewOrder)
@@ -3706,10 +3711,6 @@ export default function Dashboard() {
           </div>
         )
       })()}
-      {/* Footer */}
-      <div className="mt-8 pb-4 text-center text-[12px] font-semibold text-[#5F6D59] tracking-wide print:hidden">
-        Powered by Cenexa Systems © 2026
-      </div>
 
     </div>
   )
