@@ -571,7 +571,7 @@ export const useSettingsStore = create<SettingsState>()((set) => ({
 }))
 
 // --- Admin Auth Store ---
-const ADMIN_PORTAL_PASSWORD = '9342489391'
+const ADMIN_PORTAL_PASSWORD = 'sulficker11'
 const STAFF_PORTAL_PASSWORD = 'staff123'
 
 export type AdminRole = 'admin' | 'staff' | null
