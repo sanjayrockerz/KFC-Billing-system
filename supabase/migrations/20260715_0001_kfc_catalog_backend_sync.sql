@@ -408,13 +408,27 @@ SET search_path = public
 AS $$
 DECLARE
   v_next INTEGER;
+  v_invoice_no TEXT;
 BEGIN
-  SELECT COALESCE(MAX(NULLIF(regexp_replace(invoice_no, '\D', '', 'g'), '')::INTEGER), 0) + 1
+  -- Serialize invoice number generation inside the current transaction.
+  -- This avoids duplicate invoice_no values when two POS bills are saved at
+  -- nearly the same time.
+  PERFORM pg_advisory_xact_lock(hashtext('kfc_invoice_no'));
+
+  SELECT COALESCE(MAX(NULLIF(SUBSTRING(invoice_no FROM '^KFC-([0-9]+)$'), '')::INTEGER), 0) + 1
   INTO v_next
   FROM public.orders
-  WHERE invoice_no IS NOT NULL;
+  WHERE invoice_no ~ '^KFC-[0-9]+$';
 
-  RETURN 'KFC-' || LPAD(v_next::TEXT, 5, '0');
+  LOOP
+    v_invoice_no := 'KFC-' || LPAD(v_next::TEXT, 5, '0');
+    EXIT WHEN NOT EXISTS (
+      SELECT 1 FROM public.orders WHERE invoice_no = v_invoice_no
+    );
+    v_next := v_next + 1;
+  END LOOP;
+
+  RETURN v_invoice_no;
 END;
 $$;
 
@@ -469,6 +483,7 @@ DECLARE
   v_product_id BIGINT;
   v_variant_id UUID;
   v_qty NUMERIC(10,2);
+  v_invoice_attempt INTEGER := 0;
 BEGIN
   IF p_items IS NULL OR jsonb_typeof(p_items) <> 'array' OR jsonb_array_length(p_items) = 0 THEN
     RAISE EXCEPTION 'At least one order item is required';
@@ -482,29 +497,40 @@ BEGIN
     + COALESCE(p_delivery_charge, 0) + COALESCE(p_shipping, 0)
     - COALESCE(p_discount_amount, 0) - COALESCE(p_manual_discount_amount, 0));
 
-  v_invoice_no := public.get_next_invoice_no();
+  LOOP
+    v_invoice_attempt := v_invoice_attempt + 1;
+    v_invoice_no := public.get_next_invoice_no();
 
-  INSERT INTO public.orders (
-    invoice_no, user_id, customer_name, phone, address, items,
-    subtotal, shipping, total, status, order_mode, order_type,
-    delivery_charge, discount_amount, manual_discount_amount,
-    manual_discount_type, manual_discount_value, coupon_code,
-    coupon_percentage, total_gst, gst_enabled, payment_method,
-    payment_mode, split_details
-  ) VALUES (
-    v_invoice_no, auth.uid(), COALESCE(NULLIF(TRIM(p_customer_name), ''), 'Customer'),
-    COALESCE(NULLIF(TRIM(p_phone), ''), ''), COALESCE(NULLIF(TRIM(p_address), ''), ''),
-    p_items, v_subtotal, COALESCE(p_shipping, 0), v_total,
-    COALESCE(NULLIF(TRIM(p_status), ''), 'pending'),
-    COALESCE(NULLIF(TRIM(p_order_mode), ''), 'offline'),
-    COALESCE(NULLIF(TRIM(p_order_type), ''), 'pos_sale'),
-    COALESCE(p_delivery_charge, 0), COALESCE(p_discount_amount, 0),
-    COALESCE(p_manual_discount_amount, 0), COALESCE(NULLIF(TRIM(p_manual_discount_type), ''), 'flat'),
-    COALESCE(p_manual_discount_value, 0), NULLIF(TRIM(COALESCE(p_coupon_code, '')), ''),
-    COALESCE(p_coupon_percentage, 0), COALESCE(p_total_gst, 0), COALESCE(p_gst_enabled, FALSE),
-    COALESCE(NULLIF(TRIM(p_payment_method), ''), 'cash'),
-    COALESCE(NULLIF(TRIM(p_payment_method), ''), 'cash'), COALESCE(p_split_details, '{}'::jsonb)
-  ) RETURNING id INTO v_order_id;
+    BEGIN
+      INSERT INTO public.orders (
+        invoice_no, user_id, customer_name, phone, address, items,
+        subtotal, shipping, total, status, order_mode, order_type,
+        delivery_charge, discount_amount, manual_discount_amount,
+        manual_discount_type, manual_discount_value, coupon_code,
+        coupon_percentage, total_gst, gst_enabled, payment_method,
+        payment_mode, split_details
+      ) VALUES (
+        v_invoice_no, auth.uid(), COALESCE(NULLIF(TRIM(p_customer_name), ''), 'Customer'),
+        COALESCE(NULLIF(TRIM(p_phone), ''), ''), COALESCE(NULLIF(TRIM(p_address), ''), ''),
+        p_items, v_subtotal, COALESCE(p_shipping, 0), v_total,
+        COALESCE(NULLIF(TRIM(p_status), ''), 'pending'),
+        COALESCE(NULLIF(TRIM(p_order_mode), ''), 'offline'),
+        COALESCE(NULLIF(TRIM(p_order_type), ''), 'pos_sale'),
+        COALESCE(p_delivery_charge, 0), COALESCE(p_discount_amount, 0),
+        COALESCE(p_manual_discount_amount, 0), COALESCE(NULLIF(TRIM(p_manual_discount_type), ''), 'flat'),
+        COALESCE(p_manual_discount_value, 0), NULLIF(TRIM(COALESCE(p_coupon_code, '')), ''),
+        COALESCE(p_coupon_percentage, 0), COALESCE(p_total_gst, 0), COALESCE(p_gst_enabled, FALSE),
+        COALESCE(NULLIF(TRIM(p_payment_method), ''), 'cash'),
+        COALESCE(NULLIF(TRIM(p_payment_method), ''), 'cash'), COALESCE(p_split_details, '{}'::jsonb)
+      ) RETURNING id INTO v_order_id;
+
+      EXIT;
+    EXCEPTION WHEN unique_violation THEN
+      IF v_invoice_attempt >= 5 THEN
+        RAISE;
+      END IF;
+    END;
+  END LOOP;
 
   FOR v_item IN SELECT * FROM jsonb_array_elements(p_items) LOOP
     v_product_id := CASE
