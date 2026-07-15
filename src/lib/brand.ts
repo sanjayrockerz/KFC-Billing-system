@@ -1,0 +1,19 @@
+export const BRAND_EN = 'Korean Fried Chicken'
+export const BRAND_TA = 'கொரியன் பிரைடு சிக்கன்'
+export const BRAND_SUBTITLE = 'Admin Billing'
+
+export const BRAND_PRIMARY_PHONE_DISPLAY = '+91 9342489391'
+export const BRAND_PRIMARY_PHONE_E164 = '919342489391'
+export const BRAND_SECONDARY_PHONE_DISPLAY = '+91 9342489391'
+export const BRAND_SECONDARY_PHONE_E164 = '919342489391'
+export const BRAND_THIRD_PHONE_DISPLAY = '+91 9342489391'
+export const BRAND_THIRD_PHONE_E164 = '919342489391'
+export const BRAND_PHONE_DISPLAY = BRAND_PRIMARY_PHONE_DISPLAY
+export const BRAND_PHONE_E164 = BRAND_PRIMARY_PHONE_E164
+export const BRAND_WHATSAPP = BRAND_THIRD_PHONE_DISPLAY
+export const WHATSAPP_NUM = BRAND_THIRD_PHONE_E164
+export const BRAND_WHATSAPP_LINK = `https://wa.me/${BRAND_THIRD_PHONE_E164}`
+export const BRAND_EMAIL = 'admin@koreanfriedchicken.local'
+export const BRAND_ADDRESS = 'Nanjappa Garden Selvapuram, Shivalaya Mahal Road, SBI Bank Opposite, Komarapalayam, Coimbatore'
+export const BRAND_OWNER = 'Sulficker Roshan N'
+export const BRAND_LOCATION_LINK = '#'
