@@ -31,6 +31,9 @@ type CreatedOrder = {
   createdAt: string
 }
 
+const INVOICE_HOTFIX_MESSAGE =
+  'Invoice number generator is still outdated in Supabase. Run supabase/migrations/20260715_0002_fix_invoice_collision.sql in the Supabase SQL editor, then redeploy/retry the sale.'
+
 export const createOrderWithStock = async (input: CreateOrderInput): Promise<CreatedOrder> => {
   const customerName   = input.customerName.trim() || 'Customer'
   const phone          = input.phone.trim()
@@ -61,7 +64,7 @@ export const createOrderWithStock = async (input: CreateOrderInput): Promise<Cre
   const paymentMethod   = input.paymentMethod || 'cash'
   const splitDetails    = input.splitDetails || {}
 
-  const newRpcResult = await supabase.rpc('create_order_with_stock', {
+  const rpcParams = {
     p_customer_name:          customerName,
     p_phone:                  phone,
     p_address:                address,
@@ -81,9 +84,21 @@ export const createOrderWithStock = async (input: CreateOrderInput): Promise<Cre
     p_gst_enabled:            gstEnabled,
     p_payment_method:         paymentMethod,
     p_split_details:          splitDetails,
-  })
+  }
+
+  const newRpcResult = await supabase.rpc('create_order_with_stock', rpcParams)
   data  = newRpcResult.data
   error = newRpcResult.error
+
+  if (error && typeof error === 'object' && error !== null && 'message' in error) {
+    const firstMessage = String((error as { message: unknown }).message)
+    const firstDetails = 'details' in error ? String((error as { details?: unknown }).details ?? '') : ''
+    if (/orders_invoice_no_key|duplicate key value.*invoice_no|Key \(invoice_no\)=/i.test(`${firstMessage} ${firstDetails}`)) {
+      const retryResult = await supabase.rpc('create_order_with_stock', rpcParams)
+      data = retryResult.data
+      error = retryResult.error
+    }
+  }
 
 
 
@@ -93,6 +108,9 @@ export const createOrderWithStock = async (input: CreateOrderInput): Promise<Cre
       const message = String(err.message)
       if (/invalid api key|invalid value.*apikey|apikey.*invalid/i.test(message)) {
         throw new Error('Supabase configuration is invalid. Please redeploy with the correct Supabase URL and publishable key.')
+      }
+      if (/orders_invoice_no_key|duplicate key value.*invoice_no|Key \(invoice_no\)=/i.test(`${message} ${String(err.details ?? '')}`)) {
+        throw new Error(INVOICE_HOTFIX_MESSAGE)
       }
       throw new Error(message + (err.details ? ` (${String(err.details)})` : ''))
     }

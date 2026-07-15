@@ -683,3 +683,5 @@ WITH CHECK (TRUE);
 -- SELECT name_en, is_active FROM public.categories ORDER BY sort_order, name_en;
 -- SELECT name, category, price, stock, is_active FROM public.products WHERE is_active ORDER BY sort_order, name;
 -- SELECT code, percentage, is_active FROM public.coupons ORDER BY created_at DESC;
+
+NOTIFY pgrst, 'reload schema';
